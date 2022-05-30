@@ -10,16 +10,31 @@ public abstract class SceneView {
 	
 	protected abstract void initComponents();
 	
-	protected abstract void addComponents();
+	protected abstract Pane addComponents();
 	
-	protected abstract void initScene();
+	protected abstract Scene initScene();
 	
-	public Scene generateScene() {
+	public void generateScene() {
 		this.initComponents();
-		this.addComponents();
-		this.initScene();
-		
-		return this.scene;
+		this.root = this.addComponents();
+		this.scene = this.initScene();
 	}
+
+	public Pane getRoot() {
+		return root;
+	}
+
+	public void setRoot(Pane root) {
+		this.root = root;
+	}
+
+	public Scene getScene() {
+		return scene;
+	}
+
+	public void setScene(Scene scene) {
+		this.scene = scene;
+	}
+	
 
 }

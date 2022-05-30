@@ -1,30 +1,43 @@
 package application.view;
 
+import application.MainApplication;
+import application.model.MainModel;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 
 public class GameSceneView extends SceneView{
 
-	private Label menuLabel;
+	private Canvas canvas;
 	
 	@Override
 	protected void initComponents() {
 		// TODO Auto-generated method stub
 		this.root = new StackPane();
-		this.menuLabel = new Label("Game");
+		this.canvas = new Canvas(MainApplication.W, MainApplication.H);
+		
+		GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.RED);
+        gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
 	}
 
 	@Override
-	protected void addComponents() {
+	protected Pane addComponents() {
 		// TODO Auto-generated method stub
-		this.root.getChildren().add(menuLabel);
+		this.root.getChildren().add(canvas);
+		
+		return this.root;
 	}
 
 	@Override
-	protected void initScene() {
+	protected Scene initScene() {
 		// TODO Auto-generated method stub
 		this.scene = new Scene(root);
+		
+		return this.scene;
 	}
 
 }
