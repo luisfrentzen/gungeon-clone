@@ -5,9 +5,12 @@ import application.factory.SceneFactory;
 import application.model.MainModel;
 import application.view.MainView;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -17,7 +20,11 @@ public class MainApplication extends Application{
 	public MainView view;
 	public MainModel model;
 	
+	public static double W;
+	public static double H;
+	
 	public SceneFactory sceneFactory;
+	public static Scene scene;
 	
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -25,9 +32,15 @@ public class MainApplication extends Application{
 		stage.setMaximized(true);
 		stage.initStyle(StageStyle.UNDECORATED);
 		
-		sceneFactory = new SceneFactory();
+		stage.show();
 		
-		stage.setScene(sceneFactory.makeScene("G"));
+		W = stage.getWidth();
+		H = stage.getHeight();
+		
+		sceneFactory = new SceneFactory();
+		scene = sceneFactory.makeScene("G");
+		
+		stage.setScene(scene);
 		stage.show();
 	}
 	

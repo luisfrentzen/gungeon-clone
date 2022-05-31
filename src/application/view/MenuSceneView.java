@@ -3,6 +3,7 @@ package application.view;
 import application.factory.SceneFactory;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 public class MenuSceneView extends SceneView{
@@ -17,15 +18,19 @@ public class MenuSceneView extends SceneView{
 	}
 
 	@Override
-	protected void addComponents() {
+	protected Pane addComponents() {
 		// TODO Auto-generated method stub
 		this.root.getChildren().add(menuLabel);
+		
+		return this.root;
 	}
 
 	@Override
-	protected void initScene() {
+	protected Scene initScene() {
 		// TODO Auto-generated method stub
 		this.scene = new Scene(root);
+		
+		return this.scene;
 	}
 
 }

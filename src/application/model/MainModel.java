@@ -2,8 +2,8 @@ package application.model;
 
 public class MainModel {
 
-	public MainModel() {
+	private MainModel() {
 		// TODO Auto-generated constructor stub
 	}
-
+	
 }
