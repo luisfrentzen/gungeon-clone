@@ -6,6 +6,8 @@ public class PlayerModel extends CharacterModel{
 		// TODO Auto-generated constructor stub
 		this.x = x;
 		this.y = y;
+		this.w = 50;
+		this.h = 50;
 		this.speed = speed;
 		this.damage = damage;
 		

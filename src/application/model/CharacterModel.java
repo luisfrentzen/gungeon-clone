@@ -1,9 +1,6 @@
 package application.model;
 
-public abstract class CharacterModel {
-
-	protected int x;
-	protected int y;
+public abstract class CharacterModel extends GameObjectModel {
 	
 	protected int hp;
 	protected int speed;

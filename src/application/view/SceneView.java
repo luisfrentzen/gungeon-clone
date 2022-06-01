@@ -1,12 +1,17 @@
 package application.view;
 
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 
 public abstract class SceneView {
 
 	protected Pane root;
 	protected Scene scene;
+	
+	protected Canvas canvas;
+	protected GraphicsContext gc;
 	
 	protected abstract void initComponents();
 	
