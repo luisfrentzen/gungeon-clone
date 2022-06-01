@@ -2,6 +2,7 @@ package application.view;
 
 import application.MainApplication;
 import application.model.MainModel;
+import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -10,8 +11,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 public class GameSceneView extends SceneView{
-
-	private Canvas canvas;
 	
 	@Override
 	protected void initComponents() {
@@ -19,7 +18,7 @@ public class GameSceneView extends SceneView{
 		this.root = new StackPane();
 		this.canvas = new Canvas(MainApplication.W, MainApplication.H);
 		
-		GraphicsContext gc = canvas.getGraphicsContext2D();
+		this.gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.RED);
         gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
 	}
@@ -38,6 +37,19 @@ public class GameSceneView extends SceneView{
 		this.scene = new Scene(root);
 		
 		return this.scene;
+	}
+
+	@Override
+	public void start() {
+		// TODO Auto-generated method stub
+		AnimationTimer loop = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                	
+            }
+        };
+        
+        loop.start();
 	}
 
 }

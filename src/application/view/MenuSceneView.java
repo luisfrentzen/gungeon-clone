@@ -33,4 +33,10 @@ public class MenuSceneView extends SceneView{
 		return this.scene;
 	}
 
+	@Override
+	public void start() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

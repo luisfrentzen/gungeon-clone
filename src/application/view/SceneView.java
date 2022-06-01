@@ -1,5 +1,6 @@
 package application.view;
 
+import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -23,7 +24,11 @@ public abstract class SceneView {
 		this.initComponents();
 		this.root = this.addComponents();
 		this.scene = this.initScene();
+		
+		this.start();
 	}
+	
+	public abstract void start();
 
 	public Pane getRoot() {
 		return root;
