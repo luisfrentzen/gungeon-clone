@@ -23,6 +23,8 @@ public class MainApplication extends Application{
 	public static double W;
 	public static double H;
 	
+	public static int FPS;
+	
 	public SceneFactory sceneFactory;
 	public static Scene scene;
 	
@@ -36,6 +38,8 @@ public class MainApplication extends Application{
 		
 		W = stage.getWidth();
 		H = stage.getHeight();
+		
+		FPS = 60;
 		
 		sceneFactory = new SceneFactory();
 		scene = sceneFactory.makeScene("G");

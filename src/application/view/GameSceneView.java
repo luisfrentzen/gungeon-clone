@@ -1,16 +1,18 @@
 package application.view;
 
 import application.MainApplication;
-import application.model.MainModel;
+import application.controller.PlayerController;
 import javafx.animation.AnimationTimer;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 
 public class GameSceneView extends SceneView{
+	
+	PlayerController playerController;
 	
 	@Override
 	protected void initComponents() {
@@ -19,8 +21,8 @@ public class GameSceneView extends SceneView{
 		this.canvas = new Canvas(MainApplication.W, MainApplication.H);
 		
 		this.gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.RED);
-        gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+		
+		this.playerController = new PlayerController(this.canvas);
 	}
 
 	@Override
@@ -36,20 +38,75 @@ public class GameSceneView extends SceneView{
 		// TODO Auto-generated method stub
 		this.scene = new Scene(root);
 		
+		this.scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent e) {
+				// TODO Auto-generated method stub
+				switch(e.getCode()) {
+				case W:
+					playerController.setVectorUp(1);
+					break;
+				case A:
+					playerController.setVectorLeft(1);
+					break;
+				case S:
+					playerController.setVectorDown(1);
+					break;
+				case D:
+					playerController.setVectorRight(1);
+					break;
+				default:
+					break;
+				}
+			}
+			
+		});
+		
+		this.scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent e) {
+				// TODO Auto-generated method stub
+				switch(e.getCode()) {
+				case W:
+					playerController.setVectorUp(0);
+					break;
+				case A:
+					playerController.setVectorLeft(0);
+					break;
+				case S:
+					playerController.setVectorDown(0);
+					break;
+				case D:
+					playerController.setVectorRight(0);
+					break;
+				default:
+					break;
+				}
+			}
+			
+		});
+		
 		return this.scene;
 	}
 
+
 	@Override
-	public void start() {
+	public void renderFrame() {
 		// TODO Auto-generated method stub
-		AnimationTimer loop = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                	
-            }
-        };
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        playerController.render();
         
-        loop.start();
+        System.out.println("render");
+	}
+
+	@Override
+	public void updateFrame() {
+		// TODO Auto-generated method stub
+		playerController.update();
+		
+		System.out.println("update");
 	}
 
 }

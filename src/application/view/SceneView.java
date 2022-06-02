@@ -1,5 +1,6 @@
 package application.view;
 
+import application.MainApplication;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -28,7 +29,33 @@ public abstract class SceneView {
 		this.start();
 	}
 	
-	public abstract void start();
+	public abstract void updateFrame();
+	
+	public abstract void renderFrame();
+	
+	public void start() {
+		
+		AnimationTimer loop = new AnimationTimer() {
+			double then = System.currentTimeMillis();
+			double interval = 1000 / MainApplication.FPS;
+			
+            @Override
+            public void handle(long n) {
+            	double now = System.currentTimeMillis();
+            	double elapsed = now - then;
+            	
+            	if (elapsed > interval) {
+            		then = now;
+            		updateFrame();
+            		renderFrame();
+            	}
+            	
+                
+            }
+        };
+        
+        loop.start();
+	}
 
 	public Pane getRoot() {
 		return root;

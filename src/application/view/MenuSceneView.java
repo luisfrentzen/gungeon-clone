@@ -1,6 +1,5 @@
 package application.view;
 
-import application.factory.SceneFactory;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -35,6 +34,18 @@ public class MenuSceneView extends SceneView{
 
 	@Override
 	public void start() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateFrame() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void renderFrame() {
 		// TODO Auto-generated method stub
 		
 	}
