@@ -39,7 +39,7 @@ public class MainApplication extends Application{
 		W = stage.getWidth();
 		H = stage.getHeight();
 		
-		FPS = 60;
+		FPS = 12;
 		
 		sceneFactory = new SceneFactory();
 		scene = sceneFactory.makeScene("G");

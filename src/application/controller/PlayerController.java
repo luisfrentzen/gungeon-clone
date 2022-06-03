@@ -4,6 +4,7 @@ import application.model.PlayerModel;
 import application.view.PlayerView;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class PlayerController extends CharacterController{
@@ -14,12 +15,27 @@ public class PlayerController extends CharacterController{
 	private PlayerModel playerModel;
 	private PlayerView playerView;
 	
+	private Image[] idleSprites;
+	private int drawTick;
+	
 	public PlayerController(Canvas canvas) {
 		// TODO Auto-generated constructor stub
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		
 		this.playerModel = new PlayerModel(this.canvas.getWidth() / 2, this.canvas.getHeight() / 2);
+		
+		this.loadSprites();
+		this.drawTick = 0;
+	}
+	
+	public void loadSprites() {
+		idleSprites = new Image[5];
+		
+		idleSprites[0] = new Image(this.getClass().getResource("/Marine/Idle/Front/marine_idle_front_001.png").toExternalForm());
+		idleSprites[1] = new Image(this.getClass().getResource("/Marine/Idle/Front/marine_idle_front_002.png").toExternalForm());
+		idleSprites[2] = new Image(this.getClass().getResource("/Marine/Idle/Front/marine_idle_front_003.png").toExternalForm());
+		idleSprites[3] = new Image(this.getClass().getResource("/Marine/Idle/Front/marine_idle_front_004.png").toExternalForm());
 	}
 	
 	public void drawPlayer() {
@@ -28,7 +44,8 @@ public class PlayerController extends CharacterController{
 		double centerX = playerModel.getX() - playerModel.getW() / 2;
 		double centerY = playerModel.getY() - playerModel.getH() / 2;
 		
-		this.gc.fillRect(centerX, centerY, playerModel.getW(), playerModel.getH());
+		Image p = this.idleSprites[(drawTick++) % 4];
+		this.gc.drawImage(p, centerX, centerY, p.getWidth(), p.getHeight());
 	}
 	
 	//[UP, LEFT, DOWN, RIGHT]
