@@ -24,6 +24,7 @@ public class MainApplication extends Application{
 	public static double H;
 	
 	public static int FPS;
+	public static double globalScale;
 	
 	public SceneFactory sceneFactory;
 	public static Scene scene;
@@ -39,13 +40,23 @@ public class MainApplication extends Application{
 		W = stage.getWidth();
 		H = stage.getHeight();
 		
-		FPS = 12;
+		globalScale = 0.5;
+		
+		FPS = 24;
 		
 		sceneFactory = new SceneFactory();
 		scene = sceneFactory.makeScene("G");
 		
 		stage.setScene(scene);
 		stage.show();
+	}
+	
+	public static double mapWidth(double w) {
+		return w * (W / 100);
+	}
+	
+	public static double mapHeight(double h) {
+		return h * (H / 100);
 	}
 	
 	

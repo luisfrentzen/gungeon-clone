@@ -7,6 +7,14 @@ public abstract class GameObjectModel {
 	protected double w;
 	protected double h;
 	
+	protected double scale;
+	
+	public double getScale() {
+		return scale;
+	}
+	public void setScale(double scale) {
+		this.scale = scale;
+	}
 	public double getX() {
 		return x;
 	}
@@ -20,16 +28,16 @@ public abstract class GameObjectModel {
 		this.y = y;
 	}
 	public double getW() {
-		return w;
+		return w * scale;
 	}
 	public void setW(double w) {
-		this.w = w;
+		this.w = w / scale;
 	}
 	public double getH() {
-		return h;
+		return h * scale;
 	}
 	public void setH(double h) {
-		this.h = h;
+		this.h = h / scale;
 	}
 	
 	

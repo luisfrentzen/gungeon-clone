@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
@@ -21,6 +22,7 @@ public class GameSceneView extends SceneView{
 		this.canvas = new Canvas(MainApplication.W, MainApplication.H);
 		
 		this.gc = canvas.getGraphicsContext2D();
+		this.gc.setImageSmoothing(false);
 		
 		this.playerController = new PlayerController(this.canvas);
 	}
@@ -37,6 +39,21 @@ public class GameSceneView extends SceneView{
 	protected Scene initScene() {
 		// TODO Auto-generated method stub
 		this.scene = new Scene(root);
+		
+		this.scene.setOnMouseMoved(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent e) {
+				// TODO Auto-generated method stub
+				double dX = e.getX() - playerController.getPlayerX();
+				double dY = e.getY() - playerController.getPlayerY();
+				
+				double ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;
+				
+				playerController.setPlayerAngle(ang);
+			}
+			
+		});
 		
 		this.scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
@@ -97,8 +114,7 @@ public class GameSceneView extends SceneView{
 		// TODO Auto-generated method stub
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         playerController.render();
-        
-        System.out.println("render");
+    
 	}
 
 	@Override
@@ -106,7 +122,6 @@ public class GameSceneView extends SceneView{
 		// TODO Auto-generated method stub
 		playerController.update();
 		
-		System.out.println("update");
 	}
 
 }

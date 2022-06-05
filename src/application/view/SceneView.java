@@ -49,8 +49,7 @@ public abstract class SceneView {
             		updateFrame();
             		renderFrame();
             	}
-            	
-                
+
             }
         };
         

@@ -1,6 +1,9 @@
 package application.controller;
 
+
+import application.MainApplication;
 import application.model.PlayerModel;
+import application.model.SpriteModel;
 import application.view.PlayerView;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -15,7 +18,8 @@ public class PlayerController extends CharacterController{
 	private PlayerModel playerModel;
 	private PlayerView playerView;
 	
-	private Image[] idleSprites;
+	private SpriteModel sprites;
+	
 	private int drawTick;
 	
 	public PlayerController(Canvas canvas) {
@@ -23,29 +27,41 @@ public class PlayerController extends CharacterController{
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		
-		this.playerModel = new PlayerModel(this.canvas.getWidth() / 2, this.canvas.getHeight() / 2);
+		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 3);
 		
-		this.loadSprites();
 		this.drawTick = 0;
+		this.sprites = playerModel.getIdleSprites();
+
 	}
 	
-	public void loadSprites() {
-		idleSprites = new Image[5];
-		
-		idleSprites[0] = new Image(this.getClass().getResource("/Marine/Idle/Front/marine_idle_front_001.png").toExternalForm());
-		idleSprites[1] = new Image(this.getClass().getResource("/Marine/Idle/Front/marine_idle_front_002.png").toExternalForm());
-		idleSprites[2] = new Image(this.getClass().getResource("/Marine/Idle/Front/marine_idle_front_003.png").toExternalForm());
-		idleSprites[3] = new Image(this.getClass().getResource("/Marine/Idle/Front/marine_idle_front_004.png").toExternalForm());
+	public double getPlayerX() {
+		return this.playerModel.getX();
+	}
+	
+	public double getPlayerY() {
+		return this.playerModel.getY();
 	}
 	
 	public void drawPlayer() {
 		this.gc.setFill(Color.BLUE);
 		
-		double centerX = playerModel.getX() - playerModel.getW() / 2;
-		double centerY = playerModel.getY() - playerModel.getH() / 2;
+		int i = (int)(drawTick++ / 8) % 4;
+		double h = this.sprites.getHeight(i);
+		double w = this.sprites.getWidth(i);
 		
-		Image p = this.idleSprites[(drawTick++) % 4];
-		this.gc.drawImage(p, centerX, centerY, p.getWidth(), p.getHeight());
+		Image p = this.sprites.get(i);
+		double centerX = playerModel.getX() - w / 2;
+		double centerY = playerModel.getY() - h / 2;
+		
+		this.gc.drawImage(p, centerX, centerY, w, h);
+	}
+	
+	public void setPlayerAngle(double ang) {
+		this.playerModel.setAngle(ang);
+	}
+	
+	public double getPlayerAngle(int a) {
+		return this.playerModel.getAngle();
 	}
 	
 	//[UP, LEFT, DOWN, RIGHT]
@@ -114,14 +130,6 @@ public class PlayerController extends CharacterController{
 		cY += vY;
 		
 		this.move(cX, cY);
-		
-//		System.out.println(vX + " " + vY);
-//		System.out.println(this.playerModel.getX() + " " + this.playerModel.getY());
-		
-//		System.out.println(this.playerModel.getVectors()[0] + " " +
-//				this.playerModel.getVectors()[1] + " " +
-//				this.playerModel.getVectors()[2] + " " +
-//				this.playerModel.getVectors()[3]);
 	}
 
 	@Override

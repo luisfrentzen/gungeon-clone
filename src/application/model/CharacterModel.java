@@ -1,11 +1,14 @@
 package application.model;
 
+import javafx.scene.image.Image;
+
 public abstract class CharacterModel extends GameObjectModel {
 	
 	protected int hp;
 	protected double speed;
 	protected double damage;
-
+	protected double state;
+	
 	protected int[] vectors = {0, 0, 0, 0};
 
 	public int getHp() {

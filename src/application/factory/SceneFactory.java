@@ -25,7 +25,10 @@ public class SceneFactory {
 		
 		scene.generateScene();
 		
-		Image cursor = new Image(this.getClass().getResource("/cursor.png").toExternalForm());
+		String path = this.getClass().getResource("/app/cursor.png").toExternalForm();
+		
+		System.out.println(path);
+		Image cursor = new Image(path);
 		scene.getScene().setCursor(new ImageCursor(cursor, cursor.getWidth() / 2, cursor.getHeight() / 2));
 		
 		return scene.getScene();
