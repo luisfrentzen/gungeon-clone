@@ -20,6 +20,9 @@ public class MainApplication extends Application{
 	public MainView view;
 	public MainModel model;
 	
+	public static double recomW = 1920;
+	public static double recomH = 1080;
+	
 	public static double W;
 	public static double H;
 	
@@ -33,16 +36,16 @@ public class MainApplication extends Application{
 	public void start(Stage stage) throws Exception {
 		// TODO Auto-generated method stub
 		stage.setMaximized(true);
-		stage.initStyle(StageStyle.UNDECORATED);
+//		stage.initStyle(StageStyle.UNDECORATED);
 		
 		stage.show();
 		
 		W = stage.getWidth();
 		H = stage.getHeight();
 		
-		globalScale = 0.5;
+		globalScale = W / recomW;
 		
-		FPS = 24;
+		FPS = 60;
 		
 		sceneFactory = new SceneFactory();
 		scene = sceneFactory.makeScene("G");

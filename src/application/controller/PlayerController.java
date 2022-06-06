@@ -27,10 +27,10 @@ public class PlayerController extends CharacterController{
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		
-		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 3);
+		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 5);
 		
 		this.drawTick = 0;
-		this.sprites = playerModel.getIdleSprites();
+		this.sprites = playerModel.getFrontIdleSprites();
 
 	}
 	
@@ -49,11 +49,61 @@ public class PlayerController extends CharacterController{
 		double h = this.sprites.getHeight(i);
 		double w = this.sprites.getWidth(i);
 		
+		if (this.getPlayerFacing() == PlayerModel.BACK_LEFT || this.getPlayerFacing() == PlayerModel.FRONT_LEFT) {
+			w = -w;
+		}
+		
 		Image p = this.sprites.get(i);
 		double centerX = playerModel.getX() - w / 2;
 		double centerY = playerModel.getY() - h / 2;
 		
-		this.gc.drawImage(p, centerX, centerY, w, h);
+//		System.out.println(w / 3 + " " + h / 3);
+
+		this.gc.drawImage(p, centerX, centerY, w, h);			
+	}
+	
+	public void updatePlayerFacing(double ang) {
+		int f = 0;
+		SpriteModel s = null;
+		
+		if (ang >= 45 && ang < 135) {
+			f = PlayerModel.BACK;
+			s = playerModel.getBackIdleSprites();
+		}
+		else if (ang >= 135 && ang < 180) {
+			f = PlayerModel.BACK_RIGHT;
+			s = playerModel.getBackRightIdleSprites();
+		}
+		else if (ang >= 180 && ang < 225) {
+			f = PlayerModel.FRONT_RIGHT;
+			s = playerModel.getFrontRightIdleSprites();
+		}
+		else if (ang >= 225 && ang < 315) {
+			f = PlayerModel.FRONT;
+			s = playerModel.getFrontIdleSprites();
+		}
+		else if (ang >= 315){
+			f = PlayerModel.FRONT_LEFT;
+			s = playerModel.getFrontRightIdleSprites();
+		}
+		else {
+			f = PlayerModel.BACK_LEFT;
+			s = playerModel.getBackRightIdleSprites();
+		}
+		
+		if (f != this.getPlayerFacing()) {
+			this.sprites = s;
+		}
+		
+		this.setPlayerFacing(f);
+	}
+	
+	public void setPlayerFacing(int f) {
+		this.playerModel.setFacing(f);
+	}
+	
+	public int getPlayerFacing() {
+		return this.playerModel.getFacing();
 	}
 	
 	public void setPlayerAngle(double ang) {

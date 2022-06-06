@@ -2,6 +2,7 @@ package application.view;
 
 import application.MainApplication;
 import application.controller.PlayerController;
+import application.model.PlayerModel;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -50,7 +51,10 @@ public class GameSceneView extends SceneView{
 				
 				double ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;
 				
+				System.out.println(ang);
+				
 				playerController.setPlayerAngle(ang);
+				playerController.updatePlayerFacing(ang);
 			}
 			
 		});

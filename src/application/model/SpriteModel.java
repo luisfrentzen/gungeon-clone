@@ -2,6 +2,7 @@ package application.model;
 
 import java.io.File;
 
+import application.MainApplication;
 import javafx.scene.image.Image;
 
 public class SpriteModel {
@@ -34,11 +35,11 @@ public class SpriteModel {
 	}
 	
 	public double getWidth(int idx) {
-		return sprites[idx].getWidth() * this.scale;
+		return sprites[idx].getWidth() * this.scale * MainApplication.globalScale;
 	}
 	
 	public double getHeight(int idx) {
-		return sprites[idx].getHeight() * this.scale;
+		return sprites[idx].getHeight() * this.scale * MainApplication.globalScale;
 	}
 
 }
