@@ -27,11 +27,19 @@ public class PlayerController extends CharacterController{
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		
-		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 5);
+		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 4);
 		
 		this.drawTick = 0;
-		this.sprites = playerModel.getFrontIdleSprites();
+		this.sprites = playerModel.getSprites(PlayerModel.IDLE, PlayerModel.FRONT);
 
+	}
+	
+	public int getPlayerState() {
+		return this.playerModel.getState();
+	}
+	
+	public void setPlayerState(int s) {
+		playerModel.setState(s);
 	}
 	
 	public double getPlayerX() {
@@ -43,9 +51,11 @@ public class PlayerController extends CharacterController{
 	}
 	
 	public void drawPlayer() {
+		int actionTick = 24;
 		this.gc.setFill(Color.BLUE);
+		this.sprites = this.playerModel.getSprites(this.playerModel.getState(), this.playerModel.getFacing());
 		
-		int i = (int)(drawTick++ / 8) % 4;
+		int i = (int)(drawTick++ / (int)(actionTick / this.sprites.getLen())) % this.sprites.getLen();
 		double h = this.sprites.getHeight(i);
 		double w = this.sprites.getWidth(i);
 		
@@ -66,33 +76,23 @@ public class PlayerController extends CharacterController{
 		int f = 0;
 		SpriteModel s = null;
 		
-		if (ang >= 45 && ang < 135) {
+		if (ang >= 20 && ang < 65) {
+			f = PlayerModel.BACK_LEFT;
+		}
+		else if (ang >= 65 && ang < 115) {
 			f = PlayerModel.BACK;
-			s = playerModel.getBackIdleSprites();
 		}
-		else if (ang >= 135 && ang < 180) {
+		else if (ang >= 115 && ang < 160) {
 			f = PlayerModel.BACK_RIGHT;
-			s = playerModel.getBackRightIdleSprites();
 		}
-		else if (ang >= 180 && ang < 225) {
+		else if (ang >= 160 && ang < 245) {
 			f = PlayerModel.FRONT_RIGHT;
-			s = playerModel.getFrontRightIdleSprites();
 		}
-		else if (ang >= 225 && ang < 315) {
+		else if (ang >= 245 && ang < 295) {
 			f = PlayerModel.FRONT;
-			s = playerModel.getFrontIdleSprites();
-		}
-		else if (ang >= 315){
-			f = PlayerModel.FRONT_LEFT;
-			s = playerModel.getFrontRightIdleSprites();
 		}
 		else {
-			f = PlayerModel.BACK_LEFT;
-			s = playerModel.getBackRightIdleSprites();
-		}
-		
-		if (f != this.getPlayerFacing()) {
-			this.sprites = s;
+			f = PlayerModel.FRONT_LEFT;
 		}
 		
 		this.setPlayerFacing(f);
@@ -170,11 +170,33 @@ public class PlayerController extends CharacterController{
 		double cX = this.playerModel.getX();
 		double cY = this.playerModel.getY();
 		
-		double vX = (this.getVectorLeft() * -this.playerModel.getSpeed()) + 
-				(this.getVectorRight() * this.playerModel.getSpeed());
+		int n = 0;
+		for (int v : this.playerModel.getVectors()) {
+			n += v;
+		}
 		
-		double vY = (this.getVectorUp() * -this.playerModel.getSpeed()) + 
-				(this.getVectorDown() * this.playerModel.getSpeed());
+		if (n == 0) {
+			this.playerModel.setState(PlayerModel.IDLE);
+		}
+		else {
+			this.playerModel.setState(PlayerModel.RUN);
+		}
+		
+		double vX = (-this.getVectorLeft()) + 
+				(this.getVectorRight());
+		
+		double vY = (-this.getVectorUp()) + 
+				(this.getVectorDown());
+		
+		double mag = Math.sqrt(vX * vX + vY * vY);
+		
+		if (mag > 0) {
+			vX /= mag;
+			vY /= mag;
+		}
+		
+		vX *= this.playerModel.getSpeed();
+		vY *= this.playerModel.getSpeed();
 		
 		cX += vX;
 		cY += vY;

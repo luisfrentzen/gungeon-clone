@@ -51,8 +51,6 @@ public class GameSceneView extends SceneView{
 				
 				double ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;
 				
-				System.out.println(ang);
-				
 				playerController.setPlayerAngle(ang);
 				playerController.updatePlayerFacing(ang);
 			}
@@ -64,6 +62,7 @@ public class GameSceneView extends SceneView{
 			@Override
 			public void handle(KeyEvent e) {
 				// TODO Auto-generated method stub
+				
 				switch(e.getCode()) {
 				case W:
 					playerController.setVectorUp(1);
@@ -89,6 +88,7 @@ public class GameSceneView extends SceneView{
 			@Override
 			public void handle(KeyEvent e) {
 				// TODO Auto-generated method stub
+						
 				switch(e.getCode()) {
 				case W:
 					playerController.setVectorUp(0);

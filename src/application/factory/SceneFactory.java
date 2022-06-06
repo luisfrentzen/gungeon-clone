@@ -2,6 +2,7 @@ package application.factory;
 
 import java.net.URISyntaxException;
 
+import application.model.SpriteModel;
 import application.view.GameSceneView;
 import application.view.MenuSceneView;
 import application.view.SceneView;
@@ -25,10 +26,9 @@ public class SceneFactory {
 		
 		scene.generateScene();
 		
-		String path = this.getClass().getResource("/app/cursor.png").toExternalForm();
-		
-		Image cursor = new Image(path);
-		scene.getScene().setCursor(new ImageCursor(cursor, cursor.getWidth() / 2, cursor.getHeight() / 2));
+		SpriteModel cursor = new SpriteModel("/app/cursor", 10);
+		System.out.println(cursor.getWidth(0));
+		scene.getScene().setCursor(new ImageCursor(cursor.get(0), cursor.getWidth(0) / 2, cursor.getHeight(0) / 2));
 		
 		return scene.getScene();
  	}

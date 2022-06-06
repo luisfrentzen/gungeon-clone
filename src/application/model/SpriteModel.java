@@ -30,6 +30,10 @@ public class SpriteModel {
 		}
 	}
 	
+	public int getLen() {
+		return this.len;
+	}
+	
 	public Image get(int idx) {
 		return sprites[idx];
 	}
