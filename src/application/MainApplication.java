@@ -43,14 +43,17 @@ public class MainApplication extends Application{
 		W = stage.getWidth();
 		H = stage.getHeight();
 		
-		globalScale = W / recomW;
+//		globalScale = W / recomW;
+		globalScale = 1;
 		
 		FPS = 60;
 		
 		sceneFactory = new SceneFactory();
 		scene = sceneFactory.makeScene("G");
 		
+		stage.setResizable(false);
 		stage.setScene(scene);
+		stage.sizeToScene();
 		stage.show();
 	}
 	

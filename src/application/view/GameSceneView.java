@@ -1,16 +1,19 @@
 package application.view;
 
+
 import application.MainApplication;
 import application.controller.PlayerController;
 import application.model.PlayerModel;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.transform.Scale;
 
 public class GameSceneView extends SceneView{
 	
@@ -20,7 +23,20 @@ public class GameSceneView extends SceneView{
 	protected void initComponents() {
 		// TODO Auto-generated method stub
 		this.root = new StackPane();
+		this.root.setMinHeight(MainApplication.H);
+		this.root.setMinWidth(MainApplication.W);
+//		this.root.setStyle("-fx-background-color: darkslateblue;");
+		
 		this.canvas = new Canvas(MainApplication.W, MainApplication.H);
+//		this.canvas.setStyle("-fx-border-color: blue; -fx-border-width: 5;");
+		((StackPane) this.root).setAlignment(this.canvas, Pos.TOP_LEFT); 
+		
+		Scale s = new Scale();
+		s.setX(5);
+		s.setY(5);
+		
+//		this.canvas.
+//		this.canvas.getTransforms().addAll(s);
 		
 		this.gc = canvas.getGraphicsContext2D();
 		this.gc.setImageSmoothing(false);

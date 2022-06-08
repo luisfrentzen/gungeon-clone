@@ -5,12 +5,15 @@ import java.util.HashMap;
 public class PlayerModel extends CharacterModel{
 	
 	private HashMap<Integer, HashMap<Integer, SpriteModel>> sprites;
+	private SpriteModel hand;
+	private SpriteModel pistol;
 	
 	private int facing;
 	
 	public static final int IDLE = 0;
 	public static final int RUN = 1;
 	public static final int DODGE = 2;
+	public static final int HAND = 3;
 	
 	public static final int FRONT = 0;
 	public static final int FRONT_RIGHT = 1;
@@ -28,7 +31,7 @@ public class PlayerModel extends CharacterModel{
 		this.y = y;
 		this.w = 50;
 		this.h = 50;
-		this.speed = 10;
+		this.speed = 5;
 		this.scale = scale;
 //		this.damage = damage;
 		
@@ -54,10 +57,10 @@ public class PlayerModel extends CharacterModel{
 		this.sprites = new HashMap<Integer, HashMap<Integer,SpriteModel>>();
 		
 		HashMap<Integer, SpriteModel> idle = new HashMap<Integer, SpriteModel>();
-		idle.put(PlayerModel.FRONT, new SpriteModel("/marine/idle/front/twohand/", this.scale));
-		idle.put(PlayerModel.FRONT_RIGHT, new SpriteModel("/marine/idle/frontright/twohand/", this.scale));
-		idle.put(PlayerModel.FRONT_LEFT, new SpriteModel("/marine/idle/frontright/twohand/", this.scale));
-		idle.put(PlayerModel.BACK, new SpriteModel("/marine/idle/back/twohand/", this.scale));
+		idle.put(PlayerModel.FRONT, new SpriteModel("/marine/idle/front/onehand/", this.scale));
+		idle.put(PlayerModel.FRONT_RIGHT, new SpriteModel("/marine/idle/frontright/onehand/", this.scale));
+		idle.put(PlayerModel.FRONT_LEFT, new SpriteModel("/marine/idle/frontright/onehand/", this.scale));
+		idle.put(PlayerModel.BACK, new SpriteModel("/marine/idle/back/onehand/", this.scale));
 		idle.put(PlayerModel.BACK_RIGHT, new SpriteModel("/marine/idle/backright/twohand/", this.scale));
 		idle.put(PlayerModel.BACK_LEFT, new SpriteModel("/marine/idle/backright/twohand/", this.scale));
 		
@@ -71,6 +74,14 @@ public class PlayerModel extends CharacterModel{
 		
 		this.sprites.put(PlayerModel.IDLE, idle);
 		this.sprites.put(PlayerModel.RUN, run);
+		
+		this.hand = new SpriteModel("/marine/hand/", this.scale);
+		this.pistol = new SpriteModel("/gun/idle/", this.scale);
+		
+	}
+	
+	public SpriteModel getHand() {
+		return this.hand;
 	}
 	
 	public int getState() {
@@ -91,5 +102,10 @@ public class PlayerModel extends CharacterModel{
 	
 	public double getAngle() {
 		return this.angle;
+	}
+
+	public SpriteModel getPistol() {
+		// TODO Auto-generated method stub
+		return this.pistol;
 	}
 }

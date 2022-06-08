@@ -27,7 +27,6 @@ public class SceneFactory {
 		scene.generateScene();
 		
 		SpriteModel cursor = new SpriteModel("/app/cursor", 10);
-		System.out.println(cursor.getWidth(0));
 		scene.getScene().setCursor(new ImageCursor(cursor.get(0), cursor.getWidth(0) / 2, cursor.getHeight(0) / 2));
 		
 		return scene.getScene();

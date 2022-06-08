@@ -19,6 +19,8 @@ public class PlayerController extends CharacterController{
 	private PlayerView playerView;
 	
 	private SpriteModel sprites;
+	private SpriteModel hand;
+	private SpriteModel pistol;
 	
 	private int drawTick;
 	
@@ -27,10 +29,13 @@ public class PlayerController extends CharacterController{
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		
-		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 4);
+//		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 1);
+		this.playerModel = new PlayerModel(canvas.getWidth() / 2, canvas.getHeight() / 2, 4);
 		
 		this.drawTick = 0;
 		this.sprites = playerModel.getSprites(PlayerModel.IDLE, PlayerModel.FRONT);
+		this.hand = playerModel.getHand();
+		this.pistol = playerModel.getPistol();
 
 	}
 	
@@ -52,14 +57,13 @@ public class PlayerController extends CharacterController{
 	
 	public void drawPlayer() {
 		int actionTick = 24;
-		this.gc.setFill(Color.BLUE);
 		this.sprites = this.playerModel.getSprites(this.playerModel.getState(), this.playerModel.getFacing());
 		
 		int i = (int)(drawTick++ / (int)(actionTick / this.sprites.getLen())) % this.sprites.getLen();
 		double h = this.sprites.getHeight(i);
 		double w = this.sprites.getWidth(i);
 		
-		if (this.getPlayerFacing() == PlayerModel.BACK_LEFT || this.getPlayerFacing() == PlayerModel.FRONT_LEFT) {
+		if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
 			w = -w;
 		}
 		
@@ -67,9 +71,49 @@ public class PlayerController extends CharacterController{
 		double centerX = playerModel.getX() - w / 2;
 		double centerY = playerModel.getY() - h / 2;
 		
-//		System.out.println(w / 3 + " " + h / 3);
+//		System.out.println(p.getHeight());
 
-		this.gc.drawImage(p, centerX, centerY, w, h);			
+		this.gc.drawImage(p, ((int)centerX) + .5, ((int)centerY) + .5, w, h);			
+	}
+	
+	public void drawHand() {
+		double h = this.hand.getHeight(0);
+		double w = this.hand.getWidth(0);
+		
+		double ph = this.sprites.getHeight(0);
+		double pw = this.sprites.getWidth(0);
+		
+		if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
+			pw = -pw;
+			w = -w;
+		}
+
+		double centerX = playerModel.getX() + pw * (25/100.0);
+		double centerY = playerModel.getY() + ph * (22.0/100.0);
+		
+		Image p = this.hand.get(0);
+		
+		this.gc.drawImage(p, centerX, centerY, w, h);
+	}
+	
+	public void drawPistol() {
+		double h = this.pistol.getHeight(0);
+		double w = this.pistol.getWidth(0);
+		
+		double ph = this.sprites.getHeight(0);
+		double pw = this.sprites.getWidth(0);
+		
+		if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
+			pw = -pw;
+			w = -w;
+		}
+
+		double centerX = playerModel.getX() + pw * (21.0/100.0);
+		double centerY = playerModel.getY() + ph * (2.5/100.0);
+				
+		Image p = this.pistol.get(0);
+		
+		this.gc.drawImage(p, centerX, centerY, w, h);
 	}
 	
 	public void updatePlayerFacing(double ang) {
@@ -98,6 +142,66 @@ public class PlayerController extends CharacterController{
 		this.setPlayerFacing(f);
 	}
 	
+	@Override
+	public void move(double x, double y) {
+		// TODO Auto-generated method stub
+		this.playerModel.setX(x);
+		this.playerModel.setY(y);
+	}
+	
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+		this.drawPistol();
+		this.drawHand();
+		this.drawPlayer();
+	}
+	
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		double cX = this.playerModel.getX();
+		double cY = this.playerModel.getY();
+		
+		int n = 0;
+		for (int v : this.playerModel.getVectors()) {
+			n += v;
+		}
+		
+		if (n == 0) {
+			this.playerModel.setState(PlayerModel.IDLE);
+		}
+		else {
+			this.playerModel.setState(PlayerModel.RUN);
+		}
+		
+		double vX = (-this.getVectorLeft()) + 
+				(this.getVectorRight());
+		
+		double vY = (-this.getVectorUp()) + 
+				(this.getVectorDown());
+		
+		double mag = Math.sqrt(vX * vX + vY * vY);
+		
+		if (mag > 0) {
+			vX /= mag;
+			vY /= mag;
+		}
+		
+		vX *= this.playerModel.getSpeed();
+		vY *= this.playerModel.getSpeed();
+		
+		cX += vX;
+		cY += vY;
+		
+		this.move(cX, cY);
+	}
+	
+	@Override
+	public void onCollide() {
+		// TODO Auto-generated method stub
+		
+	}
 	public void setPlayerFacing(int f) {
 		this.playerModel.setFacing(f);
 	}
@@ -110,7 +214,7 @@ public class PlayerController extends CharacterController{
 		this.playerModel.setAngle(ang);
 	}
 	
-	public double getPlayerAngle(int a) {
+	public double getPlayerAngle() {
 		return this.playerModel.getAngle();
 	}
 	
@@ -151,64 +255,6 @@ public class PlayerController extends CharacterController{
 		this.playerModel.setVectorRight(v);
 	}
 
-	@Override
-	public void move(double x, double y) {
-		// TODO Auto-generated method stub
-		this.playerModel.setX(x);
-		this.playerModel.setY(y);
-	}
-
-	@Override
-	public void render() {
-		// TODO Auto-generated method stub
-		this.drawPlayer();
-	}
-
-	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-		double cX = this.playerModel.getX();
-		double cY = this.playerModel.getY();
-		
-		int n = 0;
-		for (int v : this.playerModel.getVectors()) {
-			n += v;
-		}
-		
-		if (n == 0) {
-			this.playerModel.setState(PlayerModel.IDLE);
-		}
-		else {
-			this.playerModel.setState(PlayerModel.RUN);
-		}
-		
-		double vX = (-this.getVectorLeft()) + 
-				(this.getVectorRight());
-		
-		double vY = (-this.getVectorUp()) + 
-				(this.getVectorDown());
-		
-		double mag = Math.sqrt(vX * vX + vY * vY);
-		
-		if (mag > 0) {
-			vX /= mag;
-			vY /= mag;
-		}
-		
-		vX *= this.playerModel.getSpeed();
-		vY *= this.playerModel.getSpeed();
-		
-		cX += vX;
-		cY += vY;
-		
-		this.move(cX, cY);
-	}
-
-	@Override
-	public void onCollide() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	
 }
