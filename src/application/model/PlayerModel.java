@@ -22,8 +22,12 @@ public class PlayerModel extends CharacterModel{
 	public static final int BACK_LEFT = 4;
 	public static final int FRONT_LEFT = 5;
 	
-	private int state;
 	private double angle;
+	
+	private boolean showGun;
+	private boolean showHand;
+	
+	private int dodgeFrame;
 
 	public PlayerModel(double x, double y, double scale) {
 		// TODO Auto-generated constructor stub
@@ -31,7 +35,7 @@ public class PlayerModel extends CharacterModel{
 		this.y = y;
 		this.w = 50;
 		this.h = 50;
-		this.speed = 5;
+		this.speed = 4;
 		this.scale = scale;
 //		this.damage = damage;
 		
@@ -41,9 +45,36 @@ public class PlayerModel extends CharacterModel{
 		
 		this.facing = PlayerModel.FRONT;
 		
+		this.showGun = true;
+		this.dodgeFrame = 0;
+		
 		this.loadSprites();
 	}
 	
+	public int getDodgeFrame() {
+		return dodgeFrame;
+	}
+
+	public void setDodgeFrame(int dodgeFrame) {
+		this.dodgeFrame = dodgeFrame;
+	}
+
+	public boolean isShowHand() {
+		return showHand;
+	}
+
+	public void setShowHand(boolean showHand) {
+		this.showHand = showHand;
+	}
+
+	public boolean isShowGun() {
+		return showGun;
+	}
+
+	public void setShowGun(boolean showGun) {
+		this.showGun = showGun;
+	}
+
 	public int getFacing() {
 		return this.facing;
 	}
@@ -61,8 +92,8 @@ public class PlayerModel extends CharacterModel{
 		idle.put(PlayerModel.FRONT_RIGHT, new SpriteModel("/marine/idle/frontright/onehand/", this.scale));
 		idle.put(PlayerModel.FRONT_LEFT, new SpriteModel("/marine/idle/frontright/onehand/", this.scale));
 		idle.put(PlayerModel.BACK, new SpriteModel("/marine/idle/back/onehand/", this.scale));
-		idle.put(PlayerModel.BACK_RIGHT, new SpriteModel("/marine/idle/backright/twohand/", this.scale));
-		idle.put(PlayerModel.BACK_LEFT, new SpriteModel("/marine/idle/backright/twohand/", this.scale));
+		idle.put(PlayerModel.BACK_RIGHT, new SpriteModel("/marine/idle/backright/nohand/", this.scale));
+		idle.put(PlayerModel.BACK_LEFT, new SpriteModel("/marine/idle/backright/nohand/", this.scale));
 		
 		HashMap<Integer, SpriteModel> run = new HashMap<Integer, SpriteModel>();
 		run.put(PlayerModel.FRONT, new SpriteModel("/marine/run/front/nohand/", this.scale));
@@ -72,8 +103,17 @@ public class PlayerModel extends CharacterModel{
 		run.put(PlayerModel.BACK_RIGHT, new SpriteModel("/marine/run/backright/nohand/", this.scale));
 		run.put(PlayerModel.BACK_LEFT, new SpriteModel("/marine/run/backright/nohand/", this.scale));
 		
+		HashMap<Integer, SpriteModel> dodge = new HashMap<Integer, SpriteModel>();
+		dodge.put(PlayerModel.FRONT, new SpriteModel("/marine/dodge/front/", this.scale));
+		dodge.put(PlayerModel.FRONT_RIGHT, new SpriteModel("/marine/dodge/frontright/", this.scale));
+		dodge.put(PlayerModel.FRONT_LEFT, new SpriteModel("/marine/dodge/frontright/", this.scale));
+		dodge.put(PlayerModel.BACK, new SpriteModel("/marine/dodge/back/", this.scale));
+		dodge.put(PlayerModel.BACK_RIGHT, new SpriteModel("/marine/dodge/backright/", this.scale));
+		dodge.put(PlayerModel.BACK_LEFT, new SpriteModel("/marine/dodge/backright/", this.scale));
+		
 		this.sprites.put(PlayerModel.IDLE, idle);
 		this.sprites.put(PlayerModel.RUN, run);
+		this.sprites.put(PlayerModel.DODGE, dodge);
 		
 		this.hand = new SpriteModel("/marine/hand/", this.scale);
 		this.pistol = new SpriteModel("/gun/idle/", this.scale);

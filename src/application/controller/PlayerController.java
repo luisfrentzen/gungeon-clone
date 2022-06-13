@@ -9,6 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Rotate;
 
 public class PlayerController extends CharacterController{
 	
@@ -44,6 +45,11 @@ public class PlayerController extends CharacterController{
 	}
 	
 	public void setPlayerState(int s) {
+		if (this.getPlayerState() == s) {
+			return;
+		}
+		
+		this.drawTick = 0;
 		playerModel.setState(s);
 	}
 	
@@ -103,22 +109,41 @@ public class PlayerController extends CharacterController{
 		double ph = this.sprites.getHeight(0);
 		double pw = this.sprites.getWidth(0);
 		
+		double ang = this.getPlayerAngle();
+		
 		if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
 			pw = -pw;
 			w = -w;
 		}
-
+		else {
+			ang -= 180;
+		}
+		
+		double handX = playerModel.getX() + pw * (35/100.0);
+		double handY = playerModel.getY() + ph * (30/100.0);
+		
 		double centerX = playerModel.getX() + pw * (21.0/100.0);
-		double centerY = playerModel.getY() + ph * (2.5/100.0);
+		double centerY = playerModel.getY() + ph * (5/100.0);
 				
 		Image p = this.pistol.get(0);
 		
+		this.gc.save();
+		Rotate r = new Rotate(ang, handX, handY);
+		gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
+		
 		this.gc.drawImage(p, centerX, centerY, w, h);
+		
+		this.gc.restore();
+	}
+	
+	public void doDodge() {
+		if (this.getPlayerState() == PlayerModel.RUN) {
+			this.playerModel.setDodgeFrame(this.playerModel.getSprites(PlayerModel.DODGE, PlayerModel.FRONT).getLen() * 2);
+		}
 	}
 	
 	public void updatePlayerFacing(double ang) {
 		int f = 0;
-		SpriteModel s = null;
 		
 		if (ang >= 20 && ang < 65) {
 			f = PlayerModel.BACK_LEFT;
@@ -142,6 +167,14 @@ public class PlayerController extends CharacterController{
 		this.setPlayerFacing(f);
 	}
 	
+	public void hideGun() {
+		this.playerModel.setShowGun(false);
+	}
+	
+	public void unhideGun() {
+		this.playerModel.setShowGun(true);
+	}
+	
 	@Override
 	public void move(double x, double y) {
 		// TODO Auto-generated method stub
@@ -152,8 +185,11 @@ public class PlayerController extends CharacterController{
 	@Override
 	public void render() {
 		// TODO Auto-generated method stub
-		this.drawPistol();
-		this.drawHand();
+		if (this.playerModel.isShowGun()) {
+			this.drawPistol();
+			this.drawHand();
+		}
+		
 		this.drawPlayer();
 	}
 	
@@ -164,15 +200,22 @@ public class PlayerController extends CharacterController{
 		double cY = this.playerModel.getY();
 		
 		int n = 0;
+	
 		for (int v : this.playerModel.getVectors()) {
 			n += v;
 		}
 		
 		if (n == 0) {
-			this.playerModel.setState(PlayerModel.IDLE);
+			this.setPlayerState(PlayerModel.IDLE);
 		}
 		else {
-			this.playerModel.setState(PlayerModel.RUN);
+			if (this.playerModel.getDodgeFrame() > 0) {
+				this.setPlayerState(PlayerModel.DODGE);
+				this.playerModel.setDodgeFrame(this.playerModel.getDodgeFrame() - 1);
+			}
+			else {
+				this.setPlayerState(PlayerModel.RUN);				
+			}
 		}
 		
 		double vX = (-this.getVectorLeft()) + 

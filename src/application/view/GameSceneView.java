@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -69,6 +70,18 @@ public class GameSceneView extends SceneView{
 				
 				playerController.setPlayerAngle(ang);
 				playerController.updatePlayerFacing(ang);
+			}
+			
+		});
+		
+		this.scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent e) {
+				// TODO Auto-generated method stub
+				if (e.getButton() == MouseButton.SECONDARY) {
+					playerController.doDodge();
+				}
 			}
 			
 		});

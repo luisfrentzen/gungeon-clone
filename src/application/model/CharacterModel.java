@@ -7,9 +7,17 @@ public abstract class CharacterModel extends GameObjectModel {
 	protected int hp;
 	protected double speed;
 	protected double damage;
-	protected double state;
+	protected int state;
 	
 	protected int[] vectors = {0, 0, 0, 0};
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
 
 	public int getHp() {
 		return hp;
@@ -20,7 +28,7 @@ public abstract class CharacterModel extends GameObjectModel {
 	}
 
 	public double getSpeed() {
-		return speed;
+		return speed * this.scale;
 	}
 
 	public void setSpeed(double speed) {
