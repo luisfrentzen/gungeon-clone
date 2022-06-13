@@ -1,6 +1,9 @@
 package application.controller;
 
 
+import java.awt.MouseInfo;
+import java.util.Arrays;
+
 import application.MainApplication;
 import application.model.PlayerModel;
 import application.model.SpriteModel;
@@ -24,6 +27,8 @@ public class PlayerController extends CharacterController{
 	private SpriteModel pistol;
 	
 	private int drawTick;
+	private int[] currentVector;
+	private double currentAngle;
 	
 	public PlayerController(Canvas canvas) {
 		// TODO Auto-generated constructor stub
@@ -37,6 +42,8 @@ public class PlayerController extends CharacterController{
 		this.sprites = playerModel.getSprites(PlayerModel.IDLE, PlayerModel.FRONT);
 		this.hand = playerModel.getHand();
 		this.pistol = playerModel.getPistol();
+		
+		this.currentVector = playerModel.getVectors();
 
 	}
 	
@@ -63,13 +70,13 @@ public class PlayerController extends CharacterController{
 	
 	public void drawPlayer() {
 		int actionTick = 24;
-		this.sprites = this.playerModel.getSprites(this.playerModel.getState(), this.playerModel.getFacing());
+		this.sprites = this.playerModel.getSprites(this.getPlayerState(), this.getPlayerFacing());
 		
 		int i = (int)(drawTick++ / (int)(actionTick / this.sprites.getLen())) % this.sprites.getLen();
 		double h = this.sprites.getHeight(i);
 		double w = this.sprites.getWidth(i);
 		
-		if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
+		if (this.isFlip()) {
 			w = -w;
 		}
 		
@@ -80,6 +87,15 @@ public class PlayerController extends CharacterController{
 //		System.out.println(p.getHeight());
 
 		this.gc.drawImage(p, ((int)centerX) + .5, ((int)centerY) + .5, w, h);			
+	}
+	
+	public boolean isFlip() {
+		if (this.getPlayerState() == PlayerModel.DODGE) {
+			return this.getPlayerFacing() > 2;
+		}
+		else {
+			return (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270);			
+		}
 	}
 	
 	public void drawHand() {
@@ -137,8 +153,43 @@ public class PlayerController extends CharacterController{
 	}
 	
 	public void doDodge() {
-		if (this.getPlayerState() == PlayerModel.RUN) {
+		if (this.getPlayerState() == PlayerModel.RUN && this.getVectorSum() > 0) {
+			this.currentAngle = this.getPlayerAngle();
+			this.setPlayerState(PlayerModel.DODGE);
+			this.hideGun();
+			this.currentVector = Arrays.copyOf(this.playerModel.getVectors(), this.playerModel.getVectors().length);
+			System.out.println(this.currentVector[0]);
 			this.playerModel.setDodgeFrame(this.playerModel.getSprites(PlayerModel.DODGE, PlayerModel.FRONT).getLen() * 2);
+		}
+	}
+	
+	public int getDodgeDir() {
+		int vX = this.getCVectorRight() - this.getCVectorLeft();
+		int vY = this.getCVectorDown() - this.getCVectorUp();
+		
+		if (vX > 0 && vY > 0) {
+			return PlayerModel.FRONT_RIGHT;
+		}
+		else if (vX < 0 && vY < 0) {
+			return PlayerModel.BACK_LEFT;
+		}
+		else if (vX > 0 && vY < 0) {
+			return PlayerModel.BACK_RIGHT;
+		}
+		else if (vX < 0 && vY > 0) {
+			return PlayerModel.BACK_LEFT;
+		}
+		else if (vX > 0 && vY == 0) {
+			return PlayerModel.FRONT_RIGHT;
+		}
+		else if (vX < 0 && vY == 0) {
+			return PlayerModel.FRONT_LEFT;
+		}
+		else if (vX == 0 && vY > 0) {
+			return PlayerModel.FRONT;
+		}
+		else {
+			return PlayerModel.BACK;
 		}
 	}
 	
@@ -193,36 +244,48 @@ public class PlayerController extends CharacterController{
 		this.drawPlayer();
 	}
 	
+	public int getVectorSum() {
+		return Math.abs(this.getCVectorDown() - this.getCVectorUp()) + Math.abs(this.getCVectorLeft() - this.getCVectorRight());
+	}
+	
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
 		double cX = this.playerModel.getX();
 		double cY = this.playerModel.getY();
 		
-		int n = 0;
-	
-		for (int v : this.playerModel.getVectors()) {
-			n += v;
-		}
+		double dX = MouseInfo.getPointerInfo().getLocation().getX() - this.getPlayerX();
+		double dY = MouseInfo.getPointerInfo().getLocation().getY() - this.getPlayerY();
 		
-		if (n == 0) {
-			this.setPlayerState(PlayerModel.IDLE);
+		double ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;
+		
+		this.setPlayerAngle(ang);
+		this.updatePlayerFacing(ang);
+		
+		if (this.playerModel.getDodgeFrame() > 0) {
+			this.playerModel.setDodgeFrame(this.playerModel.getDodgeFrame() - 1);
+			
+			if (this.playerModel.getDodgeFrame() == 0) {
+				this.setPlayerState(PlayerModel.IDLE);
+				this.resetVector();
+				this.unhideGun();
+			}
 		}
 		else {
-			if (this.playerModel.getDodgeFrame() > 0) {
-				this.setPlayerState(PlayerModel.DODGE);
-				this.playerModel.setDodgeFrame(this.playerModel.getDodgeFrame() - 1);
+			if (this.getVectorSum() == 0) {
+				this.setPlayerState(PlayerModel.IDLE);
 			}
 			else {
 				this.setPlayerState(PlayerModel.RUN);				
 			}
 		}
 		
-		double vX = (-this.getVectorLeft()) + 
-				(this.getVectorRight());
 		
-		double vY = (-this.getVectorUp()) + 
-				(this.getVectorDown());
+		double vX = (-this.getCVectorLeft()) + 
+				(this.getCVectorRight());
+		
+		double vY = (-this.getCVectorUp()) + 
+				(this.getCVectorDown());
 		
 		double mag = Math.sqrt(vX * vX + vY * vY);
 		
@@ -250,7 +313,13 @@ public class PlayerController extends CharacterController{
 	}
 	
 	public int getPlayerFacing() {
-		return this.playerModel.getFacing();
+		if (this.getPlayerState() == PlayerModel.DODGE) {
+			System.out.println(this.getDodgeDir());
+			return this.getDodgeDir();
+		}
+		else {
+			return this.playerModel.getFacing();
+		}
 	}
 	
 	public void setPlayerAngle(double ang) {
@@ -258,7 +327,12 @@ public class PlayerController extends CharacterController{
 	}
 	
 	public double getPlayerAngle() {
-		return this.playerModel.getAngle();
+		if (this.getPlayerState() == PlayerModel.DODGE) {
+			return this.currentAngle;
+		}
+		else {
+			return this.playerModel.getAngle();			
+		}
 	}
 	
 	//[UP, LEFT, DOWN, RIGHT]
@@ -276,6 +350,26 @@ public class PlayerController extends CharacterController{
 	
 	public int getVectorRight() {
 		return this.playerModel.getVectors()[3];
+	}
+	
+	public int getCVectorUp() {
+		return this.currentVector[0];
+	}
+	
+	public int getCVectorLeft() {
+		return this.currentVector[1];
+	}
+	
+	public int getCVectorDown() {
+		return this.currentVector[2];
+	}
+	
+	public int getCVectorRight() {
+		return this.currentVector[3];
+	}
+	
+	public void resetVector() {
+		this.currentVector = playerModel.getVectors();
 	}
 	
 	public void setVectorUp(int v) {

@@ -58,23 +58,7 @@ public class GameSceneView extends SceneView{
 		// TODO Auto-generated method stub
 		this.scene = new Scene(root);
 		
-		this.scene.setOnMouseMoved(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent e) {
-				// TODO Auto-generated method stub
-				double dX = e.getX() - playerController.getPlayerX();
-				double dY = e.getY() - playerController.getPlayerY();
-				
-				double ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;
-				
-				playerController.setPlayerAngle(ang);
-				playerController.updatePlayerFacing(ang);
-			}
-			
-		});
-		
-		this.scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		this.scene.setOnMousePressed(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent e) {
