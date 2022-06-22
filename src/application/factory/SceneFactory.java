@@ -1,5 +1,6 @@
 package application.factory;
 
+import java.awt.MouseInfo;
 import java.net.URISyntaxException;
 
 import application.model.SpriteModel;
@@ -11,6 +12,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 
 public class SceneFactory {
+	
+	private SpriteModel cursor;
 	
 	public Scene makeScene(String sceneType) {
 		SceneView scene = null;
@@ -24,11 +27,12 @@ public class SceneFactory {
 			break;
 		}
 		
+		this.cursor = new SpriteModel("/app/cursor/", 1);
+		ImageCursor im = new ImageCursor(cursor.get(0));
 		scene.generateScene();
-		
-		SpriteModel cursor = new SpriteModel("/app/cursor", 10);
-		scene.getScene().setCursor(new ImageCursor(cursor.get(0), cursor.getWidth(0) / 2, cursor.getHeight(0) / 2));
+		scene.getScene().setCursor(im);
 		
 		return scene.getScene();
  	}
+		
 }

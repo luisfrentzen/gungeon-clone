@@ -3,6 +3,7 @@ package application.view;
 
 import application.MainApplication;
 import application.controller.PlayerController;
+import application.controller.PlayerProjectileController;
 import application.model.PlayerModel;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
@@ -14,11 +15,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 
 public class GameSceneView extends SceneView{
 	
 	PlayerController playerController;
+	PlayerProjectileController ppController;
 	
 	@Override
 	protected void initComponents() {
@@ -42,7 +45,8 @@ public class GameSceneView extends SceneView{
 		this.gc = canvas.getGraphicsContext2D();
 		this.gc.setImageSmoothing(false);
 		
-		this.playerController = new PlayerController(this.canvas);
+		this.playerController = new PlayerController(this.canvas, this);
+		this.ppController = new PlayerProjectileController(this.canvas);
 	}
 
 	@Override
@@ -63,8 +67,14 @@ public class GameSceneView extends SceneView{
 			@Override
 			public void handle(MouseEvent e) {
 				// TODO Auto-generated method stub
-				if (e.getButton() == MouseButton.SECONDARY) {
+				switch (e.getButton()) {
+				case SECONDARY:
 					playerController.doDodge();
+					break;
+				case PRIMARY:
+					playerController.doShoot();
+				default:
+					break;
 				}
 			}
 			
@@ -129,8 +139,11 @@ public class GameSceneView extends SceneView{
 	@Override
 	public void renderFrame() {
 		// TODO Auto-generated method stub
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+//        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		gc.setFill(Color.BLACK);
+		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         playerController.render();
+        ppController.render();
     
 	}
 

@@ -1,7 +1,11 @@
 package application.view;
 
+import java.awt.MouseInfo;
+
 import application.MainApplication;
+import application.model.SpriteModel;
 import javafx.animation.AnimationTimer;
+import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -27,6 +31,14 @@ public abstract class SceneView {
 		this.scene = this.initScene();
 		
 		this.start();
+	}
+	
+	public double getPointerX() {
+		return MouseInfo.getPointerInfo().getLocation().getX() + ImageCursor.getBestSize(64, 64).getWidth() / 2;
+	}
+	
+	public double getPointerY() {
+		return  MouseInfo.getPointerInfo().getLocation().getY() - ImageCursor.getBestSize(64,64).getHeight() / 2;
 	}
 	
 	public abstract void updateFrame();

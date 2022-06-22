@@ -35,8 +35,8 @@ public class PlayerModel extends CharacterModel{
 		this.y = y;
 		this.w = 50;
 		this.h = 50;
-		this.speed = 4;
 		this.scale = scale;
+		this.speed = 3;
 //		this.damage = damage;
 		
 		this.hp = 3;
@@ -81,6 +81,18 @@ public class PlayerModel extends CharacterModel{
 	
 	public void setFacing(int f) {
 		this.facing = f;
+	}
+	
+	@Override
+	public double getSpeed() {
+		// TODO Auto-generated method stub
+		switch (this.state) {
+		case PlayerModel.DODGE:
+			return super.getSpeed() * 1.15;
+
+		default:
+			return super.getSpeed();
+		}
 	}
 	
 	public void loadSprites() {

@@ -1,12 +1,12 @@
 package application.model;
 
+import application.MainApplication;
 import javafx.scene.image.Image;
 
 public abstract class CharacterModel extends GameObjectModel {
 	
 	protected int hp;
 	protected double speed;
-	protected double damage;
 	protected int state;
 	
 	protected int[] vectors = {0, 0, 0, 0};
@@ -28,19 +28,11 @@ public abstract class CharacterModel extends GameObjectModel {
 	}
 
 	public double getSpeed() {
-		return speed * this.scale;
+		return speed * this.scale * MainApplication.globalScale;
 	}
 
 	public void setSpeed(double speed) {
 		this.speed = speed;
-	}
-
-	public double getDamage() {
-		return damage;
-	}
-
-	public void setDamage(double damage) {
-		this.damage = damage;
 	}
 
 	public int[] getVectors() {

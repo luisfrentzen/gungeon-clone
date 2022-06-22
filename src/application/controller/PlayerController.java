@@ -4,10 +4,10 @@ package application.controller;
 import java.awt.MouseInfo;
 import java.util.Arrays;
 
-import application.MainApplication;
 import application.model.PlayerModel;
 import application.model.SpriteModel;
 import application.view.PlayerView;
+import application.view.SceneView;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -18,6 +18,7 @@ public class PlayerController extends CharacterController{
 	
 	private GraphicsContext gc;
 	private Canvas canvas;
+	private SceneView scene;
 	
 	private PlayerModel playerModel;
 	private PlayerView playerView;
@@ -30,9 +31,10 @@ public class PlayerController extends CharacterController{
 	private int[] currentVector;
 	private double currentAngle;
 	
-	public PlayerController(Canvas canvas) {
+	public PlayerController(Canvas canvas, SceneView scene) {
 		// TODO Auto-generated constructor stub
 		this.canvas = canvas;
+		this.scene = scene;
 		this.gc = canvas.getGraphicsContext2D();
 		
 //		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 1);
@@ -72,7 +74,10 @@ public class PlayerController extends CharacterController{
 		int actionTick = 24;
 		this.sprites = this.playerModel.getSprites(this.getPlayerState(), this.getPlayerFacing());
 		
-		int i = (int)(drawTick++ / (int)(actionTick / this.sprites.getLen())) % this.sprites.getLen();
+		double tpf = (double)actionTick / (double)this.sprites.getLen();
+//		int i = (int)(drawTick++ / 6 % this.sprites.getLen());
+		int i = (int)(Math.floor(drawTick++ % actionTick) / tpf);
+		
 		double h = this.sprites.getHeight(i);
 		double w = this.sprites.getWidth(i);
 		
@@ -84,9 +89,7 @@ public class PlayerController extends CharacterController{
 		double centerX = playerModel.getX() - w / 2;
 		double centerY = playerModel.getY() - h / 2;
 		
-//		System.out.println(p.getHeight());
-
-		this.gc.drawImage(p, ((int)centerX) + .5, ((int)centerY) + .5, w, h);			
+		this.gc.drawImage(p, ((int)centerX) + .5, ((int)centerY) + .5, w, h);
 	}
 	
 	public boolean isFlip() {
@@ -158,8 +161,7 @@ public class PlayerController extends CharacterController{
 			this.setPlayerState(PlayerModel.DODGE);
 			this.hideGun();
 			this.currentVector = Arrays.copyOf(this.playerModel.getVectors(), this.playerModel.getVectors().length);
-			System.out.println(this.currentVector[0]);
-			this.playerModel.setDodgeFrame(this.playerModel.getSprites(PlayerModel.DODGE, PlayerModel.FRONT).getLen() * 2);
+			this.playerModel.setDodgeFrame(24);
 		}
 	}
 	
@@ -177,7 +179,7 @@ public class PlayerController extends CharacterController{
 			return PlayerModel.BACK_RIGHT;
 		}
 		else if (vX < 0 && vY > 0) {
-			return PlayerModel.BACK_LEFT;
+			return PlayerModel.FRONT_LEFT;
 		}
 		else if (vX > 0 && vY == 0) {
 			return PlayerModel.FRONT_RIGHT;
@@ -226,6 +228,10 @@ public class PlayerController extends CharacterController{
 		this.playerModel.setShowGun(true);
 	}
 	
+	public void doShoot() {
+		System.out.println("a");
+	}
+	
 	@Override
 	public void move(double x, double y) {
 		// TODO Auto-generated method stub
@@ -254,8 +260,8 @@ public class PlayerController extends CharacterController{
 		double cX = this.playerModel.getX();
 		double cY = this.playerModel.getY();
 		
-		double dX = MouseInfo.getPointerInfo().getLocation().getX() - this.getPlayerX();
-		double dY = MouseInfo.getPointerInfo().getLocation().getY() - this.getPlayerY();
+		double dX = this.scene.getPointerX() - this.getPlayerX();
+		double dY = this.scene.getPointerY() - this.getPlayerY();
 		
 		double ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;
 		
@@ -314,7 +320,6 @@ public class PlayerController extends CharacterController{
 	
 	public int getPlayerFacing() {
 		if (this.getPlayerState() == PlayerModel.DODGE) {
-			System.out.println(this.getDodgeDir());
 			return this.getDodgeDir();
 		}
 		else {
