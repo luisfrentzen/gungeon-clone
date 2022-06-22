@@ -129,6 +129,7 @@ public class PlayerController extends CharacterController{
 		double pw = this.sprites.getWidth(0);
 		
 		double ang = this.getPlayerAngle();
+		double angOffset = 20;
 		
 		if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
 			pw = -pw;
@@ -136,6 +137,7 @@ public class PlayerController extends CharacterController{
 		}
 		else {
 			ang -= 180;
+			angOffset *= -1;
 		}
 		
 		double handX = playerModel.getX() + pw * (35/100.0);
@@ -151,8 +153,21 @@ public class PlayerController extends CharacterController{
 		gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 		
 		this.gc.drawImage(p, centerX, centerY, w, h);
-		
 		this.gc.restore();
+		
+		double dX = this.scene.getPointerX() - this.getPlayerX();
+		double dY = this.scene.getPointerY() - this.getPlayerY();
+		
+		double shootAng = (Math.atan2(dY, dX) * 180 / Math.PI) + 180 + angOffset;
+		
+		double u = - this.pistol.getWidth(0) * 0.85;
+		double a = u * Math.sin(Math.toRadians(shootAng));
+		double b = u * Math.cos(Math.toRadians(shootAng));
+		double prX = handX + b;
+		double prY = handY + a;
+		
+		this.gc.setFill(Color.RED);
+		this.gc.fillOval(prX - 5, prY - 5, 10, 10);
 	}
 	
 	public void doDodge() {
