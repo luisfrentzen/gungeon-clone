@@ -40,6 +40,9 @@ public class PlayerProjectileController extends ProjectileController{
 	public void shootBullet(double oX, double oY, double tX, double tY) {
 		PlayerProjectileModel pp = this.projectiles.get(this.bulletIndex++ % this.nBullets);
 		
+		tX += (Math.random() * pp.getSpray()) - (pp.getSpray() / 2);
+		tY += (Math.random() * pp.getSpray()) - (pp.getSpray() / 2);
+		
 		pp.setActive(true);
 		pp.setX(oX);
 		pp.setY(oY);

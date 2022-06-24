@@ -1,5 +1,7 @@
 package application.model;
 
+import application.MainApplication;
+
 public abstract class ProjectileModel extends GameObjectModel{
 	protected SpriteModel sprite;
 	protected double speed;
@@ -11,6 +13,7 @@ public abstract class ProjectileModel extends GameObjectModel{
 	protected double oriX;
 	protected double oriY;
 	protected boolean isActive;
+	protected double spray;
 	
 	public void resetPosition() {
 		this.x = this.oriX;
@@ -18,6 +21,14 @@ public abstract class ProjectileModel extends GameObjectModel{
 		this.isActive = false;
 	}
 	
+	public double getSpray() {
+		return spray * this.scale * MainApplication.globalScale;
+	}
+
+	public void setSpray(double spray) {
+		this.spray = spray;
+	}
+
 	public boolean isActive() {
 		return isActive;
 	}
@@ -51,7 +62,7 @@ public abstract class ProjectileModel extends GameObjectModel{
 	}
 	
 	public double getSpeed() {
-		return speed;
+		return speed * this.scale * MainApplication.globalScale;
 	}
 	
 	public void setSpeed(double speed) {
