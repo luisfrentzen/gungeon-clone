@@ -33,7 +33,7 @@ public class GameSceneView extends SceneView{
 		
 		this.canvas = new Canvas(MainApplication.W, MainApplication.H);
 //		this.canvas.setStyle("-fx-border-color: blue; -fx-border-width: 5;");
-		((StackPane) this.root).setAlignment(this.canvas, Pos.TOP_LEFT); 
+		StackPane.setAlignment(this.canvas, Pos.TOP_LEFT); 
 		
 		Scale s = new Scale();
 		s.setX(5);
@@ -45,8 +45,8 @@ public class GameSceneView extends SceneView{
 		this.gc = canvas.getGraphicsContext2D();
 		this.gc.setImageSmoothing(false);
 		
-		this.playerController = new PlayerController(this.canvas, this);
 		this.ppController = new PlayerProjectileController(this.canvas);
+		this.playerController = new PlayerController(this.canvas, this, this.ppController);
 	}
 
 	@Override
@@ -142,8 +142,8 @@ public class GameSceneView extends SceneView{
 //        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		ppController.render();
         playerController.render();
-        ppController.render();
     
 	}
 
@@ -151,7 +151,7 @@ public class GameSceneView extends SceneView{
 	public void updateFrame() {
 		// TODO Auto-generated method stub
 		playerController.update();
-		
+		ppController.update();
 	}
 
 }

@@ -1,7 +1,6 @@
 package application.controller;
 
 
-import java.awt.MouseInfo;
 import java.util.Arrays;
 
 import application.model.PlayerModel;
@@ -20,6 +19,8 @@ public class PlayerController extends CharacterController{
 	private Canvas canvas;
 	private SceneView scene;
 	
+	private PlayerProjectileController ppController;
+	
 	private PlayerModel playerModel;
 	private PlayerView playerView;
 	
@@ -31,10 +32,14 @@ public class PlayerController extends CharacterController{
 	private int[] currentVector;
 	private double currentAngle;
 	
-	public PlayerController(Canvas canvas, SceneView scene) {
+	private double shootX;
+	private double shootY;
+	
+	public PlayerController(Canvas canvas, SceneView scene, PlayerProjectileController ppController) {
 		// TODO Auto-generated constructor stub
 		this.canvas = canvas;
 		this.scene = scene;
+		this.ppController = ppController;
 		this.gc = canvas.getGraphicsContext2D();
 		
 //		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 1);
@@ -166,6 +171,9 @@ public class PlayerController extends CharacterController{
 		double prX = handX + b;
 		double prY = handY + a;
 		
+		this.shootX = prX;
+		this.shootY = prY;
+		
 		this.gc.setFill(Color.RED);
 		this.gc.fillOval(prX - 5, prY - 5, 10, 10);
 	}
@@ -244,7 +252,9 @@ public class PlayerController extends CharacterController{
 	}
 	
 	public void doShoot() {
-		System.out.println("a");
+		if (this.getPlayerState() != PlayerModel.DODGE) {
+			this.ppController.shootBullet(this.shootX, this.shootY, this.scene.getPointerX(), this.scene.getPointerY());			
+		}
 	}
 	
 	@Override

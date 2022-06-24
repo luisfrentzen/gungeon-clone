@@ -38,7 +38,7 @@ public abstract class SceneView {
 	}
 	
 	public double getPointerY() {
-		return  MouseInfo.getPointerInfo().getLocation().getY() - ImageCursor.getBestSize(64,64).getHeight() / 2;
+		return  MouseInfo.getPointerInfo().getLocation().getY() - ImageCursor.getBestSize(64,64).getHeight() * 0.75;
 	}
 	
 	public abstract void updateFrame();
