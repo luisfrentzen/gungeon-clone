@@ -3,6 +3,8 @@ package application.controller;
 
 import java.util.Arrays;
 
+import javafx.geometry.Point2D;
+
 import application.model.PlayerModel;
 import application.model.SpriteModel;
 import application.view.PlayerView;
@@ -34,6 +36,9 @@ public class PlayerController extends CharacterController{
 	
 	private double shootX;
 	private double shootY;
+	
+	private double handX;
+	private double handY;
 	
 	public PlayerController(Canvas canvas, SceneView scene, PlayerProjectileController ppController) {
 		// TODO Auto-generated constructor stub
@@ -145,8 +150,8 @@ public class PlayerController extends CharacterController{
 			angOffset *= -1;
 		}
 		
-		double handX = playerModel.getX() + pw * (35/100.0);
-		double handY = playerModel.getY() + ph * (30/100.0);
+		this.handX = playerModel.getX() + pw * (35/100.0);
+		this.handY = playerModel.getY() + ph * (30/100.0);
 		
 		double centerX = playerModel.getX() + pw * (21.0/100.0);
 		double centerY = playerModel.getY() + ph * (5/100.0);
@@ -154,28 +159,30 @@ public class PlayerController extends CharacterController{
 		Image p = this.pistol.get(0);
 		
 		this.gc.save();
-		Rotate r = new Rotate(ang, handX, handY);
+		Rotate r = new Rotate(ang, this.handX, this.handY);
 		gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 		
 		this.gc.drawImage(p, centerX, centerY, w, h);
 		this.gc.restore();
 		
-		double dX = this.scene.getPointerX() - this.getPlayerX();
-		double dY = this.scene.getPointerY() - this.getPlayerY();
+		double pointX = this.handX + w * 0.8;
+		double pointY = this.handY - h * 0.4;
 		
-		double shootAng = (Math.atan2(dY, dX) * 180 / Math.PI) + 180 + angOffset;
+		Point2D rotated = getRotated(ang, pointX, pointY, handX, handY);
 		
-		double u = - this.pistol.getWidth(0) * 0.85;
-		double a = u * Math.sin(Math.toRadians(shootAng));
-		double b = u * Math.cos(Math.toRadians(shootAng));
-		double prX = handX + b;
-		double prY = handY + a;
-		
-		this.shootX = prX;
-		this.shootY = prY;
+		this.shootX = rotated.getX();
+		this.shootY = rotated.getY();
 		
 		this.gc.setFill(Color.RED);
-		this.gc.fillOval(prX - 5, prY - 5, 10, 10);
+		this.gc.fillOval(this.shootX - 5, this.shootY - 5, 10, 10);
+		this.gc.setFill(Color.BLUE);
+		this.gc.fillOval(handX - 5, handY - 5, 10, 10);
+	}
+	
+	public Point2D getRotated(double ang, double pointX, double pointY, double pivotX, double pivotY) {
+		double newX = pivotX + (pointX - pivotX) * Math.cos(Math.toRadians(ang)) - (pointY - pivotY)* Math.sin(Math.toRadians(ang));
+		double newY = pivotY + (pointX - pivotX) * Math.sin(Math.toRadians(ang)) + (pointY - pivotY)* Math.cos(Math.toRadians(ang));
+		return new Point2D(newX, newY);
 	}
 	
 	public void doDodge() {
@@ -253,7 +260,23 @@ public class PlayerController extends CharacterController{
 	
 	public void doShoot() {
 		if (this.getPlayerState() != PlayerModel.DODGE) {
-			this.ppController.shootBullet(this.shootX, this.shootY, this.scene.getPointerX(), this.scene.getPointerY());			
+			double ang = playerModel.getAngle();
+			double w = this.pistol.getWidth(0);
+			double h = this.pistol.getHeight(0);
+			
+			if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
+				w = -w;
+			}
+			else {
+				ang -= 180;
+			}
+			
+			double pointX = this.handX + w;
+			double pointY = this.handY - h * 0.4;
+			
+			Point2D rresult = this.getRotated(ang, pointX, pointY, this.handX, this.handY);
+
+			this.ppController.shootBullet(this.shootX, this.shootY, rresult.getX(), rresult.getY());			
 		}
 	}
 	
@@ -268,8 +291,8 @@ public class PlayerController extends CharacterController{
 	public void render() {
 		// TODO Auto-generated method stub
 		if (this.playerModel.isShowGun()) {
-			this.drawPistol();
 			this.drawHand();
+			this.drawPistol();
 		}
 		
 		this.drawPlayer();
