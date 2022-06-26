@@ -32,9 +32,11 @@ public class PlayerController extends CharacterController{
 	private SpriteModel sprites;
 	private SpriteModel hand;
 	private SpriteModel pistol;
+	private SpriteModel flare;
 	
 	private int drawTick;
 	private int globalTick;
+	
 	private int[] currentVector;
 	private double currentAngle;
 	
@@ -58,7 +60,8 @@ public class PlayerController extends CharacterController{
 		this.globalTick = 0;
 		this.sprites = playerModel.getSprites(PlayerModel.IDLE, PlayerModel.FRONT);
 		this.hand = playerModel.getHand();
-		this.pistol = playerModel.getPistol();
+		this.pistol = playerModel.getGunSprites(PlayerModel.GUN_IDLE);
+		this.flare = playerModel.getVFXSprites(PlayerModel.VFX_FLARE, PlayerModel.NO_DIR);
 		
 		this.currentVector = playerModel.getVectors();
 

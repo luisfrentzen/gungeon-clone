@@ -7,19 +7,15 @@ import javafx.scene.image.Image;
 
 public class SpriteModel {
 
-	private Image[] sprites;
-	private int len;
-	private double scale;
+	protected Image[] sprites;
+	protected int len;
+	protected double scale;
 	
 	public SpriteModel(String path, double scale) {
 		// TODO Auto-generated constructor stub
 		this.scale = scale;
 		
 		final File dir = new File(this.getClass().getResource(path).toString().substring(5));
-//		System.out.println(path);
-//		System.out.println(dir.exists());
-//		System.out.println(dir.isDirectory());
-//		System.out.println(dir.isFile());
 		len = dir.list().length;
 		
 		sprites = new Image[len + 1];

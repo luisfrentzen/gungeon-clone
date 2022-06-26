@@ -1,12 +1,14 @@
 package application.model;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 public class PlayerModel extends CharacterModel{
 	
 	private HashMap<Integer, HashMap<Integer, SpriteModel>> sprites;
+	private HashMap<Integer, SpriteModel> gunSprites;
+	private HashMap<Integer, HashMap<Integer, Vector<VFXModel>>> vfxs;
 	private SpriteModel hand;
-	private SpriteModel pistol;
 	
 	private int facing;
 	
@@ -21,6 +23,16 @@ public class PlayerModel extends CharacterModel{
 	public static final int BACK = 3;
 	public static final int BACK_LEFT = 4;
 	public static final int FRONT_LEFT = 5;
+	
+	public static final int NO_DIR = 0;
+	
+	public static final int GUN_IDLE = 0;
+	public static final int GUN_RELOAD = 1;
+	public static final int GUN_FIRE = 2;
+	
+	public static final int VFX_FLARE = 0;
+	
+	public static final String PATH_FLARE = "/vfx/gun/flare/";
 	
 	private double angle;
 	
@@ -159,8 +171,20 @@ public class PlayerModel extends CharacterModel{
 		this.sprites.put(PlayerModel.RUN, run);
 		this.sprites.put(PlayerModel.DODGE, dodge);
 		
+		this.gunSprites = new HashMap<Integer, SpriteModel>();
+		
+		this.gunSprites.put(PlayerModel.GUN_IDLE, new SpriteModel("/gun/idle/", this.scale));
+		this.gunSprites.put(PlayerModel.GUN_FIRE, new SpriteModel("/gun/fire/", this.scale));
+		this.gunSprites.put(PlayerModel.GUN_RELOAD, new SpriteModel("/gun/reload/", this.scale));
+		
+		this.vfxs = new HashMap<Integer, HashMap<Integer, Vector<VFXModel>>>();
+		
+		HashMap<Integer, Vector<VFXModel>> gunFlare = new HashMap<Integer, Vector<VFXModel>>();
+		gunFlare.put(PlayerModel.NO_DIR, new Vector<VFXModel>());
+		
+		this.vfxs.put(PlayerModel.VFX_FLARE, gunFlare);
+		
 		this.hand = new SpriteModel("/marine/hand/", this.scale);
-		this.pistol = new SpriteModel("/gun/idle/", this.scale);
 		
 	}
 	
@@ -179,6 +203,10 @@ public class PlayerModel extends CharacterModel{
 	public SpriteModel getSprites(int state, int dir) {
 		return this.sprites.get(state).get(dir);
 	}
+	
+	public SpriteModel getGunSprites(int state) {
+		return this.gunSprites.get(state);
+	}
 
 	public void setAngle(double a) {
 		this.angle = a;
@@ -186,10 +214,5 @@ public class PlayerModel extends CharacterModel{
 	
 	public double getAngle() {
 		return this.angle;
-	}
-
-	public SpriteModel getPistol() {
-		// TODO Auto-generated method stub
-		return this.pistol;
 	}
 }
