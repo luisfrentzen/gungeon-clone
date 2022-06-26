@@ -17,12 +17,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
 public class GameSceneView extends SceneView{
 	
 	PlayerController playerController;
 	PlayerProjectileController ppController;
+	
+	private boolean mSecondaryDown;
+	private boolean mPrimaryDown;
 	
 	@Override
 	protected void initComponents() {
@@ -42,11 +47,12 @@ public class GameSceneView extends SceneView{
 		s.setX(5);
 		s.setY(5);
 		
-//		this.canvas.
-//		this.canvas.getTransforms().addAll(s);
+		this.mSecondaryDown = false;
+		this.mPrimaryDown = false;
 		
 		this.gc = canvas.getGraphicsContext2D();
 		this.gc.setImageSmoothing(false);
+		this.gc.setFont(Font.loadFont("file:resources/font/minecraftia/Minecraftia-Regular.ttf", 16 * MainApplication.globalScale));
 		
 		this.ppController = new PlayerProjectileController(this.canvas);
 		this.playerController = new PlayerController(this.canvas, this, this.ppController);
@@ -73,9 +79,30 @@ public class GameSceneView extends SceneView{
 				switch (e.getButton()) {
 				case SECONDARY:
 					playerController.doDodge();
+					mSecondaryDown = true;
 					break;
 				case PRIMARY:
-					playerController.doShoot();
+					mPrimaryDown = true;
+					break;
+				default:
+					break;
+				}
+			}
+			
+		});
+		
+		this.scene.setOnMouseReleased(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent e) {
+				// TODO Auto-generated method stub
+				switch (e.getButton()) {
+				case SECONDARY:
+					mSecondaryDown = false;
+					break;
+				case PRIMARY:
+					mPrimaryDown = false;
+					break;
 				default:
 					break;
 				}
@@ -128,6 +155,9 @@ public class GameSceneView extends SceneView{
 				case D:
 					playerController.setVectorRight(0);
 					break;
+				case R:
+					playerController.doReload();
+					break;
 				default:
 					break;
 				}
@@ -138,6 +168,21 @@ public class GameSceneView extends SceneView{
 		return this.scene;
 	}
 
+	public boolean ismSecondaryDown() {
+		return mSecondaryDown;
+	}
+
+	public void setmSecondaryDown(boolean mSecondaryDown) {
+		this.mSecondaryDown = mSecondaryDown;
+	}
+
+	public boolean ismPrimaryDown() {
+		return mPrimaryDown;
+	}
+
+	public void setmPrimaryDown(boolean mPrimaryDown) {
+		this.mPrimaryDown = mPrimaryDown;
+	}
 
 	@Override
 	public void renderFrame() {

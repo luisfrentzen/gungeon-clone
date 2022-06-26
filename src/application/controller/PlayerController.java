@@ -4,15 +4,18 @@ package application.controller;
 import java.util.Arrays;
 
 import javafx.geometry.Point2D;
-
+import application.MainApplication;
 import application.model.PlayerModel;
 import application.model.SpriteModel;
+import application.view.GameSceneView;
 import application.view.PlayerView;
 import application.view.SceneView;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 
 public class PlayerController extends CharacterController{
@@ -31,6 +34,7 @@ public class PlayerController extends CharacterController{
 	private SpriteModel pistol;
 	
 	private int drawTick;
+	private int globalTick;
 	private int[] currentVector;
 	private double currentAngle;
 	
@@ -51,6 +55,7 @@ public class PlayerController extends CharacterController{
 		this.playerModel = new PlayerModel(canvas.getWidth() / 2, canvas.getHeight() / 2, 4);
 		
 		this.drawTick = 0;
+		this.globalTick = 0;
 		this.sprites = playerModel.getSprites(PlayerModel.IDLE, PlayerModel.FRONT);
 		this.hand = playerModel.getHand();
 		this.pistol = playerModel.getPistol();
@@ -295,6 +300,11 @@ public class PlayerController extends CharacterController{
 			this.drawPistol();
 		}
 		
+		if (this.playerModel.getMagSize() == 0 && (this.globalTick / 16) % 2 == 0) {
+			this.gc.setFill(Color.WHITE);
+			this.gc.fillText("reload", this.getPlayerX() - (this.sprites.getWidth(0) * 0.34), this.getPlayerY() - this.sprites.getHeight(0) * 0.35);
+		}
+		
 		this.drawPlayer();
 	}
 	
@@ -302,9 +312,14 @@ public class PlayerController extends CharacterController{
 		return Math.abs(this.getCVectorDown() - this.getCVectorUp()) + Math.abs(this.getCVectorLeft() - this.getCVectorRight());
 	}
 	
+	public void doReload() {
+		this.playerModel.setMagSize(this.playerModel.getMagCap());
+	}
+	
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
+		this.globalTick++;
 		double cX = this.playerModel.getX();
 		double cY = this.playerModel.getY();
 		
@@ -351,8 +366,18 @@ public class PlayerController extends CharacterController{
 		vX *= this.playerModel.getSpeed();
 		vY *= this.playerModel.getSpeed();
 		
+		if (this.playerModel.getGunDownTime() > 0) {
+			this.playerModel.setGunDownTime(this.playerModel.getGunDownTime() - 1);
+		}
+		
 		cX += vX;
 		cY += vY;
+		
+		if (((GameSceneView) this.scene).ismPrimaryDown() && this.playerModel.getGunDownTime() == 0 && this.playerModel.getMagSize() > 0) {
+			this.doShoot();
+			this.playerModel.setGunDownTime(12);
+			this.playerModel.setMagSize(this.playerModel.getMagSize() - 1);
+		}
 		
 		this.move(cX, cY);
 	}

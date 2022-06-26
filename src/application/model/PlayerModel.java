@@ -28,6 +28,10 @@ public class PlayerModel extends CharacterModel{
 	private boolean showHand;
 	
 	private int dodgeFrame;
+	private int gunDownTime;
+	
+	private int magCap;
+	private int magSize;
 
 	public PlayerModel(double x, double y, double scale) {
 		// TODO Auto-generated constructor stub
@@ -37,7 +41,11 @@ public class PlayerModel extends CharacterModel{
 		this.h = 50;
 		this.scale = scale;
 		this.speed = 3;
+		this.gunDownTime = 0;
 //		this.damage = damage;
+		
+		this.magCap = 9;
+		this.magSize = 9;
 		
 		this.hp = 3;
 		this.state = PlayerModel.IDLE;
@@ -51,6 +59,30 @@ public class PlayerModel extends CharacterModel{
 		this.loadSprites();
 	}
 	
+	public int getMagCap() {
+		return magCap;
+	}
+
+	public void setMagCap(int magCap) {
+		this.magCap = magCap;
+	}
+
+	public int getMagSize() {
+		return magSize;
+	}
+
+	public void setMagSize(int magSize) {
+		this.magSize = magSize;
+	}
+
+	public int getGunDownTime() {
+		return gunDownTime;
+	}
+
+	public void setGunDownTime(int gunDownTime) {
+		this.gunDownTime = gunDownTime;
+	}
+
 	public int getDodgeFrame() {
 		return dodgeFrame;
 	}

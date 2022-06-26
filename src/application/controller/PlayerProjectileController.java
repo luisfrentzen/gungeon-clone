@@ -65,8 +65,9 @@ public class PlayerProjectileController extends ProjectileController{
 			this.gc.drawImage(s.get(0), x, y, s.getWidth(0), s.getHeight(0));
 		
 			this.gc.save();
+//			this.gc.setEffect(new GaussianBlur(20));
 			this.gc.setGlobalBlendMode(BlendMode.COLOR_DODGE);
-			this.gc.setGlobalAlpha(0.4);
+			this.gc.setGlobalAlpha(0.7);
 			this.gc.setFill(Color.YELLOW);
 			
 			double glowOffset = 0;
