@@ -23,6 +23,9 @@ public class GameSceneView extends SceneView{
 	PlayerController playerController;
 	PlayerProjectileController ppController;
 	
+	private boolean mPrimaryDown;
+	private boolean mSecondaryDown;
+	
 	@Override
 	protected void initComponents() {
 		// TODO Auto-generated method stub
@@ -61,6 +64,8 @@ public class GameSceneView extends SceneView{
 	protected Scene initScene() {
 		// TODO Auto-generated method stub
 		this.scene = new Scene(root);
+		this.mPrimaryDown = false;
+		this.mSecondaryDown = false;
 		
 		this.scene.setOnMousePressed(new EventHandler<MouseEvent>() {
 
@@ -70,8 +75,10 @@ public class GameSceneView extends SceneView{
 				switch (e.getButton()) {
 				case SECONDARY:
 					playerController.doDodge();
+					mSecondaryDown = true;
 					break;
 				case PRIMARY:
+					mPrimaryDown = true;
 					playerController.doShoot();
 				default:
 					break;
@@ -79,6 +86,26 @@ public class GameSceneView extends SceneView{
 			}
 			
 		});
+		
+		this.scene.setOnMouseReleased(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent e) {
+				// TODO Auto-generated method stub
+				switch (e.getButton()) {
+				case SECONDARY:
+					mSecondaryDown = false;
+					break;
+				case PRIMARY:
+					mPrimaryDown = false;
+					break;
+				default:
+					break;
+				}
+			}
+			
+		});
+		
 		
 		this.scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
