@@ -8,6 +8,7 @@ import application.model.PlayerModel;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyEvent;
@@ -32,6 +33,8 @@ public class GameSceneView extends SceneView{
 //		this.root.setStyle("-fx-background-color: darkslateblue;");
 		
 		this.canvas = new Canvas(MainApplication.W, MainApplication.H);
+		this.canvas.setCache(true);
+		this.canvas.setCacheHint(CacheHint.SPEED);
 //		this.canvas.setStyle("-fx-border-color: blue; -fx-border-width: 5;");
 		StackPane.setAlignment(this.canvas, Pos.TOP_LEFT); 
 		
