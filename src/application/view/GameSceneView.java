@@ -8,6 +8,7 @@ import application.model.PlayerModel;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyEvent;
@@ -16,6 +17,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
 public class GameSceneView extends SceneView{
@@ -35,6 +38,8 @@ public class GameSceneView extends SceneView{
 //		this.root.setStyle("-fx-background-color: darkslateblue;");
 		
 		this.canvas = new Canvas(MainApplication.W, MainApplication.H);
+		this.canvas.setCache(true);
+		this.canvas.setCacheHint(CacheHint.SPEED);
 //		this.canvas.setStyle("-fx-border-color: blue; -fx-border-width: 5;");
 		StackPane.setAlignment(this.canvas, Pos.TOP_LEFT); 
 		
@@ -42,11 +47,12 @@ public class GameSceneView extends SceneView{
 		s.setX(5);
 		s.setY(5);
 		
-//		this.canvas.
-//		this.canvas.getTransforms().addAll(s);
+		this.mSecondaryDown = false;
+		this.mPrimaryDown = false;
 		
 		this.gc = canvas.getGraphicsContext2D();
 		this.gc.setImageSmoothing(false);
+		this.gc.setFont(Font.loadFont("file:resources/font/minecraftia/Minecraftia-Regular.ttf", 16 * MainApplication.globalScale));
 		
 		this.ppController = new PlayerProjectileController(this.canvas);
 		this.playerController = new PlayerController(this.canvas, this, this.ppController);
@@ -76,10 +82,36 @@ public class GameSceneView extends SceneView{
 				case SECONDARY:
 					playerController.doDodge();
 					mSecondaryDown = true;
+<<<<<<< HEAD
 					break;
 				case PRIMARY:
 					mPrimaryDown = true;
 					playerController.doShoot();
+=======
+					break;
+				case PRIMARY:
+					mPrimaryDown = true;
+					break;
+				default:
+					break;
+				}
+			}
+			
+		});
+		
+		this.scene.setOnMouseReleased(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent e) {
+				// TODO Auto-generated method stub
+				switch (e.getButton()) {
+				case SECONDARY:
+					mSecondaryDown = false;
+					break;
+				case PRIMARY:
+					mPrimaryDown = false;
+					break;
+>>>>>>> b984f6143a7e8e4c93eb2c0d25d64023b6e442f7
 				default:
 					break;
 				}
@@ -152,6 +184,9 @@ public class GameSceneView extends SceneView{
 				case D:
 					playerController.setVectorRight(0);
 					break;
+				case R:
+					playerController.doReload();
+					break;
 				default:
 					break;
 				}
@@ -162,6 +197,21 @@ public class GameSceneView extends SceneView{
 		return this.scene;
 	}
 
+	public boolean ismSecondaryDown() {
+		return mSecondaryDown;
+	}
+
+	public void setmSecondaryDown(boolean mSecondaryDown) {
+		this.mSecondaryDown = mSecondaryDown;
+	}
+
+	public boolean ismPrimaryDown() {
+		return mPrimaryDown;
+	}
+
+	public void setmPrimaryDown(boolean mPrimaryDown) {
+		this.mPrimaryDown = mPrimaryDown;
+	}
 
 	@Override
 	public void renderFrame() {

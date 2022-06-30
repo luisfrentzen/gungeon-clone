@@ -7,6 +7,7 @@ import application.model.PlayerProjectileModel;
 import application.model.SpriteModel;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
@@ -25,7 +26,7 @@ public class PlayerProjectileController extends ProjectileController{
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		
-		this.nBullets = 100;
+		this.nBullets = 9;
 		
 		initBullets(this.nBullets);
 		this.bulletIndex = 0;
@@ -64,7 +65,8 @@ public class PlayerProjectileController extends ProjectileController{
 			this.gc.drawImage(s.get(0), x, y, s.getWidth(0), s.getHeight(0));
 		
 			this.gc.save();
-			this.gc.setEffect(new GaussianBlur(30.0));
+//			this.gc.setEffect(new GaussianBlur(20));
+			this.gc.setGlobalBlendMode(BlendMode.COLOR_DODGE);
 			this.gc.setGlobalAlpha(0.7);
 			this.gc.setFill(Color.YELLOW);
 			
