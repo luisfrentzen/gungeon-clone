@@ -208,6 +208,11 @@ public class PlayerModel extends CharacterModel{
 		return this.gunSprites.get(state);
 	}
 
+//	public VFXModel getVFXSprites(int vfx, int dir) {
+//		// TODO Auto-generated method stub
+//		Vector<VFXModel> v = this.vfxs.get(vfx).get(dir);
+//	}
+
 	public void setAngle(double a) {
 		this.angle = a;
 	}
@@ -215,4 +220,5 @@ public class PlayerModel extends CharacterModel{
 	public double getAngle() {
 		return this.angle;
 	}
+
 }

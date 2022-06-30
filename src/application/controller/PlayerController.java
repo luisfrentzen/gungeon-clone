@@ -2,11 +2,13 @@ package application.controller;
 
 
 import java.util.Arrays;
+import java.util.Vector;
 
 import javafx.geometry.Point2D;
 import application.MainApplication;
 import application.model.PlayerModel;
 import application.model.SpriteModel;
+import application.model.VFXModel;
 import application.view.GameSceneView;
 import application.view.PlayerView;
 import application.view.SceneView;
@@ -32,7 +34,9 @@ public class PlayerController extends CharacterController{
 	private SpriteModel sprites;
 	private SpriteModel hand;
 	private SpriteModel pistol;
-	private SpriteModel flare;
+	private VFXModel flare;
+	
+	private Vector<VFXModel> vfxRender;
 	
 	private int drawTick;
 	private int globalTick;
@@ -61,9 +65,12 @@ public class PlayerController extends CharacterController{
 		this.sprites = playerModel.getSprites(PlayerModel.IDLE, PlayerModel.FRONT);
 		this.hand = playerModel.getHand();
 		this.pistol = playerModel.getGunSprites(PlayerModel.GUN_IDLE);
-		this.flare = playerModel.getVFXSprites(PlayerModel.VFX_FLARE, PlayerModel.NO_DIR);
+		this.flare = new VFXModel(PlayerModel.PATH_FLARE, playerModel.getScale() * 0.65, 0, 0);
+		this.flare.setDone(true);
 		
 		this.currentVector = playerModel.getVectors();
+		
+		vfxRender = new Vector<VFXModel>();
 
 	}
 	
@@ -86,6 +93,18 @@ public class PlayerController extends CharacterController{
 	
 	public double getPlayerY() {
 		return this.playerModel.getY();
+	}
+	
+	public void addVFX(String vfx, int x, int y) {
+		vfxRender.add(new VFXModel(PlayerModel.PATH_FLARE, playerModel.getScale(), 100, 100));
+	}
+	
+	public void drawVFX() {
+		for (VFXModel fx : this.vfxRender) {
+			if (!fx.isDone()) {
+				this.gc.drawImage(fx.getNext(), fx.getX(), fx.getY(), fx.getWidth(fx.getNFrame() - 1), fx.getHeight(fx.getNFrame() - 1));
+			}
+		}
 	}
 	
 	public void drawPlayer() {
@@ -171,6 +190,11 @@ public class PlayerController extends CharacterController{
 		gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 		
 		this.gc.drawImage(p, centerX, centerY, w, h);
+		
+		if (!this.flare.isDone()) {
+			this.gc.drawImage(this.flare.getNext(), centerX + w, centerY + (h * 0.3) - this.flare.getHeight(this.flare.getNFrame() - 1) / 2, (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) ? -this.flare.getWidth(this.flare.getNFrame()-1) : this.flare.getWidth(this.flare.getNFrame()-1), this.flare.getHeight(this.flare.getNFrame()-1));
+		}
+		
 		this.gc.restore();
 		
 		double pointX = this.handX + w * 0.8;
@@ -181,10 +205,10 @@ public class PlayerController extends CharacterController{
 		this.shootX = rotated.getX();
 		this.shootY = rotated.getY();
 		
-		this.gc.setFill(Color.RED);
-		this.gc.fillOval(this.shootX - 5, this.shootY - 5, 10, 10);
-		this.gc.setFill(Color.BLUE);
-		this.gc.fillOval(handX - 5, handY - 5, 10, 10);
+//		this.gc.setFill(Color.RED);
+//		this.gc.fillOval(this.shootX - 5, this.shootY - 5, 10, 10);
+//		this.gc.setFill(Color.BLUE);
+//		this.gc.fillOval(handX - 5, handY - 5, 10, 10);
 	}
 	
 	public Point2D getRotated(double ang, double pointX, double pointY, double pivotX, double pivotY) {
@@ -272,6 +296,10 @@ public class PlayerController extends CharacterController{
 			double w = this.pistol.getWidth(0);
 			double h = this.pistol.getHeight(0);
 			
+			this.flare.reset();
+			this.flare.setX(this.shootX);
+			this.flare.setY(this.shootY);
+			
 			if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
 				w = -w;
 			}
@@ -308,6 +336,7 @@ public class PlayerController extends CharacterController{
 			this.gc.fillText("reload", this.getPlayerX() - (this.sprites.getWidth(0) * 0.34), this.getPlayerY() - this.sprites.getHeight(0) * 0.35);
 		}
 		
+		this.drawVFX();
 		this.drawPlayer();
 	}
 	

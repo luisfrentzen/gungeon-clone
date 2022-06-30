@@ -82,36 +82,10 @@ public class GameSceneView extends SceneView{
 				case SECONDARY:
 					playerController.doDodge();
 					mSecondaryDown = true;
-<<<<<<< HEAD
-					break;
-				case PRIMARY:
-					mPrimaryDown = true;
-					playerController.doShoot();
-=======
 					break;
 				case PRIMARY:
 					mPrimaryDown = true;
 					break;
-				default:
-					break;
-				}
-			}
-			
-		});
-		
-		this.scene.setOnMouseReleased(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent e) {
-				// TODO Auto-generated method stub
-				switch (e.getButton()) {
-				case SECONDARY:
-					mSecondaryDown = false;
-					break;
-				case PRIMARY:
-					mPrimaryDown = false;
-					break;
->>>>>>> b984f6143a7e8e4c93eb2c0d25d64023b6e442f7
 				default:
 					break;
 				}
