@@ -182,8 +182,23 @@ public class PlayerController extends CharacterController{
 		
 		double centerX = playerModel.getX() + pw * (21.0/100.0);
 		double centerY = playerModel.getY() + ph * (5/100.0);
-				
-		Image p = this.pistol.get(0);
+		
+		Image p;
+		
+		if (this.pistol.getLen() == 1) {
+			p = this.pistol.get(0);			
+		}
+		else {
+			if (this.drawTick % 3 == 0) {
+				p = this.pistol.getNext();
+				if (this.pistol.isDone()) {
+					this.pistol = playerModel.getGunSprites(PlayerModel.GUN_IDLE);
+				}
+			}
+			else {
+				p = this.pistol.get(this.pistol.getNFrame());
+			}
+		}
 		
 		this.gc.save();
 		Rotate r = new Rotate(ang, this.handX, this.handY);
@@ -296,6 +311,9 @@ public class PlayerController extends CharacterController{
 			double w = this.pistol.getWidth(0);
 			double h = this.pistol.getHeight(0);
 			
+			this.pistol = playerModel.getGunSprites(PlayerModel.GUN_FIRE);
+			this.pistol.reset();
+			
 			this.flare.reset();
 			this.flare.setX(this.shootX);
 			this.flare.setY(this.shootY);
@@ -345,6 +363,8 @@ public class PlayerController extends CharacterController{
 	}
 	
 	public void doReload() {
+		this.pistol = playerModel.getGunSprites(PlayerModel.GUN_RELOAD);
+		this.pistol.reset();
 		this.playerModel.setMagSize(this.playerModel.getMagCap());
 	}
 	

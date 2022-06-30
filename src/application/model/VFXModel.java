@@ -3,9 +3,6 @@ package application.model;
 import javafx.scene.image.Image;
 
 public class VFXModel extends SpriteModel{
-
-	private boolean isDone;
-	private int currentFrame;
 	
 	private double x;
 	private double y;
@@ -16,33 +13,6 @@ public class VFXModel extends SpriteModel{
 		
 		this.isDone = false;
 		this.currentFrame = 0;
-	}
-	
-	public void reset() {
-		this.isDone = false;
-		this.currentFrame = 0;
-	}
-	
-	public Image getNext() {
-		Image im = get(this.currentFrame++);
-		
-		if (currentFrame == getLen()) {
-			this.isDone = true;
-		}
-		
-		return im;
-	}
-	
-	public boolean isDone() {
-		return isDone;
-	}
-
-	public void setDone(boolean isDone) {
-		this.isDone = isDone;
-	}
-
-	public int getNFrame() {
-		return this.currentFrame;
 	}
 
 	public double getX() {

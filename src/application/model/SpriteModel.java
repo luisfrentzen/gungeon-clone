@@ -10,10 +10,14 @@ public class SpriteModel {
 	protected Image[] sprites;
 	protected int len;
 	protected double scale;
+	protected int currentFrame;
+	protected boolean isDone;
 	
 	public SpriteModel(String path, double scale) {
 		// TODO Auto-generated constructor stub
 		this.scale = scale;
+		this.isDone = false;
+		this.currentFrame = 0;
 		
 		final File dir = new File(this.getClass().getResource(path).toString().substring(5));
 		len = dir.list().length;
@@ -24,6 +28,33 @@ public class SpriteModel {
 		for (final File f : dir.listFiles()) {
 			sprites[i++] = new Image(f.toURI().toString());
 		}
+	}
+	
+	public void reset() {
+		this.isDone = false;
+		this.currentFrame = 0;
+	}
+	
+	public boolean isDone() {
+		return isDone;
+	}
+
+	public void setDone(boolean isDone) {
+		this.isDone = isDone;
+	}
+
+	public int getNFrame() {
+		return this.currentFrame;
+	}
+	
+	public Image getNext() {
+		Image im = get(this.currentFrame++);
+		
+		if (currentFrame == getLen()) {
+			this.isDone = true;
+		}
+		
+		return im;
 	}
 	
 	public int getLen() {
