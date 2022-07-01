@@ -11,8 +11,17 @@ public class VFXModel extends SpriteModel{
 		// TODO Auto-generated constructor stub
 		super(path, scale);
 		
+		this.x = x;
+		this.y = y;
+		
 		this.isDone = false;
 		this.currentFrame = 0;
+	}
+	
+	public VFXModel(String path, double scale, double x, double y, int frameLength) {
+		// TODO Auto-generated constructor stub
+		this(path, scale, x, y);
+		this.frameLength = frameLength;
 	}
 
 	public double getX() {

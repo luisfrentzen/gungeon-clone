@@ -191,7 +191,7 @@ public class GameSceneView extends SceneView{
 	public void renderFrame() {
 		// TODO Auto-generated method stub
 //        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		gc.setFill(Color.BLACK);
+		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		ppController.render();
         playerController.render();

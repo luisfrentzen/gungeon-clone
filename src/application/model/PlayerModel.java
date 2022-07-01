@@ -33,6 +33,7 @@ public class PlayerModel extends CharacterModel{
 	public static final int VFX_FLARE = 0;
 	
 	public static final String PATH_FLARE = "/vfx/gun/flare/";
+	public static final String PATH_RUN_DUST = "/vfx/player/run/";
 	
 	private double angle;
 	
@@ -174,8 +175,8 @@ public class PlayerModel extends CharacterModel{
 		this.gunSprites = new HashMap<Integer, SpriteModel>();
 		
 		this.gunSprites.put(PlayerModel.GUN_IDLE, new SpriteModel("/gun/idle/", this.scale));
-		this.gunSprites.put(PlayerModel.GUN_FIRE, new SpriteModel("/gun/fire/", this.scale));
-		this.gunSprites.put(PlayerModel.GUN_RELOAD, new SpriteModel("/gun/reload/", this.scale));
+		this.gunSprites.put(PlayerModel.GUN_FIRE, new SpriteModel("/gun/fire/", this.scale, 3));
+		this.gunSprites.put(PlayerModel.GUN_RELOAD, new SpriteModel("/gun/reload/", this.scale, 3));
 		
 		this.vfxs = new HashMap<Integer, HashMap<Integer, Vector<VFXModel>>>();
 		
@@ -207,11 +208,6 @@ public class PlayerModel extends CharacterModel{
 	public SpriteModel getGunSprites(int state) {
 		return this.gunSprites.get(state);
 	}
-
-//	public VFXModel getVFXSprites(int vfx, int dir) {
-//		// TODO Auto-generated method stub
-//		Vector<VFXModel> v = this.vfxs.get(vfx).get(dir);
-//	}
 
 	public void setAngle(double a) {
 		this.angle = a;

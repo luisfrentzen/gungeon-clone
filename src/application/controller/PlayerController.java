@@ -36,6 +36,8 @@ public class PlayerController extends CharacterController{
 	private SpriteModel pistol;
 	private VFXModel flare;
 	
+	private double lastX;
+	private double lastY;
 	private Vector<VFXModel> vfxRender;
 	
 	private int drawTick;
@@ -59,6 +61,8 @@ public class PlayerController extends CharacterController{
 		
 //		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 1);
 		this.playerModel = new PlayerModel(canvas.getWidth() / 2, canvas.getHeight() / 2, 4);
+		this.lastX = this.getPlayerX();
+		this.lastY = this.getPlayerY();
 		
 		this.drawTick = 0;
 		this.globalTick = 0;
@@ -95,14 +99,16 @@ public class PlayerController extends CharacterController{
 		return this.playerModel.getY();
 	}
 	
-	public void addVFX(String vfx, int x, int y) {
-		vfxRender.add(new VFXModel(PlayerModel.PATH_FLARE, playerModel.getScale(), 100, 100));
+	public void addVFX(String vfx, double x, double y, int frameLength) {
+		vfxRender.add(new VFXModel(vfx, playerModel.getScale(), x, y, frameLength));
 	}
 	
 	public void drawVFX() {
 		for (VFXModel fx : this.vfxRender) {
 			if (!fx.isDone()) {
+				
 				this.gc.drawImage(fx.getNext(), fx.getX(), fx.getY(), fx.getWidth(fx.getNFrame() - 1), fx.getHeight(fx.getNFrame() - 1));
+				
 			}
 		}
 	}
@@ -189,14 +195,9 @@ public class PlayerController extends CharacterController{
 			p = this.pistol.get(0);			
 		}
 		else {
-			if (this.drawTick % 3 == 0) {
-				p = this.pistol.getNext();
-				if (this.pistol.isDone()) {
-					this.pistol = playerModel.getGunSprites(PlayerModel.GUN_IDLE);
-				}
-			}
-			else {
-				p = this.pistol.get(this.pistol.getNFrame());
+			p = this.pistol.getNext();
+			if (this.pistol.isDone()) {
+				this.pistol = playerModel.getGunSprites(PlayerModel.GUN_IDLE);
 			}
 		}
 		
@@ -339,6 +340,17 @@ public class PlayerController extends CharacterController{
 		// TODO Auto-generated method stub
 		this.playerModel.setX(x);
 		this.playerModel.setY(y);
+		
+		double dx = (this.lastX - this.getPlayerX()) * (this.lastX - this.getPlayerX());
+		double dy = (this.lastY - this.getPlayerY()) * (this.lastY - this.getPlayerY());
+		
+		double d = Math.sqrt(dx + dy);
+		
+		if (d > 100) {
+			this.lastX = this.getPlayerX();
+			this.lastY = this.getPlayerY();
+			this.addVFX(PlayerModel.PATH_RUN_DUST, x, y + this.sprites.getHeight(0) * 0.35, 2);
+		}
 	}
 	
 	@Override

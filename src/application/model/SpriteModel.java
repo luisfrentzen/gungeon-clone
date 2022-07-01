@@ -12,12 +12,17 @@ public class SpriteModel {
 	protected double scale;
 	protected int currentFrame;
 	protected boolean isDone;
+	protected int frameLength;
+	protected int currentFrameL;
 	
 	public SpriteModel(String path, double scale) {
 		// TODO Auto-generated constructor stub
 		this.scale = scale;
 		this.isDone = false;
 		this.currentFrame = 0;
+		
+		this.frameLength = 1;
+		this.currentFrameL = 0;
 		
 		final File dir = new File(this.getClass().getResource(path).toString().substring(5));
 		len = dir.list().length;
@@ -28,6 +33,12 @@ public class SpriteModel {
 		for (final File f : dir.listFiles()) {
 			sprites[i++] = new Image(f.toURI().toString());
 		}
+	}
+	
+	public SpriteModel(String path, double scale, int frameLength) {
+		// TODO Auto-generated constructor stub
+		this(path, scale);
+		this.frameLength = frameLength;
 	}
 	
 	public void reset() {
@@ -48,9 +59,18 @@ public class SpriteModel {
 	}
 	
 	public Image getNext() {
-		Image im = get(this.currentFrame++);
+		Image im;
 		
-		if (currentFrame == getLen()) {
+		if (this.currentFrameL == this.frameLength) {
+			im = get(this.currentFrame++);
+			this.currentFrameL = 0;
+		}
+		else {
+			im = get(this.currentFrame);
+			this.currentFrameL += 1;
+		}
+		
+		if (this.currentFrame == getLen() - 1 && this.currentFrameL == this.frameLength) {
 			this.isDone = true;
 		}
 		
@@ -66,10 +86,18 @@ public class SpriteModel {
 	}
 	
 	public double getWidth(int idx) {
+		if (idx < 0 || idx > this.sprites.length - 1) {
+			idx = 0;
+		}
+		
 		return sprites[idx].getWidth() * this.scale * MainApplication.globalScale;
 	}
 	
 	public double getHeight(int idx) {
+		if (idx < 0 || idx > this.sprites.length - 1) {
+			idx = 0;
+		}
+		
 		return sprites[idx].getHeight() * this.scale * MainApplication.globalScale;
 	}
 
