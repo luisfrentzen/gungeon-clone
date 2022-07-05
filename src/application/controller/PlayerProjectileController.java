@@ -21,12 +21,13 @@ public class PlayerProjectileController extends ProjectileController{
 	private int bulletIndex;
 	private int nBullets;
 	
-	public PlayerProjectileController(Canvas canvas) {
+	public PlayerProjectileController(Canvas canvas, CameraController camera) {
 		projectiles = new Vector<PlayerProjectileModel>();
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		
 		this.nBullets = 9;
+		this.camera = camera;
 		
 		initBullets(this.nBullets);
 		this.bulletIndex = 0;
@@ -62,10 +63,9 @@ public class PlayerProjectileController extends ProjectileController{
 			double x = ppModel.getX() - s.getWidth(0) / 2;
 			double y = ppModel.getY() - s.getWidth(0) / 2;
 			
-			this.gc.drawImage(s.get(0), x, y, s.getWidth(0), s.getHeight(0));
+			this.gc.drawImage(s.get(0), this.camera.getXMapRelative(x), this.camera.getYMapRelative(y), s.getWidth(0), s.getHeight(0));
 		
 			this.gc.save();
-//			this.gc.setEffect(new GaussianBlur(20));
 			this.gc.setGlobalBlendMode(BlendMode.COLOR_DODGE);
 			this.gc.setGlobalAlpha(0.7);
 			this.gc.setFill(Color.YELLOW);
@@ -75,7 +75,7 @@ public class PlayerProjectileController extends ProjectileController{
 			double glowX = ppModel.getX() - (s.getWidth(0) + glowOffset) / 2;
 			double glowY = ppModel.getY() - (s.getWidth(0) + glowOffset) / 2;
 			
-			this.gc.fillOval(glowX, glowY, s.getWidth(0) + glowOffset, s.getHeight(0) + glowOffset);
+			this.gc.fillOval(this.camera.getXMapRelative(glowX), this.camera.getYMapRelative(glowY), s.getWidth(0) + glowOffset, s.getHeight(0) + glowOffset);
 			
 			this.gc.restore();
 		}

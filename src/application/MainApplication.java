@@ -36,12 +36,14 @@ public class MainApplication extends Application{
 	public void start(Stage stage) throws Exception {
 		// TODO Auto-generated method stub
 		stage.setMaximized(true);
-//		stage.initStyle(StageStyle.UNDECORATED);
+		stage.initStyle(StageStyle.UNDECORATED);
 		
 		stage.show();
 		
 		W = stage.getWidth();
 		H = stage.getHeight();
+		
+		System.out.println(W + " " + H);
 		
 //		globalScale = W / recomW;
 		globalScale = 1;

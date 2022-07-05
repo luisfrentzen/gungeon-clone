@@ -1,6 +1,7 @@
 package application.controller;
 
 public abstract class GameObjectController {
+	protected CameraController camera;
 	
 	public abstract void render();
 	

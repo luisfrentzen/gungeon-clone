@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import javafx.geometry.Point2D;
 import application.MainApplication;
+import application.model.CameraModel;
 import application.model.PlayerModel;
 import application.model.SpriteModel;
 import application.model.VFXModel;
@@ -14,6 +15,7 @@ import application.view.PlayerView;
 import application.view.SceneView;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -51,13 +53,16 @@ public class PlayerController extends CharacterController{
 	
 	private double handX;
 	private double handY;
+
 	
-	public PlayerController(Canvas canvas, SceneView scene, PlayerProjectileController ppController) {
+	public PlayerController(Canvas canvas, SceneView scene, PlayerProjectileController ppController, CameraController camera) {
 		// TODO Auto-generated constructor stub
 		this.canvas = canvas;
 		this.scene = scene;
 		this.ppController = ppController;
 		this.gc = canvas.getGraphicsContext2D();
+		
+		this.camera = camera;
 		
 //		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 1);
 		this.playerModel = new PlayerModel(canvas.getWidth() / 2, canvas.getHeight() / 2, 4);
@@ -107,7 +112,7 @@ public class PlayerController extends CharacterController{
 		for (VFXModel fx : this.vfxRender) {
 			if (!fx.isDone()) {
 				
-				this.gc.drawImage(fx.getNext(), fx.getX(), fx.getY(), fx.getWidth(fx.getNFrame() - 1), fx.getHeight(fx.getNFrame() - 1));
+				this.camera.draw(this.gc, fx.getNext(), fx.getX(), fx.getY(), fx.getWidth(fx.getNFrame() - 1), fx.getHeight(fx.getNFrame() - 1));
 				
 			}
 		}
@@ -118,7 +123,6 @@ public class PlayerController extends CharacterController{
 		this.sprites = this.playerModel.getSprites(this.getPlayerState(), this.getPlayerFacing());
 		
 		double tpf = (double)actionTick / (double)this.sprites.getLen();
-//		int i = (int)(drawTick++ / 6 % this.sprites.getLen());
 		int i = (int)(Math.floor(drawTick++ % actionTick) / tpf);
 		
 		double h = this.sprites.getHeight(i);
@@ -132,7 +136,7 @@ public class PlayerController extends CharacterController{
 		double centerX = playerModel.getX() - w / 2;
 		double centerY = playerModel.getY() - h / 2;
 		
-		this.gc.drawImage(p, ((int)centerX) + .5, ((int)centerY) + .5, w, h);
+		this.camera.draw(this.gc, p, ((int)centerX) + .5, ((int)centerY) + .5, w, h);
 	}
 	
 	public boolean isFlip() {
@@ -161,7 +165,7 @@ public class PlayerController extends CharacterController{
 		
 		Image p = this.hand.get(0);
 		
-		this.gc.drawImage(p, centerX, centerY, w, h);
+		this.camera.draw(this.gc, p, centerX, centerY, w, h);
 	}
 	
 	public void drawPistol() {
@@ -172,7 +176,6 @@ public class PlayerController extends CharacterController{
 		double pw = this.sprites.getWidth(0);
 		
 		double ang = this.getPlayerAngle();
-		double angOffset = 20;
 		
 		if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
 			pw = -pw;
@@ -180,7 +183,6 @@ public class PlayerController extends CharacterController{
 		}
 		else {
 			ang -= 180;
-			angOffset *= -1;
 		}
 		
 		this.handX = playerModel.getX() + pw * (35/100.0);
@@ -202,29 +204,24 @@ public class PlayerController extends CharacterController{
 		}
 		
 		this.gc.save();
-		Rotate r = new Rotate(ang, this.handX, this.handY);
+		Rotate r = new Rotate(ang, this.camera.getXMapRelative(this.handX), this.camera.getYMapRelative(this.handY));
 		gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
 		
-		this.gc.drawImage(p, centerX, centerY, w, h);
+		this.camera.draw(this.gc, p, centerX, centerY, w, h);
 		
 		if (!this.flare.isDone()) {
-			this.gc.drawImage(this.flare.getNext(), centerX + w, centerY + (h * 0.3) - this.flare.getHeight(this.flare.getNFrame() - 1) / 2, (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) ? -this.flare.getWidth(this.flare.getNFrame()-1) : this.flare.getWidth(this.flare.getNFrame()-1), this.flare.getHeight(this.flare.getNFrame()-1));
+			this.camera.draw(this.gc, this.flare.getNext(), centerX + w, centerY + (h * 0.3) - this.flare.getHeight(this.flare.getNFrame() - 1) / 2, (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) ? -this.flare.getWidth(this.flare.getNFrame()-1) : this.flare.getWidth(this.flare.getNFrame()-1), this.flare.getHeight(this.flare.getNFrame()-1));
 		}
 		
 		this.gc.restore();
 		
-		double pointX = this.handX + w * 0.8;
-		double pointY = this.handY - h * 0.4;
+		double pointX = this.handX + (w * 0.8);
+		double pointY = this.handY - (h * 0.4);
 		
-		Point2D rotated = getRotated(ang, pointX, pointY, handX, handY);
+		Point2D rotated = this.getRotated(ang, pointX, pointY, this.handX, this.handY);
 		
 		this.shootX = rotated.getX();
 		this.shootY = rotated.getY();
-		
-//		this.gc.setFill(Color.RED);
-//		this.gc.fillOval(this.shootX - 5, this.shootY - 5, 10, 10);
-//		this.gc.setFill(Color.BLUE);
-//		this.gc.fillOval(handX - 5, handY - 5, 10, 10);
 	}
 	
 	public Point2D getRotated(double ang, double pointX, double pointY, double pivotX, double pivotY) {
@@ -341,33 +338,40 @@ public class PlayerController extends CharacterController{
 		this.playerModel.setX(x);
 		this.playerModel.setY(y);
 		
+		camera.setX(x - MainApplication.W / 2);
+		camera.setY(y - MainApplication.H / 2);
+		
 		double dx = (this.lastX - this.getPlayerX()) * (this.lastX - this.getPlayerX());
 		double dy = (this.lastY - this.getPlayerY()) * (this.lastY - this.getPlayerY());
 		
 		double d = Math.sqrt(dx + dy);
 		
-		if (d > 100) {
+		if (d > 100 && this.getPlayerState() != PlayerModel.DODGE) {
 			this.lastX = this.getPlayerX();
 			this.lastY = this.getPlayerY();
-			this.addVFX(PlayerModel.PATH_RUN_DUST, x, y + this.sprites.getHeight(0) * 0.35, 2);
+			this.addVFX(PlayerModel.PATH_RUN_DUST, x, y + this.sprites.getHeight(0) * 0.275, 2);
 		}
 	}
-	
+
 	@Override
 	public void render() {
 		// TODO Auto-generated method stub
+		this.drawVFX();
+		
 		if (this.playerModel.isShowGun()) {
-			this.drawHand();
 			this.drawPistol();
 		}
 		
 		if (this.playerModel.getMagSize() == 0 && (this.globalTick / 16) % 2 == 0) {
 			this.gc.setFill(Color.WHITE);
-			this.gc.fillText("reload", this.getPlayerX() - (this.sprites.getWidth(0) * 0.34), this.getPlayerY() - this.sprites.getHeight(0) * 0.35);
+			this.gc.fillText("reload", this.getPlayerX() - (this.sprites.getWidth(0) * 0.34) - this.camera.getX(), this.getPlayerY() - this.sprites.getHeight(0) * 0.35 - this.camera.getY());
 		}
 		
-		this.drawVFX();
 		this.drawPlayer();
+		
+		if (this.playerModel.isShowGun()) {
+			this.drawHand();
+		}
 	}
 	
 	public int getVectorSum() {

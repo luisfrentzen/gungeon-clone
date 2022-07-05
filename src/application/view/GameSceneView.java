@@ -2,8 +2,10 @@ package application.view;
 
 
 import application.MainApplication;
+import application.controller.CameraController;
 import application.controller.PlayerController;
 import application.controller.PlayerProjectileController;
+import application.model.CameraModel;
 import application.model.PlayerModel;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
@@ -29,23 +31,25 @@ public class GameSceneView extends SceneView{
 	private boolean mPrimaryDown;
 	private boolean mSecondaryDown;
 	
+	private CameraController camera;
+	
 	@Override
 	protected void initComponents() {
 		// TODO Auto-generated method stub
 		this.root = new StackPane();
 		this.root.setMinHeight(MainApplication.H);
 		this.root.setMinWidth(MainApplication.W);
-//		this.root.setStyle("-fx-background-color: darkslateblue;");
 		
 		this.canvas = new Canvas(MainApplication.W, MainApplication.H);
 		this.canvas.setCache(true);
 		this.canvas.setCacheHint(CacheHint.SPEED);
-//		this.canvas.setStyle("-fx-border-color: blue; -fx-border-width: 5;");
 		StackPane.setAlignment(this.canvas, Pos.TOP_LEFT); 
 		
 		Scale s = new Scale();
 		s.setX(5);
 		s.setY(5);
+		
+		camera = new CameraController();
 		
 		this.mSecondaryDown = false;
 		this.mPrimaryDown = false;
@@ -54,8 +58,12 @@ public class GameSceneView extends SceneView{
 		this.gc.setImageSmoothing(false);
 		this.gc.setFont(Font.loadFont("file:resources/font/minecraftia/Minecraftia-Regular.ttf", 16 * MainApplication.globalScale));
 		
-		this.ppController = new PlayerProjectileController(this.canvas);
-		this.playerController = new PlayerController(this.canvas, this, this.ppController);
+		this.ppController = new PlayerProjectileController(this.canvas, this.camera);
+		this.playerController = new PlayerController(this.canvas, this, this.ppController, this.camera);
+	}
+	
+	public CameraController getCamera() {
+		return this.camera;
 	}
 
 	@Override
@@ -186,12 +194,24 @@ public class GameSceneView extends SceneView{
 	public void setmPrimaryDown(boolean mPrimaryDown) {
 		this.mPrimaryDown = mPrimaryDown;
 	}
+	
+	@Override
+	public double getPointerX() {
+		// TODO Auto-generated method stub
+		return this.camera.getXCamRelative(super.getPointerX());
+	}
+	
+	@Override
+	public double getPointerY() {
+		// TODO Auto-generated method stub
+		return this.camera.getYCamRelative(super.getPointerY());
+	}
 
 	@Override
 	public void renderFrame() {
 		// TODO Auto-generated method stub
 //        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		gc.setFill(Color.WHITE);
+		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		ppController.render();
         playerController.render();
