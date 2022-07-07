@@ -39,7 +39,7 @@ public class PlayerProjectileController extends ProjectileController{
 	
 	public void initBullets(int n) {
 		for (int i = 0; i < n; i ++) {
-			this.projectiles.add(new PlayerProjectileModel(100, 100 + i * 10, 0, 0));
+			this.projectiles.add(new PlayerProjectileModel(-1000, -1000 + i * 10, 0, 0));
 		}
 	}
 	

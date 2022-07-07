@@ -67,7 +67,7 @@ public class PlayerController extends CharacterController{
 		this.gc = canvas.getGraphicsContext2D();
 		
 		this.camera = camera;
-		this.cameraOffset = 150 * MainApplication.globalScale;
+		this.cameraOffset = 0.1;
 		this.cameraOffsetX = 0;
 		this.cameraOffsetY = 0;
 		
@@ -414,8 +414,8 @@ public class PlayerController extends CharacterController{
 		double dX = this.scene.getPointerX() - this.getPlayerX();
 		double dY = this.scene.getPointerY() - this.getPlayerY();
 		
-		this.cameraOffsetX = dX / (MainApplication.W / 2) * this.cameraOffset;
-		this.cameraOffsetY = dY / (MainApplication.H / 2) * this.cameraOffset;
+		this.cameraOffsetX = dX / (MainApplication.W / 2) * (this.cameraOffset * MainApplication.W);
+		this.cameraOffsetY = dY / (MainApplication.H / 2) * (this.cameraOffset * MainApplication.H);
 		
 		double ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;
 		
