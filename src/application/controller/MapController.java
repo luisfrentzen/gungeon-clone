@@ -4,6 +4,7 @@ import application.model.MapModel;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 public class MapController extends GameObjectController{
 	
@@ -73,15 +74,9 @@ public class MapController extends GameObjectController{
 	public void render() {
 		// TODO Auto-generated method stub
 		this.gc.save();
-		this.gc.setGlobalAlpha(0.6);
-		
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < this.map.getNw(); j++) {
-				Image wall = this.map.getWall(this.topwallMap[i][j]);
-				
-				camera.draw(this.gc, wall, j * this.map.getTileSize(), (i + 1) * -this.map.getTileSize(), this.map.getTileSize(), this.map.getTileSize());
-			}
-		}
+		this.gc.setFill(Color.BLACK);
+
+		this.gc.setGlobalAlpha(0.5);
 		
 		Image rightWall = this.map.getWall(MapModel.WALL_RIGHT_EDGE);
 		Image leftWall = this.map.getWall(MapModel.WALL_LEFT_EDGE);
@@ -91,10 +86,76 @@ public class MapController extends GameObjectController{
 		Image leftBotCorner = this.map.getWall(MapModel.WALL_BOT_LEFT_CORNER);
 		Image botEdgeWall = this.map.getWall(MapModel.WALL_BOT_EDGE);
 		
+		Image redTileTopLeft = this.map.getWall(MapModel.RED_TILE_TOP_LEFT);
+		Image redTileBotLeft = this.map.getWall(MapModel.RED_TILE_BOT_LEFT);
+		Image redTileTopRight = this.map.getWall(MapModel.RED_TILE_TOP_RIGHT);
+		Image redTileBotRight = this.map.getWall(MapModel.RED_TILE_BOT_RIGHT);
+		
+		Image redTileHor = this.map.getWall(MapModel.RED_TILE_HOR);
+		Image redTileHorVar = this.map.getWall(MapModel.RED_TILE_HOR_VAR);
+		Image redTileVer = this.map.getWall(MapModel.RED_TILE_VER);
+		Image redTileVerVar = this.map.getWall(MapModel.RED_TILE_VER_VAR);
+		
+		double tileSize = this.map.getTileSize();
+		for (int i = 0; i < this.map.getNh(); i++) {
+			for (int j = 0; j < this.map.getNw(); j++) {
+				Image tile = this.map.getTile(this.tileMap[i][j]);
+				
+				camera.draw(this.gc, tile, j * this.map.getTileSize(), i * this.map.getTileSize(), this.map.getTileSize(), this.map.getTileSize());
+			
+				if (i > 0) continue;
+				
+				this.gc.setGlobalAlpha(1);
+				this.gc.fillRect(this.camera.getXMapRelative(j * this.map.getTileSize()), this.camera.getYMapRelative(0), tileSize, tileSize / 2);
+				this.gc.setGlobalAlpha(0.65);
+				camera.draw(this.gc, redTileHor, 
+						j * this.map.getTileSize(), 
+						0, 
+						tileSize,
+						tileSize / 2);
+				this.gc.setGlobalAlpha(0.5);
+			}
+		}
+		
+		for (int i = 0; i < this.map.getNw(); i++) {
+			camera.draw(this.gc, botEdgeWall, i * this.map.getTileSize(), this.map.getNh() * this.map.getTileSize(), this.map.getTileSize(), this.map.getTileSize());
+			this.gc.setGlobalAlpha(1);
+			this.gc.fillRect(this.camera.getXMapRelative(i * this.map.getTileSize()), this.camera.getYMapRelative(this.map.getNh() * tileSize - (tileSize / 2)), tileSize, tileSize / 2);
+			this.gc.setGlobalAlpha(0.65);
+			camera.draw(this.gc, redTileHor, 
+					i * this.map.getTileSize(), 
+					this.map.getNh() * tileSize - (tileSize / 2), 
+					tileSize, 
+					tileSize / 2);
+			this.gc.setGlobalAlpha(0.5);
+		}
+		
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < this.map.getNw(); j++) {
+				Image wall = this.map.getWall(this.topwallMap[i][j]);
+				
+				camera.draw(this.gc, wall, j * this.map.getTileSize(), (i + 1) * -this.map.getTileSize(), this.map.getTileSize(), this.map.getTileSize());
+			}
+		}
+		
 		for(int i = 0; i < 2; i++) {
 			for (int j = -3; j < this.map.getNh() + 1; j++) {
-				Image wall = leftWall;
+				double dx = i == 0 ? -tileSize : (this.map.getNw() * tileSize);
+				double dy = j * tileSize;
 
+				Image wall = leftWall;
+				Image tile = redTileVerVar;
+				double tileW = tileSize / 2;
+						
+				if (j == 0) {
+					tile = i == 0? redTileTopLeft : redTileTopRight;
+					tileW = tileSize;
+				}
+				else if (j == this.map.getNh() - 1) {
+					tile = i == 0? redTileBotLeft : redTileBotRight;
+					tileW = tileSize;
+				}
+				
 				if (j == -3) {
 					wall = i == 0? leftTopCorner : rightTopCorner;
 				}
@@ -106,26 +167,25 @@ public class MapController extends GameObjectController{
 				}
 				
 				camera.draw(this.gc, wall, 
-						i == 0? -this.map.getTileSize() : this.map.getNw() * this.map.getTileSize(), 
-						j * this.map.getTileSize(), 
-						this.map.getTileSize(), 
-						this.map.getTileSize());
-			}
-		}
-		
-		for (int i = 0; i < this.map.getNw(); i++) {
-			camera.draw(this.gc, botEdgeWall, i * this.map.getTileSize(), this.map.getNh() * this.map.getTileSize(), this.map.getTileSize(), this.map.getTileSize());
-		}
-	
-		this.gc.setGlobalAlpha(0.5);
-		
-		for (int i = 0; i < this.map.getNh(); i++) {
-			for (int j = 0; j < this.map.getNw(); j++) {
-				Image tile = this.map.getTile(this.tileMap[i][j]);
+						dx, 
+						dy, 
+						tileSize, 
+						tileSize);
 				
-				camera.draw(this.gc, tile, j * this.map.getTileSize(), i * this.map.getTileSize(), this.map.getTileSize(), this.map.getTileSize());
+				if (j < 0 || j >= this.map.getNh()) continue;
+				
+				this.gc.setGlobalAlpha(1);
+				this.gc.fillRect(this.camera.getXMapRelative(dx + (i == 0 ? tileSize : -tileSize / 2)), this.camera.getYMapRelative(dy), tileSize / 2, tileSize);
+				this.gc.setGlobalAlpha(0.65);
+				camera.draw(this.gc, tile, 
+						dx + (i == 0 ? tileSize : -tileW), 
+						dy, 
+						tileW, 
+						tileSize);
+				this.gc.setGlobalAlpha(0.5);
 			}
 		}
+		
 		this.gc.restore();
 	}
 

@@ -67,7 +67,7 @@ public class PlayerController extends CharacterController{
 		this.gc = canvas.getGraphicsContext2D();
 		
 		this.camera = camera;
-		this.cameraOffset = 60 * MainApplication.globalScale;
+		this.cameraOffset = 150 * MainApplication.globalScale;
 		this.cameraOffsetX = 0;
 		this.cameraOffsetY = 0;
 		

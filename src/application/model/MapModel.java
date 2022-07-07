@@ -12,15 +12,26 @@ public class MapModel extends GameObjectModel{
 	public static int WALL_LIGHT_VAR = 1;
 	public static int WALL_DARK = 2;
 	public static int WALL_DARK_VAR = 3;
+	
 	public static int WALL_BOT_EDGE = 4;
 	public static int WALL_RIGHT_EDGE = 5;
 	public static int WALL_LEFT_EDGE = 6;
 	public static int WALL_TOP_EDGE = 7;
+	
 	public static int WALL_TOP_LEFT_CORNER = 8;
 	public static int WALL_TOP_RIGHT_CORNER = 9;
 	public static int WALL_BOT_LEFT_CORNER = 10;
 	public static int WALL_BOT_RIGHT_CORNER = 11;
 	
+	public static int RED_TILE_TOP_LEFT = 12;
+	public static int RED_TILE_TOP_RIGHT = 13;
+	public static int RED_TILE_BOT_LEFT = 14;
+	public static int RED_TILE_BOT_RIGHT = 15;
+	
+	public static int RED_TILE_HOR = 16;
+	public static int RED_TILE_VER = 17;
+	public static int RED_TILE_VER_VAR = 18;
+	public static int RED_TILE_HOR_VAR = 19;
 	
 	public MapModel(double scale) {
 		// TODO Auto-generated constructor stub
