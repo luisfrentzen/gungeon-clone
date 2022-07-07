@@ -3,6 +3,7 @@ package application.view;
 
 import application.MainApplication;
 import application.controller.CameraController;
+import application.controller.MapController;
 import application.controller.PlayerController;
 import application.controller.PlayerProjectileController;
 import application.model.CameraModel;
@@ -27,6 +28,7 @@ public class GameSceneView extends SceneView{
 	
 	PlayerController playerController;
 	PlayerProjectileController ppController;
+	MapController map;
 	
 	private boolean mPrimaryDown;
 	private boolean mSecondaryDown;
@@ -60,6 +62,7 @@ public class GameSceneView extends SceneView{
 		
 		this.ppController = new PlayerProjectileController(this.canvas, this.camera);
 		this.playerController = new PlayerController(this.canvas, this, this.ppController, this.camera);
+		this.map = new MapController(4, this.camera, this.canvas);
 	}
 	
 	public CameraController getCamera() {
@@ -213,6 +216,7 @@ public class GameSceneView extends SceneView{
 //        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		map.render();
 		ppController.render();
         playerController.render();
     

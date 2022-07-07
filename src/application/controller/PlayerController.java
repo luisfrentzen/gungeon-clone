@@ -53,6 +53,10 @@ public class PlayerController extends CharacterController{
 	
 	private double handX;
 	private double handY;
+	
+	private double cameraOffset;
+	private double cameraOffsetX;
+	private double cameraOffsetY;
 
 	
 	public PlayerController(Canvas canvas, SceneView scene, PlayerProjectileController ppController, CameraController camera) {
@@ -63,6 +67,9 @@ public class PlayerController extends CharacterController{
 		this.gc = canvas.getGraphicsContext2D();
 		
 		this.camera = camera;
+		this.cameraOffset = 60 * MainApplication.globalScale;
+		this.cameraOffsetX = 0;
+		this.cameraOffsetY = 0;
 		
 //		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 1);
 		this.playerModel = new PlayerModel(canvas.getWidth() / 2, canvas.getHeight() / 2, 4);
@@ -116,6 +123,17 @@ public class PlayerController extends CharacterController{
 				
 			}
 		}
+	}
+	
+	public void drawShadow() {
+		double h = this.sprites.getHeight(0);
+		double w = this.sprites.getWidth(0);
+		
+		this.gc.save();
+		this.gc.setGlobalAlpha(0.6);
+		this.gc.setFill(Color.BLACK);
+		this.gc.fillOval(this.camera.getXMapRelative(playerModel.getX()) - w * 0.25, this.camera.getYMapRelative(playerModel.getY()) + h * 0.45, w * 0.5, h / 8);
+		this.gc.restore();
 	}
 	
 	public void drawPlayer() {
@@ -338,8 +356,8 @@ public class PlayerController extends CharacterController{
 		this.playerModel.setX(x);
 		this.playerModel.setY(y);
 		
-		camera.setX(x - MainApplication.W / 2);
-		camera.setY(y - MainApplication.H / 2);
+		camera.setX((x - MainApplication.W / 2) + this.cameraOffsetX);
+		camera.setY((y - MainApplication.H / 2) + this.cameraOffsetY);
 		
 		double dx = (this.lastX - this.getPlayerX()) * (this.lastX - this.getPlayerX());
 		double dy = (this.lastY - this.getPlayerY()) * (this.lastY - this.getPlayerY());
@@ -357,6 +375,8 @@ public class PlayerController extends CharacterController{
 	public void render() {
 		// TODO Auto-generated method stub
 		this.drawVFX();
+		
+		this.drawShadow();
 		
 		if (this.playerModel.isShowGun()) {
 			this.drawPistol();
@@ -393,6 +413,9 @@ public class PlayerController extends CharacterController{
 		
 		double dX = this.scene.getPointerX() - this.getPlayerX();
 		double dY = this.scene.getPointerY() - this.getPlayerY();
+		
+		this.cameraOffsetX = dX / (MainApplication.W / 2) * this.cameraOffset;
+		this.cameraOffsetY = dY / (MainApplication.H / 2) * this.cameraOffset;
 		
 		double ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;
 		
