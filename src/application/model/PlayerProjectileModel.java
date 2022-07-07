@@ -5,17 +5,17 @@ import application.MainApplication;
 public class PlayerProjectileModel extends ProjectileModel{
 	
 	public PlayerProjectileModel(double x, double y, double tX, double tY) {
-		this.scale = 1.75;
+		this.scale = 2;
 		this.x = x;
 		this.y = y;
 		this.oriX = x;
 		this.oriY = y;
 		
-		this.speed = 15 * this.scale * MainApplication.globalScale;
+		this.speed = 13 * this.scale * MainApplication.globalScale;
 		
 		this.targetX = tX;
 		this.targetY = tY;
-		this.spray = 0.6;
+		this.spray = 0.4;
 		
 		calculateVectors();
 

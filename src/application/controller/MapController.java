@@ -61,6 +61,14 @@ public class MapController extends GameObjectController{
 		}
 	}
 	
+	public double getMapWidth() {
+		return this.map.getTileSize() * this.map.getNw();
+	}
+	
+	public double getMapHeight() {
+		return this.map.getTileSize() * this.map.getNh();
+	}
+	
 	@Override
 	public void render() {
 		// TODO Auto-generated method stub

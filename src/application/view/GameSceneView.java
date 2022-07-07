@@ -33,6 +33,9 @@ public class GameSceneView extends SceneView{
 	private boolean mPrimaryDown;
 	private boolean mSecondaryDown;
 	
+	private double mapW;
+	private double mapH;
+	
 	private CameraController camera;
 	
 	@Override
@@ -60,9 +63,20 @@ public class GameSceneView extends SceneView{
 		this.gc.setImageSmoothing(false);
 		this.gc.setFont(Font.loadFont("file:resources/font/minecraftia/Minecraftia-Regular.ttf", 16 * MainApplication.globalScale));
 		
-		this.ppController = new PlayerProjectileController(this.canvas, this.camera);
+		this.ppController = new PlayerProjectileController(this.canvas, this, this.camera);
 		this.playerController = new PlayerController(this.canvas, this, this.ppController, this.camera);
+		
 		this.map = new MapController(4, this.camera, this.canvas);
+		this.mapH = this.map.getMapHeight();
+		this.mapW = this.map.getMapWidth();
+	}
+	
+	public double getMapH() {
+		return this.mapH;
+	}
+	
+	public double getMapW() {
+		return this.mapW;
 	}
 	
 	public CameraController getCamera() {

@@ -5,6 +5,8 @@ import java.util.Vector;
 import application.MainApplication;
 import application.model.PlayerProjectileModel;
 import application.model.SpriteModel;
+import application.view.GameSceneView;
+import application.view.SceneView;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
@@ -17,14 +19,16 @@ public class PlayerProjectileController extends ProjectileController{
 	
 	private GraphicsContext gc;
 	private Canvas canvas;
+	private SceneView scene;
 	private Vector<PlayerProjectileModel> projectiles;
 	private int bulletIndex;
 	private int nBullets;
 	
-	public PlayerProjectileController(Canvas canvas, CameraController camera) {
+	public PlayerProjectileController(Canvas canvas, SceneView scene, CameraController camera) {
 		projectiles = new Vector<PlayerProjectileModel>();
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
+		this.scene = scene;
 		
 		this.nBullets = 9;
 		this.camera = camera;
@@ -102,7 +106,7 @@ public class PlayerProjectileController extends ProjectileController{
 			ppModel.setX(ppModel.getX() + vX);
 			ppModel.setY(ppModel.getY() + vY);
 			
-			if ((ppModel.getX() > MainApplication.W || ppModel.getX() < 0) || ppModel.getY() > MainApplication.H || ppModel.getY() < 0) {
+			if ((ppModel.getX() > ((GameSceneView)this.scene).getMapW() * 1.1 || ppModel.getX() < 0) || ppModel.getY() > ((GameSceneView)this.scene).getMapW() * 1.1 || ppModel.getY() < 0) {
 				ppModel.resetPosition();
 			}
 		}
