@@ -2,6 +2,7 @@ package application.view;
 
 
 import application.MainApplication;
+import application.controller.BarrierController;
 import application.controller.CameraController;
 import application.controller.MapController;
 import application.controller.PlayerController;
@@ -30,6 +31,7 @@ public class GameSceneView extends SceneView{
 	PlayerController playerController;
 	PlayerProjectileController ppController;
 	MapController map;
+	BarrierController barrier;
 	
 	private boolean mPrimaryDown;
 	private boolean mSecondaryDown;
@@ -63,13 +65,14 @@ public class GameSceneView extends SceneView{
 		this.gc = canvas.getGraphicsContext2D();
 		this.gc.setImageSmoothing(false);
 		this.gc.setFont(Font.loadFont("file:resources/font/minecraftia/Minecraftia-Regular.ttf", 16 * MainApplication.globalScale));
-		
-		this.ppController = new PlayerProjectileController(this.canvas, this, this.camera);
-		this.playerController = new PlayerController(this.canvas, this, this.ppController, this.camera);
-		
+						
 		this.map = new MapController(4, this.camera, this.canvas);
 		this.mapH = this.map.getMapHeight();
 		this.mapW = this.map.getMapWidth();
+		this.barrier = new BarrierController(this.canvas, this.camera, 0, -80, mapW, mapH + 80);
+		
+		this.ppController = new PlayerProjectileController(this.canvas, this, this.camera, this.barrier);
+		this.playerController = new PlayerController(this.canvas, this, this.ppController, this.camera, this.barrier);
 	}
 	
 	public double getMapH() {
@@ -234,13 +237,14 @@ public class GameSceneView extends SceneView{
 		map.render();
 		ppController.render();
         playerController.render();
-    
+        barrier.render();
 	}
 
 	@Override
 	public void updateFrame() {
 		// TODO Auto-generated method stub
 		playerController.update();
+		
 		ppController.update();
 	}
 

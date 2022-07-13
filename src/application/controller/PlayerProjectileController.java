@@ -23,12 +23,14 @@ public class PlayerProjectileController extends ProjectileController{
 	private Vector<PlayerProjectileModel> projectiles;
 	private int bulletIndex;
 	private int nBullets;
+	private BarrierController barrier;
 	
-	public PlayerProjectileController(Canvas canvas, SceneView scene, CameraController camera) {
+	public PlayerProjectileController(Canvas canvas, SceneView scene, CameraController camera, BarrierController barrier) {
 		projectiles = new Vector<PlayerProjectileModel>();
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		this.scene = scene;
+		this.barrier = barrier;
 		
 		this.nBullets = 9;
 		this.camera = camera;
@@ -67,6 +69,11 @@ public class PlayerProjectileController extends ProjectileController{
 			double x = ppModel.getX() - s.getWidth(0) / 2;
 			double y = ppModel.getY() - s.getWidth(0) / 2;
 			
+			ppModel.setW(s.getWidth(0) * 0.75);
+			ppModel.setH(s.getHeight(0) * 0.75);
+			ppModel.setBoundX(ppModel.getX() - ppModel.getW() / 2);
+			ppModel.setBoundY(ppModel.getY() - ppModel.getH() / 2);
+			
 			this.gc.drawImage(s.get(0), this.camera.getXMapRelative(x), this.camera.getYMapRelative(y), s.getWidth(0), s.getHeight(0));
 		
 			this.gc.save();
@@ -82,6 +89,7 @@ public class PlayerProjectileController extends ProjectileController{
 			this.gc.fillOval(this.camera.getXMapRelative(glowX), this.camera.getYMapRelative(glowY), s.getWidth(0) + glowOffset, s.getHeight(0) + glowOffset);
 			
 			this.gc.restore();
+			this.gc.strokeRect(this.camera.getXMapRelative(ppModel.getBoundX()), this.camera.getYMapRelative(ppModel.getBoundY()), ppModel.getW(), ppModel.getH());
 		}
 	}
 	
@@ -101,14 +109,17 @@ public class PlayerProjectileController extends ProjectileController{
 			double vY = ppModel.getVectorY();
 			
 			vX *= ppModel.getSpeed();
+//			vX *= 1;
 			vY *= ppModel.getSpeed();
+//			vY *= 1;
 			
 			ppModel.setX(ppModel.getX() + vX);
 			ppModel.setY(ppModel.getY() + vY);
 			
-			if ((ppModel.getX() > ((GameSceneView)this.scene).getMapW() * 1.1 || ppModel.getX() < 0) || ppModel.getY() > ((GameSceneView)this.scene).getMapW() * 1.1 || ppModel.getY() < 0) {
+			if ((ppModel.getX() > this.barrier.getMaxX() || ppModel.getX() < this.barrier.getMinX()) || (ppModel.getY() > this.barrier.getMaxY() || ppModel.getY() < this.barrier.getMinY())) {
 				ppModel.resetPosition();
 			}
+			
 		}
 	}
 

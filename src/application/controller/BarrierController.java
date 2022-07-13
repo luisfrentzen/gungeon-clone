@@ -3,23 +3,51 @@ package application.controller;
 import java.util.Vector;
 
 import application.model.BarrierModel;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public class BarrierController extends GameObjectController{
 
-	private Vector<BarrierModel> barriers;
+	private BarrierModel barrier;
+	private CameraController camera;
+	private Canvas canvas;
+	private GraphicsContext gc;
 	
-	public BarrierController() {
+	public BarrierController(Canvas canvas, CameraController camera, double x, double y, double w, double h) {
 		// TODO Auto-generated constructor stub
-		this.barriers = new Vector<BarrierModel>();
+		this.barrier = new BarrierModel(x, y, w, h);
+		this.canvas = canvas;
+		this.camera = camera;
+		this.gc = this.canvas.getGraphicsContext2D();
 	}
 	
-	public void addBarrier(double x, double y, double h, double w) {
-		this.barriers.add(new BarrierModel(x, y, w, h));
+	public BarrierModel getBarrier() {
+		return this.barrier;
+	}
+	
+	public double getMaxX() {
+		return this.barrier.getX() + this.barrier.getW();
+	}
+
+	public double getMaxY() {
+		return this.barrier.getY() + this.barrier.getH();
+	}
+	
+	public double getMinX() {
+		return this.barrier.getX();
+	}
+	
+	public double getMinY() {
+		return this.barrier.getY();
 	}
 
 	@Override
 	public void render() {
 		// TODO Auto-generated method stub
+		this.gc.setStroke(Color.RED);
+		System.out.println(barrier.getW());
+		this.gc.strokeRect(this.camera.getXMapRelative(barrier.getX()), this.camera.getYMapRelative(barrier.getY()), barrier.getW(), barrier.getH());
 	}
 
 	@Override

@@ -50,6 +50,8 @@ public class PlayerModel extends CharacterModel{
 		// TODO Auto-generated constructor stub
 		this.x = x;
 		this.y = y;
+		this.boundX = this.x - this.w / 2;
+		this.boundY = this.y - this.h / 2;
 		this.w = 50;
 		this.h = 50;
 		this.scale = scale;
@@ -70,6 +72,18 @@ public class PlayerModel extends CharacterModel{
 		this.dodgeFrame = 0;
 		
 		this.loadSprites();
+	}
+	
+	@Override
+	public double getBoundX() {
+		// TODO Auto-generated method stub
+		return this.x - this.getW() / 2;
+	}
+	
+	@Override
+	public double getBoundY() {
+		// TODO Auto-generated method stub
+		return this.y - this.getH() * 0.15;
 	}
 	
 	public int getMagCap() {

@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import javafx.geometry.Point2D;
 import application.MainApplication;
+import application.model.BarrierModel;
 import application.model.CameraModel;
 import application.model.PlayerModel;
 import application.model.SpriteModel;
@@ -40,6 +41,7 @@ public class PlayerController extends CharacterController{
 	
 	private double lastX;
 	private double lastY;
+	
 	private Vector<VFXModel> vfxRender;
 	
 	private int drawTick;
@@ -57,14 +59,19 @@ public class PlayerController extends CharacterController{
 	private double cameraOffset;
 	private double cameraOffsetX;
 	private double cameraOffsetY;
+	
+	private boolean isWallBounded;
+	
+	private BarrierController barrier;
 
 	
-	public PlayerController(Canvas canvas, SceneView scene, PlayerProjectileController ppController, CameraController camera) {
+	public PlayerController(Canvas canvas, SceneView scene, PlayerProjectileController ppController, CameraController camera, BarrierController barrier) {
 		// TODO Auto-generated constructor stub
 		this.canvas = canvas;
 		this.scene = scene;
 		this.ppController = ppController;
 		this.gc = canvas.getGraphicsContext2D();
+		this.barrier = barrier;
 		
 		this.camera = camera;
 		this.cameraOffset = 0.1;
@@ -87,9 +94,17 @@ public class PlayerController extends CharacterController{
 		this.currentVector = playerModel.getVectors();
 		
 		vfxRender = new Vector<VFXModel>();
-
+		this.isWallBounded = false;
 	}
 	
+	public boolean isWallBounded() {
+		return isWallBounded;
+	}
+
+	public void setWallBounded(boolean isWallBounded) {
+		this.isWallBounded = isWallBounded;
+	}
+
 	public int getPlayerState() {
 		return this.playerModel.getState();
 	}
@@ -109,6 +124,30 @@ public class PlayerController extends CharacterController{
 	
 	public double getPlayerY() {
 		return this.playerModel.getY();
+	}
+	
+	public void setPlayerX(double x) {
+		double off = sprites.getWidth(0) / 2;
+		if (x - off < this.barrier.getMinX()) {
+			x = this.barrier.getMinX() + off;
+		}
+		else if (x + off > this.barrier.getMaxX()) {
+			x = this.barrier.getMaxX() - off;
+		}
+		
+		this.playerModel.setX(x);
+	}
+	
+	public void setPlayerY(double y) {
+		double off = sprites.getHeight(0) / 2;
+		if (y - off < this.barrier.getMinY()) {
+			y = this.barrier.getMinY() + off;
+		}
+		else if (y + off > this.barrier.getMaxY()) {
+			y = this.barrier.getMaxY() - off;
+		}
+		
+		this.playerModel.setY(y);
 	}
 	
 	public void addVFX(String vfx, double x, double y, int frameLength) {
@@ -145,16 +184,22 @@ public class PlayerController extends CharacterController{
 		
 		double h = this.sprites.getHeight(i);
 		double w = this.sprites.getWidth(i);
+		this.playerModel.setW(w * 0.5);
+		this.playerModel.setH(h * 0.5);
 		
 		if (this.isFlip()) {
 			w = -w;
-		}
+		}		
 		
 		Image p = this.sprites.get(i);
 		double centerX = playerModel.getX() - w / 2;
 		double centerY = playerModel.getY() - h / 2;
 		
 		this.camera.draw(this.gc, p, ((int)centerX) + .5, ((int)centerY) + .5, w, h);
+		
+		this.gc.setFill(Color.RED);
+		this.gc.fillOval(this.camera.getXMapRelative(playerModel.getX()) - 5, this.camera.getYMapRelative(playerModel.getY()) - 5, 10, 10);
+		this.gc.strokeRect(this.camera.getXMapRelative(this.playerModel.getBoundX()), this.camera.getYMapRelative(this.playerModel.getBoundY()), this.playerModel.getW(), this.playerModel.getH());
 	}
 	
 	public boolean isFlip() {
@@ -353,8 +398,9 @@ public class PlayerController extends CharacterController{
 	@Override
 	public void move(double x, double y) {
 		// TODO Auto-generated method stub
-		this.playerModel.setX(x);
-		this.playerModel.setY(y);
+		
+		this.setPlayerX(x);
+		this.setPlayerY(y);
 		
 		camera.setX((x - MainApplication.W / 2) + this.cameraOffsetX);
 		camera.setY((y - MainApplication.H / 2) + this.cameraOffsetY);
@@ -471,6 +517,7 @@ public class PlayerController extends CharacterController{
 		}
 		
 		this.move(cX, cY);
+		
 	}
 	
 	@Override

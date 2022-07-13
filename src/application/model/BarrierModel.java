@@ -6,8 +6,11 @@ public class BarrierModel extends GameObjectModel{
 		// TODO Auto-generated constructor stub
 		this.x = x;
 		this.y = y;
+		this.boundX = x;
+		this.boundY = y;
 		this.w = w;
 		this.h = h;
+		this.scale = 1;
 	}
 
 }
