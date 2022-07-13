@@ -10,9 +10,6 @@ import javafx.scene.paint.Color;
 public class BarrierController extends GameObjectController{
 
 	private BarrierModel barrier;
-	private CameraController camera;
-	private Canvas canvas;
-	private GraphicsContext gc;
 	
 	public BarrierController(Canvas canvas, CameraController camera, double x, double y, double w, double h) {
 		// TODO Auto-generated constructor stub
@@ -46,7 +43,6 @@ public class BarrierController extends GameObjectController{
 	public void render() {
 		// TODO Auto-generated method stub
 		this.gc.setStroke(Color.RED);
-		System.out.println(barrier.getW());
 		this.gc.strokeRect(this.camera.getXMapRelative(barrier.getX()), this.camera.getYMapRelative(barrier.getY()), barrier.getW(), barrier.getH());
 	}
 

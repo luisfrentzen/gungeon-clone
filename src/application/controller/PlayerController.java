@@ -24,9 +24,6 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 
 public class PlayerController extends CharacterController{
-	
-	private GraphicsContext gc;
-	private Canvas canvas;
 	private SceneView scene;
 	
 	private PlayerProjectileController ppController;
@@ -41,8 +38,6 @@ public class PlayerController extends CharacterController{
 	
 	private double lastX;
 	private double lastY;
-	
-	private Vector<VFXModel> vfxRender;
 	
 	private int drawTick;
 	private int globalTick;
@@ -93,7 +88,7 @@ public class PlayerController extends CharacterController{
 		
 		this.currentVector = playerModel.getVectors();
 		
-		vfxRender = new Vector<VFXModel>();
+		this.vfxRender = new Vector<VFXModel>();
 		this.isWallBounded = false;
 	}
 	
@@ -148,20 +143,6 @@ public class PlayerController extends CharacterController{
 		}
 		
 		this.playerModel.setY(y);
-	}
-	
-	public void addVFX(String vfx, double x, double y, int frameLength) {
-		vfxRender.add(new VFXModel(vfx, playerModel.getScale(), x, y, frameLength));
-	}
-	
-	public void drawVFX() {
-		for (VFXModel fx : this.vfxRender) {
-			if (!fx.isDone()) {
-				
-				this.camera.draw(this.gc, fx.getNext(), fx.getX(), fx.getY(), fx.getWidth(fx.getNFrame() - 1), fx.getHeight(fx.getNFrame() - 1));
-				
-			}
-		}
 	}
 	
 	public void drawShadow() {
@@ -413,7 +394,7 @@ public class PlayerController extends CharacterController{
 		if (d > 100 && this.getPlayerState() != PlayerModel.DODGE) {
 			this.lastX = this.getPlayerX();
 			this.lastY = this.getPlayerY();
-			this.addVFX(PlayerModel.PATH_RUN_DUST, x, y + this.sprites.getHeight(0) * 0.275, 2);
+			this.addVFX(PlayerModel.PATH_RUN_DUST, this.playerModel.getScale(), x, y + this.sprites.getHeight(0) * 0.425, 2);
 		}
 	}
 
