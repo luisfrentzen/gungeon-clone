@@ -7,13 +7,13 @@ public class PlayerProjectileModel extends ProjectileModel{
 	public static final String PATH_IMPACT = "/vfx/gun/impact/";
 	
 	public PlayerProjectileModel(double x, double y, double tX, double tY) {
-		this.scale = 2;
+		this.scale = 2.5;
 		this.x = x;
 		this.y = y;
 		this.oriX = x;
 		this.oriY = y;
 		
-		this.speed = 13 * this.scale * MainApplication.globalScale;
+		this.speed = 11 * this.scale * MainApplication.globalScale;
 		
 		this.targetX = tX;
 		this.targetY = tY;

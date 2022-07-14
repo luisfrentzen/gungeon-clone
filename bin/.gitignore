@@ -1,6 +1,10 @@
-/application/
 /gun/
-/vfx/
-/font/
+/marine/
+/application/
+/projectile/
 /tileset/
+/vfx/
 /wall/
+/bulletkin/
+/bullettank/
+/magnum/

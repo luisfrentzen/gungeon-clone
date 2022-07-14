@@ -24,41 +24,17 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 
 public class PlayerController extends CharacterController{
-	private SceneView scene;
-	
 	private PlayerProjectileController ppController;
 	
 	private PlayerModel playerModel;
 	private PlayerView playerView;
 	
-	private SpriteModel sprites;
-	private SpriteModel hand;
-	private SpriteModel pistol;
-	private VFXModel flare;
-	
 	private double lastX;
 	private double lastY;
-	
-	private int drawTick;
-	private int globalTick;
-	
-	private int[] currentVector;
-	private double currentAngle;
-	
-	private double shootX;
-	private double shootY;
-	
-	private double handX;
-	private double handY;
 	
 	private double cameraOffset;
 	private double cameraOffsetX;
 	private double cameraOffsetY;
-	
-	private boolean isWallBounded;
-	
-	private BarrierController barrier;
-
 	
 	public PlayerController(Canvas canvas, SceneView scene, PlayerProjectileController ppController, CameraController camera, BarrierController barrier) {
 		// TODO Auto-generated constructor stub
@@ -83,23 +59,14 @@ public class PlayerController extends CharacterController{
 		this.sprites = playerModel.getSprites(PlayerModel.IDLE, PlayerModel.FRONT);
 		this.hand = playerModel.getHand();
 		this.pistol = playerModel.getGunSprites(PlayerModel.GUN_IDLE);
-		this.flare = new VFXModel(PlayerModel.PATH_FLARE, playerModel.getScale() * 0.65, 0, 0);
+		this.flare = new VFXModel(PlayerModel.PATH_FLARE, playerModel.getScale() * 0.8, 0, 0);
 		this.flare.setDone(true);
 		
 		this.currentVector = playerModel.getVectors();
 		
 		this.vfxRender = new Vector<VFXModel>();
-		this.isWallBounded = false;
 	}
 	
-	public boolean isWallBounded() {
-		return isWallBounded;
-	}
-
-	public void setWallBounded(boolean isWallBounded) {
-		this.isWallBounded = isWallBounded;
-	}
-
 	public int getPlayerState() {
 		return this.playerModel.getState();
 	}
@@ -266,12 +233,6 @@ public class PlayerController extends CharacterController{
 		
 		this.shootX = rotated.getX();
 		this.shootY = rotated.getY();
-	}
-	
-	public Point2D getRotated(double ang, double pointX, double pointY, double pivotX, double pivotY) {
-		double newX = pivotX + (pointX - pivotX) * Math.cos(Math.toRadians(ang)) - (pointY - pivotY)* Math.sin(Math.toRadians(ang));
-		double newY = pivotY + (pointX - pivotX) * Math.sin(Math.toRadians(ang)) + (pointY - pivotY)* Math.cos(Math.toRadians(ang));
-		return new Point2D(newX, newY);
 	}
 	
 	public void doDodge() {

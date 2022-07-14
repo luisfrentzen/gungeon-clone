@@ -1,16 +1,67 @@
 package application.model;
 
+import java.util.HashMap;
+import java.util.Vector;
+
 import application.MainApplication;
 import javafx.scene.image.Image;
 
 public abstract class CharacterModel extends GameObjectModel {
 	
+	protected HashMap<Integer, HashMap<Integer, SpriteModel>> sprites;
+	protected HashMap<Integer, SpriteModel> gunSprites;
+	protected SpriteModel hand;
+
+	protected int facing;
+	
 	protected int hp;
 	protected double speed;
 	protected int state;
+	protected double damage;
+
+	protected double angle;
+	
+	protected int gunDownTime;
+	
+	protected int magCap;
+	protected int magSize;
 	
 	protected int[] vectors = {0, 0, 0, 0};
+	
+	public abstract void loadSprites();
 
+	public int getMagCap() {
+		return magCap;
+	}
+
+	public void setMagCap(int magCap) {
+		this.magCap = magCap;
+	}
+
+	public int getMagSize() {
+		return magSize;
+	}
+
+	public void setMagSize(int magSize) {
+		this.magSize = magSize;
+	}
+
+	public int getGunDownTime() {
+		return gunDownTime;
+	}
+
+	public void setGunDownTime(int gunDownTime) {
+		this.gunDownTime = gunDownTime;
+	}
+	
+	public int getFacing() {
+		return facing;
+	}
+
+	public void setFacing(int facing) {
+		this.facing = facing;
+	}
+	
 	public int getState() {
 		return state;
 	}
@@ -58,6 +109,41 @@ public abstract class CharacterModel extends GameObjectModel {
 		// TODO Auto-generated method stub
 		this.vectors[3] = v;
 	}
+
+	public SpriteModel getHand() {
+		return hand;
+	}
+
+	public void setHand(SpriteModel hand) {
+		this.hand = hand;
+	}
+
+	public double getDamage() {
+		return damage;
+	}
+
+	public void setDamage(double damage) {
+		this.damage = damage;
+	}
+
+	public double getAngle() {
+		return angle;
+	}
+
+	public void setAngle(double angle) {
+		this.angle = angle;
+	}
+
+	public void setVectors(int[] vectors) {
+		this.vectors = vectors;
+	}
 	
+	public SpriteModel getSprites(int state, int dir) {
+		return this.sprites.get(state).get(dir);
+	}
+	
+	public SpriteModel getGunSprites(int state) {
+		return this.gunSprites.get(state);
+	}
 	
 }

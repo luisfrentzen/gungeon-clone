@@ -5,13 +5,6 @@ import java.util.Vector;
 
 public class PlayerModel extends CharacterModel{
 	
-	private HashMap<Integer, HashMap<Integer, SpriteModel>> sprites;
-	private HashMap<Integer, SpriteModel> gunSprites;
-	private HashMap<Integer, HashMap<Integer, Vector<VFXModel>>> vfxs;
-	private SpriteModel hand;
-	
-	private int facing;
-	
 	public static final int IDLE = 0;
 	public static final int RUN = 1;
 	public static final int DODGE = 2;
@@ -30,34 +23,26 @@ public class PlayerModel extends CharacterModel{
 	public static final int GUN_RELOAD = 1;
 	public static final int GUN_FIRE = 2;
 	
-	public static final int VFX_FLARE = 0;
-	
 	public static final String PATH_FLARE = "/vfx/gun/flare/";
 	public static final String PATH_RUN_DUST = "/vfx/player/run/";
-	
-	private double angle;
 	
 	private boolean showGun;
 	private boolean showHand;
 	
 	private int dodgeFrame;
-	private int gunDownTime;
-	
-	private int magCap;
-	private int magSize;
 
 	public PlayerModel(double x, double y, double scale) {
 		// TODO Auto-generated constructor stub
 		this.x = x;
 		this.y = y;
-		this.boundX = this.x - this.w / 2;
-		this.boundY = this.y - this.h / 2;
 		this.w = 50;
 		this.h = 50;
+		this.boundX = this.x - this.w / 2;
+		this.boundY = this.y - this.h / 2;
 		this.scale = scale;
 		this.speed = 3;
 		this.gunDownTime = 0;
-//		this.damage = damage;
+		this.damage = damage;
 		
 		this.magCap = 9;
 		this.magSize = 9;
@@ -65,8 +50,6 @@ public class PlayerModel extends CharacterModel{
 		this.hp = 3;
 		this.state = PlayerModel.IDLE;
 		this.angle = 0;
-		
-		this.facing = PlayerModel.FRONT;
 		
 		this.showGun = true;
 		this.dodgeFrame = 0;
@@ -84,30 +67,6 @@ public class PlayerModel extends CharacterModel{
 	public double getBoundY() {
 		// TODO Auto-generated method stub
 		return this.y - this.getH() * 0.15;
-	}
-	
-	public int getMagCap() {
-		return magCap;
-	}
-
-	public void setMagCap(int magCap) {
-		this.magCap = magCap;
-	}
-
-	public int getMagSize() {
-		return magSize;
-	}
-
-	public void setMagSize(int magSize) {
-		this.magSize = magSize;
-	}
-
-	public int getGunDownTime() {
-		return gunDownTime;
-	}
-
-	public void setGunDownTime(int gunDownTime) {
-		this.gunDownTime = gunDownTime;
 	}
 
 	public int getDodgeFrame() {
@@ -132,14 +91,6 @@ public class PlayerModel extends CharacterModel{
 
 	public void setShowGun(boolean showGun) {
 		this.showGun = showGun;
-	}
-
-	public int getFacing() {
-		return this.facing;
-	}
-	
-	public void setFacing(int f) {
-		this.facing = f;
 	}
 	
 	@Override
@@ -192,43 +143,11 @@ public class PlayerModel extends CharacterModel{
 		this.gunSprites.put(PlayerModel.GUN_FIRE, new SpriteModel("/gun/fire/", this.scale, 3));
 		this.gunSprites.put(PlayerModel.GUN_RELOAD, new SpriteModel("/gun/reload/", this.scale, 3));
 		
-		this.vfxs = new HashMap<Integer, HashMap<Integer, Vector<VFXModel>>>();
-		
 		HashMap<Integer, Vector<VFXModel>> gunFlare = new HashMap<Integer, Vector<VFXModel>>();
 		gunFlare.put(PlayerModel.NO_DIR, new Vector<VFXModel>());
 		
-		this.vfxs.put(PlayerModel.VFX_FLARE, gunFlare);
-		
 		this.hand = new SpriteModel("/marine/hand/", this.scale);
 		
-	}
-	
-	public SpriteModel getHand() {
-		return this.hand;
-	}
-	
-	public int getState() {
-		return this.state;
-	}
-	
-	public void setState(int s) {
-		this.state = s;
-	}
-	
-	public SpriteModel getSprites(int state, int dir) {
-		return this.sprites.get(state).get(dir);
-	}
-	
-	public SpriteModel getGunSprites(int state) {
-		return this.gunSprites.get(state);
-	}
-
-	public void setAngle(double a) {
-		this.angle = a;
-	}
-	
-	public double getAngle() {
-		return this.angle;
 	}
 
 }
