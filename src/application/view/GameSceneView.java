@@ -5,6 +5,7 @@ import application.MainApplication;
 import application.controller.BarrierController;
 import application.controller.CameraController;
 import application.controller.EnemyController;
+import application.controller.EnemyProjectileController;
 import application.controller.MapController;
 import application.controller.PlayerController;
 import application.controller.PlayerProjectileController;
@@ -33,6 +34,7 @@ public class GameSceneView extends SceneView{
 	PlayerProjectileController ppController;
 	
 	EnemyController enemy;
+	EnemyProjectileController epController;
 	
 	MapController map;
 	BarrierController barrier;
@@ -77,7 +79,9 @@ public class GameSceneView extends SceneView{
 		
 		this.ppController = new PlayerProjectileController(this.canvas, this.camera, this.barrier);
 		this.playerController = new PlayerController(this.canvas, this, this.ppController, this.camera, this.barrier);
-		this.enemy = new EnemyController(100, 100, canvas, camera, barrier, playerController);
+		
+		this.epController = new EnemyProjectileController(this.canvas, this.camera, this.barrier);
+		this.enemy = new EnemyController(100, 100, this.epController, canvas, camera, barrier, playerController);
 	}
 	
 	public double getMapH() {
@@ -241,6 +245,7 @@ public class GameSceneView extends SceneView{
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		map.render();
 		ppController.render();
+		epController.render();
         playerController.render();
         enemy.render();
         barrier.render();
@@ -252,6 +257,7 @@ public class GameSceneView extends SceneView{
 		playerController.update();
 		enemy.update();
 		ppController.update();
+		epController.update();
 	}
 
 }

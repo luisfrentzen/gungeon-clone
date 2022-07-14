@@ -13,15 +13,15 @@ public class EnemyProjectileModel extends ProjectileModel{
 		this.oriX = x;
 		this.oriY = y;
 		
-		this.speed = 11 * this.scale * MainApplication.globalScale;
+		this.speed = 1 * this.scale * MainApplication.globalScale;
 		
 		this.targetX = tX;
 		this.targetY = tY;
-		this.spray = 0.4;
+		this.spray = 0.2;
 		
 		calculateVectors();
 
-		this.sprite = new SpriteModel("/projectile/marine/", this.scale);
+		this.sprite = new SpriteModel("/projectile/bulletkin/", this.scale);
 		this.isActive = false;
 	}
 	

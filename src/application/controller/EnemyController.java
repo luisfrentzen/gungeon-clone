@@ -14,15 +14,21 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 
 public class EnemyController extends CharacterController{
+	private EnemyProjectileController bullet;
 	private EnemyModel model;
 	private PlayerController player;
+	private int[] pistolAngle;
+	private int angleIndex;
 	
-	public EnemyController(double x, double y, Canvas canvas, CameraController camera, BarrierController barrier, PlayerController player) {
+	public EnemyController(double x, double y, EnemyProjectileController bullet, Canvas canvas, CameraController camera, BarrierController barrier, PlayerController player) {
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		this.barrier = barrier;
 		this.camera = camera;
 		this.player = player;
+		this.bullet = bullet;
+		this.pistolAngle = new int[] {64, 8};
+		this.angleIndex = -1;
 		
 		this.model = new EnemyModel(x, y, 4);
 		
@@ -99,7 +105,7 @@ public class EnemyController extends CharacterController{
 		this.gc.save();
 		this.gc.setGlobalAlpha(0.6);
 		this.gc.setFill(Color.BLACK);
-		this.gc.fillOval(this.camera.getXMapRelative(this.getModelX()  - (w) /2), this.camera.getYMapRelative(this.getModelY() + (h * 0.45)), w, h / 8);
+		this.gc.fillOval(this.camera.getXMapRelative(this.getModelX() - (w) /2), this.camera.getYMapRelative(this.getModelY() + (h * 0.45)), w, h / 8);
 		this.gc.restore();
 	}
 	
@@ -128,8 +134,8 @@ public class EnemyController extends CharacterController{
 		
 		double h = this.sprites.getHeight(i);
 		double w = this.sprites.getWidth(i);
-		this.model.setW(w * 0.5);
-		this.model.setH(h * 0.5);
+		this.model.setW(w * 0.6);
+		this.model.setH(h * 0.7);
 		
 		if (this.isFlip()) {
 			w = -w;
@@ -173,7 +179,7 @@ public class EnemyController extends CharacterController{
 		double ph = this.sprites.getHeight(0);
 		double pw = this.sprites.getWidth(0);
 		
-		double ang = this.getModelAngle();
+		double ang = this.getModelAngle() - (this.angleIndex > 0? this.pistolAngle[this.angleIndex--] : 0);
 		
 		if (this.getModelAngle() < 90 || this.getModelAngle() > 270) {
 			pw = -pw;
@@ -198,6 +204,9 @@ public class EnemyController extends CharacterController{
 			p = this.pistol.getNext();
 			if (this.pistol.isDone()) {
 				this.pistol = model.getGunSprites(EnemyModel.GUN_IDLE);
+
+				this.doShoot();
+				this.angleIndex += (pistolAngle.length - 1);
 			}
 		}
 		
@@ -213,7 +222,7 @@ public class EnemyController extends CharacterController{
 		
 		this.gc.restore();
 		
-		double pointX = this.handX + (w * 0.8);
+		double pointX = this.handX + (w);
 		double pointY = this.handY - (h * 0.4);
 		
 		Point2D rotated = this.getRotated(ang, pointX, pointY, this.handX, this.handY);
@@ -304,13 +313,44 @@ public class EnemyController extends CharacterController{
 		cX += vX;
 		cY += vY;
 		
-		if (this.model.getGunDownTime() == 0 && this.model.getMagSize() > 0) {
-//			this.doShoot();
-			this.model.setGunDownTime(12);
+		if (this.model.getGunDownTime() == 0 && this.model.getMagSize() > 0 && mag < model.getNoticeRadius()) {
+			this.initiateShoot();
+
+			this.model.setGunDownTime(75);
 			this.model.setMagSize(this.model.getMagSize() - 1);
 		}
 		
 		this.move(cX, cY);
+	}
+	
+	private void initiateShoot() {
+		this.pistol = model.getGunSprites(EnemyModel.GUN_FIRE);
+		this.pistol.reset();
+	}
+
+	private void doShoot() {
+		// TODO Auto-generated method stub
+		double ang = model.getAngle();
+		double w = this.pistol.getWidth(0);
+		double h = this.pistol.getHeight(0);
+		
+		this.flare.reset();
+		this.flare.setX(this.shootX);
+		this.flare.setY(this.shootY);
+		
+		if (this.getModelAngle() < 90 || this.getModelAngle() > 270) {
+			w = -w;
+		}
+		else {
+			ang -= 180;
+		}
+		
+		double pointX = this.handX + w;
+		double pointY = this.handY - h * 0.4;
+		
+		Point2D rresult = this.getRotated(ang, pointX, pointY, this.handX, this.handY);
+
+		this.bullet.shootBullet(this.shootX, this.shootY, rresult.getX(), rresult.getY());			
 	}
 
 	@Override

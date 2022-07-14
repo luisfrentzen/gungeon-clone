@@ -33,7 +33,7 @@ public class EnemyModel extends CharacterModel{
 		this.boundX = this.x - this.w / 2;
 		this.boundY = this.y - this.y / 2;
 		this.scale = scale;
-		this.speed = 2;
+		this.speed = 0.5;
 		this.damage = 1;
 		
 		this.hp = 3;
@@ -43,7 +43,7 @@ public class EnemyModel extends CharacterModel{
 		
 		this.magCap = 9;
 		this.magSize = 9;
-		this.noticeRadius = 150 * this.scale * MainApplication.globalScale;
+		this.noticeRadius = 100 * this.scale * MainApplication.globalScale;
 	}
 
 	public double getNoticeRadius() {
@@ -79,7 +79,7 @@ public class EnemyModel extends CharacterModel{
 		this.gunSprites = new HashMap<Integer, SpriteModel>();
 
 		this.gunSprites.put(EnemyModel.GUN_IDLE, new SpriteModel("/magnum/idle/", this.scale));
-		this.gunSprites.put(EnemyModel.GUN_FIRE, new SpriteModel("/magnum/fire/", this.scale, 3));
+		this.gunSprites.put(EnemyModel.GUN_FIRE, new SpriteModel("/magnum/fire/", this.scale, 2));
 
 		HashMap<Integer, Vector<VFXModel>> gunFlare = new HashMap<Integer, Vector<VFXModel>>();
 		gunFlare.put(EnemyModel.NO_DIR, new Vector<VFXModel>());
@@ -97,6 +97,6 @@ public class EnemyModel extends CharacterModel{
 	@Override
 	public double getBoundY() {
 		// TODO Auto-generated method stub
-		return this.y - this.getH() * 0.15;
+		return this.y - this.getH() * 0.45;
 	}
 }

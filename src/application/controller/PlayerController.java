@@ -148,6 +148,8 @@ public class PlayerController extends CharacterController{
 		this.gc.setFill(Color.RED);
 		this.gc.fillOval(this.camera.getXMapRelative(playerModel.getX()) - 5, this.camera.getYMapRelative(playerModel.getY()) - 5, 10, 10);
 		this.gc.strokeRect(this.camera.getXMapRelative(this.playerModel.getBoundX()), this.camera.getYMapRelative(this.playerModel.getBoundY()), this.playerModel.getW(), this.playerModel.getH());
+	
+		this.gc.strokeOval(this.camera.getXMapRelative(playerModel.getX() - (75 * this.playerModel.getScale() * MainApplication.globalScale)), this.camera.getYMapRelative(playerModel.getY() - (75 * this.playerModel.getScale() * MainApplication.globalScale)), 150 * this.playerModel.getScale() * MainApplication.globalScale, 150 * this.playerModel.getScale() * MainApplication.globalScale);
 	}
 	
 	public boolean isFlip() {
