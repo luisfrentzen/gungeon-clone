@@ -99,7 +99,7 @@ public class EnemyController extends CharacterController{
 		this.gc.save();
 		this.gc.setGlobalAlpha(0.6);
 		this.gc.setFill(Color.BLACK);
-		this.gc.fillOval(this.camera.getXMapRelative(this.getModelX()) - w * 0.25, this.camera.getYMapRelative(this.getModelY()) + h * 0.45, w * 0.5, h / 8);
+		this.gc.fillOval(this.camera.getXMapRelative(this.getModelX()  - (w) /2), this.camera.getYMapRelative(this.getModelY() + (h * 0.45)), w, h / 8);
 		this.gc.restore();
 	}
 	
@@ -217,7 +217,6 @@ public class EnemyController extends CharacterController{
 		double pointY = this.handY - (h * 0.4);
 		
 		Point2D rotated = this.getRotated(ang, pointX, pointY, this.handX, this.handY);
-		System.out.println(this.camera.getXMapRelative(this.handY));
 		
 		this.gc.setFill(Color.RED);
 		this.gc.fillOval(this.camera.getXMapRelative(this.handX - 5), this.camera.getYMapRelative(this.handY - 5), 10, 10);
@@ -243,7 +242,6 @@ public class EnemyController extends CharacterController{
 		}
 		
 		this.setModelFacing(f);
-		System.out.println(this.getModelFacing());
 	}
 	
 	public boolean isFlip() {
@@ -278,39 +276,15 @@ public class EnemyController extends CharacterController{
 		this.setModelAngle(ang);
 		this.updateModelFacing(ang);
 		
-//		this.zeroVector();
-//		if (dX < 0) {
-//			this.setVectorLeft(1);
-//		}
-//		else {
-//			this.setVectorRight(1);
-//		}
-//		
-//		if (dY < 0) {
-//			this.setVectorUp(1); 
-//		}
-//		else {
-//			this.setVectorDown(1);
-//		}
-//		
-//		
-//		double vX = (-this.getCVectorLeft()) + 
-//				(this.getCVectorRight());
-//		
-//		double vY = (-this.getCVectorUp()) + 
-//				(this.getCVectorDown());
-//		
-//		double mag = Math.sqrt(vX * vX + vY * vY);
-//		
-//		if (mag > 0) {
-//			vX /= mag;
-//			vY /= mag;
-//		}
-		
 		double mag = Math.sqrt(dX * dX + dY * dY);
 		
 		double vX = dX / mag;
 		double vY = dY / mag;
+		
+		if (mag < model.getNoticeRadius()) {
+			vX = 0;
+			vY = 0;
+		}
 		
 		vX *= this.model.getSpeed();
 		vY *= this.model.getSpeed();

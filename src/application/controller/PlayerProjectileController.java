@@ -5,6 +5,7 @@ import java.util.Vector;
 import application.MainApplication;
 import application.model.PlayerModel;
 import application.model.PlayerProjectileModel;
+import application.model.ProjectileModel;
 import application.model.SpriteModel;
 import application.model.VFXModel;
 import application.view.GameSceneView;
@@ -19,18 +20,11 @@ import javafx.scene.paint.Color;
 
 public class PlayerProjectileController extends ProjectileController {
 
-	private SceneView scene;
-	private Vector<PlayerProjectileModel> projectiles;
-	private int bulletIndex;
-	private int nBullets;
-	private BarrierController barrier;
-
-	public PlayerProjectileController(Canvas canvas, SceneView scene, CameraController camera,
+	public PlayerProjectileController(Canvas canvas, CameraController camera,
 			BarrierController barrier) {
-		projectiles = new Vector<PlayerProjectileModel>();
+		projectiles = new Vector<ProjectileModel>();
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
-		this.scene = scene;
 		this.barrier = barrier;
 
 		this.nBullets = 9;
@@ -40,7 +34,8 @@ public class PlayerProjectileController extends ProjectileController {
 		initBullets(this.nBullets);
 		this.bulletIndex = 0;
 	}
-
+	
+	@Override
 	public void initBullets(int n) {
 		for (int i = 0; i < n; i++) {
 			this.projectiles.add(new PlayerProjectileModel(-1000, -1000 + i * 10, 0, 0));
@@ -48,7 +43,7 @@ public class PlayerProjectileController extends ProjectileController {
 	}
 
 	public void shootBullet(double oX, double oY, double tX, double tY) {
-		PlayerProjectileModel pp = this.projectiles.get(this.bulletIndex++ % this.nBullets);
+		ProjectileModel pp = this.projectiles.get(this.bulletIndex++ % this.nBullets);
 
 		tX += (Math.random() * pp.getSpray()) - (pp.getSpray() / 2);
 		tY += (Math.random() * pp.getSpray()) - (pp.getSpray() / 2);
@@ -67,7 +62,7 @@ public class PlayerProjectileController extends ProjectileController {
 		// TODO Auto-generated method stub
 		this.drawVFX();
 
-		for (PlayerProjectileModel ppModel : projectiles) {
+		for (ProjectileModel ppModel : projectiles) {
 			SpriteModel s = ppModel.getSprite();
 
 			double x = ppModel.getX() - s.getWidth(0) / 2;
@@ -107,7 +102,7 @@ public class PlayerProjectileController extends ProjectileController {
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
-		for (PlayerProjectileModel ppModel : projectiles) {
+		for (ProjectileModel ppModel : projectiles) {
 			if (!ppModel.isActive()) {
 				continue;
 			}

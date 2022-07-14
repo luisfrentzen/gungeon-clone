@@ -3,6 +3,8 @@ package application.model;
 import java.util.HashMap;
 import java.util.Vector;
 
+import application.MainApplication;
+
 public class EnemyModel extends CharacterModel{
 	
 	public static final int IDLE = 0;
@@ -20,7 +22,8 @@ public class EnemyModel extends CharacterModel{
 	
 	public static final String PATH_FLARE = "/vfx/gun/flare/";
 	
-	protected SpriteModel spawn;
+	private SpriteModel spawn;
+	private double noticeRadius;
 	
 	public EnemyModel(double x, double y, double scale) {
 		this.x = x;
@@ -30,7 +33,7 @@ public class EnemyModel extends CharacterModel{
 		this.boundX = this.x - this.w / 2;
 		this.boundY = this.y - this.y / 2;
 		this.scale = scale;
-		this.speed = 0.5;
+		this.speed = 2;
 		this.damage = 1;
 		
 		this.hp = 3;
@@ -40,8 +43,13 @@ public class EnemyModel extends CharacterModel{
 		
 		this.magCap = 9;
 		this.magSize = 9;
+		this.noticeRadius = 150 * this.scale * MainApplication.globalScale;
 	}
 
+	public double getNoticeRadius() {
+		return noticeRadius;
+	}
+	
 	@Override
 	public void loadSprites() {
 		// TODO Auto-generated method stub

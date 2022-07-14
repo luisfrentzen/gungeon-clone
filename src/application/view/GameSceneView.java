@@ -75,7 +75,7 @@ public class GameSceneView extends SceneView{
 		this.mapW = this.map.getMapWidth();
 		this.barrier = new BarrierController(this.canvas, this.camera, 0, -80, mapW, mapH + 80);
 		
-		this.ppController = new PlayerProjectileController(this.canvas, this, this.camera, this.barrier);
+		this.ppController = new PlayerProjectileController(this.canvas, this.camera, this.barrier);
 		this.playerController = new PlayerController(this.canvas, this, this.ppController, this.camera, this.barrier);
 		this.enemy = new EnemyController(100, 100, canvas, camera, barrier, playerController);
 	}
