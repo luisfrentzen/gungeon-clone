@@ -5,6 +5,7 @@ import java.util.Vector;
 import application.MainApplication;
 import application.model.EnemyModel;
 import application.model.PlayerModel;
+import application.model.SpriteModel;
 import application.model.VFXModel;
 import application.view.GameSceneView;
 import javafx.geometry.Point2D;
@@ -19,6 +20,11 @@ public class EnemyController extends CharacterController{
 	private PlayerController player;
 	private int[] pistolAngle;
 	private int angleIndex;
+	
+	private double vX;
+	private double vY;
+	
+	private SpriteModel hitFrame;
 	
 	public EnemyController(double x, double y, EnemyProjectileController bullet, Canvas canvas, CameraController camera, BarrierController barrier, PlayerController player) {
 		this.canvas = canvas;
@@ -44,7 +50,19 @@ public class EnemyController extends CharacterController{
 		this.currentVector = model.getVectors();
 		
 		this.vfxRender = new Vector<VFXModel>();
-//		this.addVFX(EnemyModel.PATHS_SPAWN, this.model.getScale(), x, y + (model.getW() * 0.3) / 2, 1);
+		this.hitFrame = model.getSprites(EnemyModel.HIT, this.model.getFacing());
+		this.hitFrame.setDone(true);
+	}
+	
+	public void hit(double magX, double magY) {
+		this.hitFrame = model.getSprites(EnemyModel.HIT, this.model.getFacing());
+		this.hitFrame.reset();
+		this.vX = magX;
+		this.vY = magY;
+	}
+	
+	public EnemyModel getModel() {
+		return this.model;
 	}
 	
 	public int getState() {
@@ -126,11 +144,30 @@ public class EnemyController extends CharacterController{
 		return this.model.getAngle();			
 	}
 	
+	public double getvX() {
+		return vX;
+	}
+
+	public void setvX(double vX) {
+		this.vX = vX;
+	}
+
+	public double getvY() {
+		return vY;
+	}
+
+	public void setvY(double vY) {
+		this.vY = vY;
+	}
+
 	public void drawModel() {
 		int actionTick = 24;
 		this.sprites = this.model.getSprites(this.getState(), this.getModelFacing());
 		if (!this.model.getSpawnSprite().isDone()) {
 			this.sprites = this.model.getSpawnSprite();
+		}
+		else if(!this.hitFrame.isDone()) {
+			this.sprites = this.hitFrame;
 		}
 		
 		double tpf = (double)actionTick / (double)this.sprites.getLen();
@@ -148,6 +185,9 @@ public class EnemyController extends CharacterController{
 		Image p = this.sprites.get(i);
 		if (!this.model.getSpawnSprite().isDone()) {
 			p = this.sprites.getNext();
+		}
+		else if(!this.hitFrame.isDone()) {
+			p = this.hitFrame.getNext();
 		}
 			
 		double centerX = model.getX() - w / 2;
@@ -296,16 +336,23 @@ public class EnemyController extends CharacterController{
 		
 		double mag = Math.sqrt(dX * dX + dY * dY);
 		
-		double vX = dX / mag;
-		double vY = dY / mag;
+		if(this.hitFrame.isDone()) {
+			this.vX = dX / mag;
+			this.vY = dY / mag;
+			
+			this.vX *= this.model.getSpeed();
+			this.vY *= this.model.getSpeed();
+		} else {
+			System.out.println(this.vX);
+			this.vX *= this.model.getKnockbackSpeed();
+			this.vY *= this.model.getKnockbackSpeed();
+			
+		}
 		
-		if (mag < model.getNoticeRadius()) {
+		if (mag < model.getNoticeRadius() && this.hitFrame.isDone()) {
 			vX = 0;
 			vY = 0;
 		}
-		
-		vX *= this.model.getSpeed();
-		vY *= this.model.getSpeed();
 		
 		if (vX == 0 && vY == 0) {
 			this.setState(EnemyModel.IDLE);

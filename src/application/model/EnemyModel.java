@@ -9,6 +9,7 @@ public class EnemyModel extends CharacterModel{
 	
 	public static final int IDLE = 0;
 	public static final int RUN = 1;
+	public static final int HIT = 2;
 	
 	public static final int FRONT_RIGHT = 0;
 	public static final int FRONT_LEFT = 1;
@@ -27,6 +28,8 @@ public class EnemyModel extends CharacterModel{
 	private double noticeRadius;
 	private int fireCooldown;
 	
+	private double knockbackSpeed;
+	
 	public EnemyModel(double x, double y, double scale) {
 		this.x = x;
 		this.y = y;
@@ -37,6 +40,7 @@ public class EnemyModel extends CharacterModel{
 		this.scale = scale;
 		this.speed = 0.5;
 		this.damage = 1;
+		this.knockbackSpeed = 0.3;
 		
 		this.hp = 3;
 		this.angle = 0;
@@ -47,6 +51,10 @@ public class EnemyModel extends CharacterModel{
 		this.magSize = 9;
 		this.fireCooldown = 75;
 		this.noticeRadius = 100 * this.scale * MainApplication.globalScale;
+	}
+
+	public double getKnockbackSpeed() {
+		return knockbackSpeed * this.scale * MainApplication.globalScale;
 	}
 
 	public int getFireCooldown() {
@@ -75,13 +83,14 @@ public class EnemyModel extends CharacterModel{
 		run.put(EnemyModel.BACK_LEFT, new SpriteModel("/bulletkin/run/rightback/", this.scale));
 
 		HashMap<Integer, SpriteModel> hit = new HashMap<Integer, SpriteModel>();
-		hit.put(EnemyModel.FRONT_RIGHT, new SpriteModel("/bulletkin/hit/right/", this.scale));
-		hit.put(EnemyModel.FRONT_LEFT, new SpriteModel("/bulletkin/hit/right/", this.scale));
-		hit.put(EnemyModel.BACK_RIGHT, new SpriteModel("/bulletkin/hit/rightback/", this.scale));
-		hit.put(EnemyModel.BACK_LEFT, new SpriteModel("/bulletkin/hit/rightback/", this.scale));
+		hit.put(EnemyModel.FRONT_RIGHT, new SpriteModel("/bulletkin/hit/right/", this.scale, 3));
+		hit.put(EnemyModel.FRONT_LEFT, new SpriteModel("/bulletkin/hit/right/", this.scale, 3));
+		hit.put(EnemyModel.BACK_RIGHT, new SpriteModel("/bulletkin/hit/rightback/", this.scale, 3));
+		hit.put(EnemyModel.BACK_LEFT, new SpriteModel("/bulletkin/hit/rightback/", this.scale, 3));
 
 		this.sprites.put(EnemyModel.IDLE, idle);
 		this.sprites.put(EnemyModel.RUN, run);
+		this.sprites.put(EnemyModel.HIT, hit);
 
 		this.gunSprites = new HashMap<Integer, SpriteModel>();
 

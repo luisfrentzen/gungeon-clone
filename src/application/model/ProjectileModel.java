@@ -29,6 +29,7 @@ public abstract class ProjectileModel extends GameObjectModel{
 		this.x = this.oriX;
 		this.y = this.oriY;
 		this.isActive = false;
+		
 	}
 	
 	public double getSpray() {

@@ -20,8 +20,10 @@ import javafx.scene.paint.Color;
 
 public class PlayerProjectileController extends ProjectileController {
 
+	private Vector<EnemyController> enemies;
+	
 	public PlayerProjectileController(Canvas canvas, CameraController camera,
-			BarrierController barrier) {
+			BarrierController barrier, Vector<EnemyController> enemies) {
 		projectiles = new Vector<ProjectileModel>();
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
@@ -30,6 +32,7 @@ public class PlayerProjectileController extends ProjectileController {
 		this.nBullets = 9;
 		this.camera = camera;
 		this.vfxRender = new Vector<VFXModel>();
+		this.enemies = enemies;
 
 		initBullets(this.nBullets);
 		this.bulletIndex = 0;
@@ -40,6 +43,21 @@ public class PlayerProjectileController extends ProjectileController {
 		for (int i = 0; i < n; i++) {
 			this.projectiles.add(new PlayerProjectileModel(-1000, -1000 + i * 10, 0, 0));
 		}
+	}
+	
+	public void checkHit(Vector<EnemyController> enem, ProjectileModel p, double magX, double magY) {
+		for (EnemyController e : enem) {
+			if (e.isColliding(e.getModel(), p)) {
+				bulletHit(p);
+				e.hit(magX, magY);
+			}
+		}
+	}
+	
+	public void bulletHit(ProjectileModel p) {
+		this.addVFX(PlayerProjectileModel.PATH_IMPACT, 3, p.getX(),
+				p.getY(), 1);
+		p.resetPosition();
 	}
 
 	@Override
@@ -94,6 +112,8 @@ public class PlayerProjectileController extends ProjectileController {
 
 			double vX = ppModel.getVectorX();
 			double vY = ppModel.getVectorY();
+			
+			this.checkHit(enemies, ppModel, vX, vY);
 
 			vX *= ppModel.getSpeed();
 //			vX *= 1;
@@ -103,14 +123,12 @@ public class PlayerProjectileController extends ProjectileController {
 			double x = ppModel.getX();
 			double y = ppModel.getY();
 
-			ppModel.setX(ppModel.getX() + vX);
-			ppModel.setY(ppModel.getY() + vY);
+			ppModel.setX(x + vX);
+			ppModel.setY(y + vY);
 
 			if ((ppModel.getX() > this.barrier.getMaxX() || ppModel.getX() < this.barrier.getMinX())
 					|| (ppModel.getY() > this.barrier.getMaxY() || ppModel.getY() < this.barrier.getMinY())) {
-				ppModel.resetPosition();
-				this.addVFX(PlayerProjectileModel.PATH_IMPACT, 3, x,
-						y, 1);
+				bulletHit(ppModel);
 			}
 
 		}
