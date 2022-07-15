@@ -44,6 +44,7 @@ public class EnemyController extends CharacterController{
 		this.currentVector = model.getVectors();
 		
 		this.vfxRender = new Vector<VFXModel>();
+//		this.addVFX(EnemyModel.PATHS_SPAWN, this.model.getScale(), x, y + (model.getW() * 0.3) / 2, 1);
 	}
 	
 	public int getState() {
@@ -128,6 +129,9 @@ public class EnemyController extends CharacterController{
 	public void drawModel() {
 		int actionTick = 24;
 		this.sprites = this.model.getSprites(this.getState(), this.getModelFacing());
+		if (!this.model.getSpawnSprite().isDone()) {
+			this.sprites = this.model.getSpawnSprite();
+		}
 		
 		double tpf = (double)actionTick / (double)this.sprites.getLen();
 		int i = (int)(Math.floor(drawTick++ % actionTick) / tpf);
@@ -142,6 +146,10 @@ public class EnemyController extends CharacterController{
 		}		
 		
 		Image p = this.sprites.get(i);
+		if (!this.model.getSpawnSprite().isDone()) {
+			p = this.sprites.getNext();
+		}
+			
 		double centerX = model.getX() - w / 2;
 		double centerY = model.getY() - h / 2;
 		
@@ -263,16 +271,17 @@ public class EnemyController extends CharacterController{
 		this.drawVFX();
 		
 		this.drawShadow();
-		this.drawPistol();
+		if (this.model.getSpawnSprite().isDone()) this.drawPistol();
 		
 		this.drawModel();
 		
-		this.drawHand();
+		if (this.model.getSpawnSprite().isDone()) this.drawHand();
 	}
 
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
+		if (!this.model.getSpawnSprite().isDone()) return;
 		this.globalTick++;
 		double cX = this.model.getX();
 		double cY = this.model.getY();
@@ -313,11 +322,16 @@ public class EnemyController extends CharacterController{
 		cX += vX;
 		cY += vY;
 		
-		if (this.model.getGunDownTime() == 0 && this.model.getMagSize() > 0 && mag < model.getNoticeRadius()) {
-			this.initiateShoot();
-
-			this.model.setGunDownTime(75);
-			this.model.setMagSize(this.model.getMagSize() - 1);
+		if (this.model.getGunDownTime() == 0) {
+			if (this.model.getMagSize() > 0 && mag < model.getNoticeRadius()) {
+				this.initiateShoot();				
+				this.model.setMagSize(this.model.getMagSize() - 1);
+			}
+			else {
+				this.doReload();
+			}
+			
+			this.model.setGunDownTime(this.model.getFireCooldown());
 		}
 		
 		this.move(cX, cY);
@@ -326,6 +340,11 @@ public class EnemyController extends CharacterController{
 	private void initiateShoot() {
 		this.pistol = model.getGunSprites(EnemyModel.GUN_FIRE);
 		this.pistol.reset();
+	}
+
+	public void doReload() {
+		this.pistol.reset();
+		this.model.setMagSize(this.model.getMagCap());
 	}
 
 	private void doShoot() {

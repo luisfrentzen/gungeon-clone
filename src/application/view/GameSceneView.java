@@ -1,6 +1,8 @@
 package application.view;
 
 
+import java.util.Vector;
+
 import application.MainApplication;
 import application.controller.BarrierController;
 import application.controller.CameraController;
@@ -33,7 +35,7 @@ public class GameSceneView extends SceneView{
 	PlayerController playerController;
 	PlayerProjectileController ppController;
 	
-	EnemyController enemy;
+	Vector<EnemyController> enemies;
 	EnemyProjectileController epController;
 	
 	MapController map;
@@ -81,7 +83,15 @@ public class GameSceneView extends SceneView{
 		this.playerController = new PlayerController(this.canvas, this, this.ppController, this.camera, this.barrier);
 		
 		this.epController = new EnemyProjectileController(this.canvas, this.camera, this.barrier);
-		this.enemy = new EnemyController(100, 100, this.epController, canvas, camera, barrier, playerController);
+		this.enemies = new Vector<EnemyController>();
+	
+		this.generateEnemies(6);
+	}
+	
+	public void generateEnemies(int n) {
+		for (int i = 0; i < n; i++) {
+			this.enemies.add(new EnemyController(this.mapW * 0.1 + Math.random() * (this.mapW * 0.8), this.mapH * 0.1 + Math.random() * (this.mapH * 0.8), this.epController, canvas, camera, barrier, playerController));
+		}
 	}
 	
 	public double getMapH() {
@@ -244,18 +254,31 @@ public class GameSceneView extends SceneView{
 		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		map.render();
-		ppController.render();
-		epController.render();
-        playerController.render();
-        enemy.render();
         barrier.render();
+        gc.save();
+        gc.setGlobalAlpha(0.25);
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.restore();
+        playerController.render();
+        
+        for (EnemyController e : enemies) {
+			e.render();
+		}
+        
+        epController.render();
+        ppController.render();
 	}
 
 	@Override
 	public void updateFrame() {
 		// TODO Auto-generated method stub
 		playerController.update();
-		enemy.update();
+
+		for (EnemyController e : enemies) {
+			e.update();
+		}
+		
 		ppController.update();
 		epController.update();
 	}

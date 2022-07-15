@@ -21,9 +21,11 @@ public class EnemyModel extends CharacterModel{
 	public static final int GUN_FIRE = 1;
 	
 	public static final String PATH_FLARE = "/vfx/gun/flare/";
+	public static final String PATHS_SPAWN = "/vfx/enemy/spawn/crosshair/";
 	
 	private SpriteModel spawn;
 	private double noticeRadius;
+	private int fireCooldown;
 	
 	public EnemyModel(double x, double y, double scale) {
 		this.x = x;
@@ -43,7 +45,12 @@ public class EnemyModel extends CharacterModel{
 		
 		this.magCap = 9;
 		this.magSize = 9;
+		this.fireCooldown = 75;
 		this.noticeRadius = 100 * this.scale * MainApplication.globalScale;
+	}
+
+	public int getFireCooldown() {
+		return fireCooldown;
 	}
 
 	public double getNoticeRadius() {
@@ -85,7 +92,11 @@ public class EnemyModel extends CharacterModel{
 		gunFlare.put(EnemyModel.NO_DIR, new Vector<VFXModel>());
 
 		this.hand = new SpriteModel("/bulletkin/hand/", this.scale);
-		this.spawn = new SpriteModel("/bulletkin/spawn/", this.scale);
+		this.spawn = new SpriteModel("/bulletkin/spawn/", this.scale, 16);
+	}
+	
+	public SpriteModel getSpawnSprite() {
+		return this.spawn;
 	}
 	
 	@Override

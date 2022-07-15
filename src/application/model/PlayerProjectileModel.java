@@ -13,7 +13,7 @@ public class PlayerProjectileModel extends ProjectileModel{
 		this.oriX = x;
 		this.oriY = y;
 		
-		this.speed = 11 * this.scale * MainApplication.globalScale;
+		this.speed = 9 * this.scale * MainApplication.globalScale;
 		
 		this.targetX = tX;
 		this.targetY = tY;

@@ -109,7 +109,6 @@ public class PlayerProjectileController extends ProjectileController {
 			if ((ppModel.getX() > this.barrier.getMaxX() || ppModel.getX() < this.barrier.getMinX())
 					|| (ppModel.getY() > this.barrier.getMaxY() || ppModel.getY() < this.barrier.getMinY())) {
 				ppModel.resetPosition();
-//				System.out.println(ppModel.getScale());
 				this.addVFX(PlayerProjectileModel.PATH_IMPACT, 3, x,
 						y, 1);
 			}
