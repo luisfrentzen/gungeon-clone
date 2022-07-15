@@ -26,9 +26,6 @@ public class PlayerModel extends CharacterModel{
 	public static final String PATH_FLARE = "/vfx/gun/flare/";
 	public static final String PATH_RUN_DUST = "/vfx/player/run/";
 	
-	private boolean showGun;
-	private boolean showHand;
-	
 	private int dodgeFrame;
 
 	public PlayerModel(double x, double y, double scale) {
@@ -75,22 +72,6 @@ public class PlayerModel extends CharacterModel{
 
 	public void setDodgeFrame(int dodgeFrame) {
 		this.dodgeFrame = dodgeFrame;
-	}
-
-	public boolean isShowHand() {
-		return showHand;
-	}
-
-	public void setShowHand(boolean showHand) {
-		this.showHand = showHand;
-	}
-
-	public boolean isShowGun() {
-		return showGun;
-	}
-
-	public void setShowGun(boolean showGun) {
-		this.showGun = showGun;
 	}
 	
 	@Override

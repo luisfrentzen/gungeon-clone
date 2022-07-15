@@ -72,21 +72,21 @@ public class EnemyModel extends CharacterModel{
 		
 		HashMap<Integer, SpriteModel> idle = new HashMap<Integer, SpriteModel>();
 		idle.put(EnemyModel.FRONT_RIGHT, new SpriteModel("/bulletkin/idle/right/", this.scale));
-		idle.put(EnemyModel.FRONT_LEFT, new SpriteModel("/bulletkin/idle/right/", this.scale));
+		idle.put(EnemyModel.FRONT_LEFT, new SpriteModel("/bulletkin/idle/left/", this.scale));
 		idle.put(EnemyModel.BACK_RIGHT, new SpriteModel("/bulletkin/idle/back/", this.scale));
 		idle.put(EnemyModel.BACK_LEFT, new SpriteModel("/bulletkin/idle/back/", this.scale));
 
 		HashMap<Integer, SpriteModel> run = new HashMap<Integer, SpriteModel>();
 		run.put(EnemyModel.FRONT_RIGHT, new SpriteModel("/bulletkin/run/right/", this.scale));
-		run.put(EnemyModel.FRONT_LEFT, new SpriteModel("/bulletkin/run/right/", this.scale));
+		run.put(EnemyModel.FRONT_LEFT, new SpriteModel("/bulletkin/run/left/", this.scale));
 		run.put(EnemyModel.BACK_RIGHT, new SpriteModel("/bulletkin/run/rightback/", this.scale));
-		run.put(EnemyModel.BACK_LEFT, new SpriteModel("/bulletkin/run/rightback/", this.scale));
+		run.put(EnemyModel.BACK_LEFT, new SpriteModel("/bulletkin/run/leftback/", this.scale));
 
 		HashMap<Integer, SpriteModel> hit = new HashMap<Integer, SpriteModel>();
 		hit.put(EnemyModel.FRONT_RIGHT, new SpriteModel("/bulletkin/hit/right/", this.scale, 3));
-		hit.put(EnemyModel.FRONT_LEFT, new SpriteModel("/bulletkin/hit/right/", this.scale, 3));
+		hit.put(EnemyModel.FRONT_LEFT, new SpriteModel("/bulletkin/hit/left/", this.scale, 3));
 		hit.put(EnemyModel.BACK_RIGHT, new SpriteModel("/bulletkin/hit/rightback/", this.scale, 3));
-		hit.put(EnemyModel.BACK_LEFT, new SpriteModel("/bulletkin/hit/rightback/", this.scale, 3));
+		hit.put(EnemyModel.BACK_LEFT, new SpriteModel("/bulletkin/hit/leftback/", this.scale, 3));
 
 		this.sprites.put(EnemyModel.IDLE, idle);
 		this.sprites.put(EnemyModel.RUN, run);

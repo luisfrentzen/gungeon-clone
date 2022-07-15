@@ -26,9 +26,28 @@ public abstract class CharacterModel extends GameObjectModel {
 	protected int magCap;
 	protected int magSize;
 	
+	protected boolean showGun;
+	protected boolean showHand;
+	
 	protected int[] vectors = {0, 0, 0, 0};
 	
 	public abstract void loadSprites();
+
+	public boolean isShowGun() {
+		return showGun;
+	}
+
+	public void setShowGun(boolean showGun) {
+		this.showGun = showGun;
+	}
+
+	public boolean isShowHand() {
+		return showHand;
+	}
+
+	public void setShowHand(boolean showHand) {
+		this.showHand = showHand;
+	}
 
 	public int getMagCap() {
 		return magCap;

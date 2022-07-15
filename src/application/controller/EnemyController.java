@@ -10,6 +10,8 @@ import application.model.VFXModel;
 import application.view.GameSceneView;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
@@ -52,6 +54,9 @@ public class EnemyController extends CharacterController{
 		this.vfxRender = new Vector<VFXModel>();
 		this.hitFrame = model.getSprites(EnemyModel.HIT, this.model.getFacing());
 		this.hitFrame.setDone(true);
+		
+		this.colorHit = new ColorAdjust();
+		this.colorHit.setBrightness(1);
 	}
 	
 	public void hit(double magX, double magY) {
@@ -179,7 +184,7 @@ public class EnemyController extends CharacterController{
 		this.model.setH(h * 0.7);
 		
 		if (this.isFlip()) {
-			w = -w;
+//			w = -w;
 		}		
 		
 		Image p = this.sprites.get(i);
@@ -193,7 +198,7 @@ public class EnemyController extends CharacterController{
 		double centerX = model.getX() - w / 2;
 		double centerY = model.getY() - h / 2;
 		
-		this.camera.draw(this.gc, p, ((int)centerX) + .5, ((int)centerY) + .5, w, h);
+	    this.camera.draw(this.gc, p, ((int)centerX) + .5, ((int)centerY) + .5, w, h);
 		
 		this.gc.setFill(Color.RED);
 		this.gc.fillOval(this.camera.getXMapRelative(model.getX()) - 5, this.camera.getYMapRelative(model.getY()) - 5, 10, 10);
@@ -211,9 +216,6 @@ public class EnemyController extends CharacterController{
 			pw = -pw;
 			w = -w;
 		}
-//
-//		double centerX = model.getX() + pw * (40.0/100.0);
-//		double centerY = model.getY() + ph * (22.0/100.0);
 		
 		Image p = this.hand.get(0);
 		
@@ -313,9 +315,14 @@ public class EnemyController extends CharacterController{
 		this.drawShadow();
 		if (this.model.getSpawnSprite().isDone()) this.drawPistol();
 		
+		this.gc.save();
+		
+		if (this.hitFrame.getNFrame() < 1 && !this.hitFrame.isDone()) this.gc.setEffect(this.colorHit);
+		
 		this.drawModel();
 		
 		if (this.model.getSpawnSprite().isDone()) this.drawHand();
+		this.gc.restore();
 	}
 
 	@Override
