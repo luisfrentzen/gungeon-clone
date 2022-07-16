@@ -13,7 +13,9 @@ import javafx.scene.paint.Color;
 
 public class EnemyProjectileController extends ProjectileController{
 	
-	public EnemyProjectileController(Canvas canvas, CameraController camera, BarrierController barrier) {
+	private PlayerController player;
+	
+	public EnemyProjectileController(Canvas canvas, CameraController camera, BarrierController barrier, PlayerController player) {
 		// TODO Auto-generated constructor stub
 		projectiles = new Vector<ProjectileModel>();
 		this.canvas = canvas;
@@ -23,9 +25,17 @@ public class EnemyProjectileController extends ProjectileController{
 		this.nBullets = 10;
 		this.camera = camera;
 		this.vfxRender = new Vector<VFXModel>();
+		this.player = player;
 		
 		initBullets(this.nBullets);
 		this.bulletIndex = 0;
+	}
+	
+	public void checkHit(ProjectileModel p, double magX, double magY) {
+		if (!this.player.isInvulnerable() && this.player.isColliding(this.player.getModel(), p)) {
+			bulletHit(p);
+			this.player.hit();
+		}
 	}
 	
 	@Override
@@ -81,6 +91,8 @@ public class EnemyProjectileController extends ProjectileController{
 			if (!ppModel.isActive()) {
 				continue;
 			}
+			
+			this.checkHit(ppModel, 0, 0);
 
 			double vX = ppModel.getVectorX();
 			double vY = ppModel.getVectorY();

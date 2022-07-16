@@ -8,6 +8,7 @@ import application.controller.BarrierController;
 import application.controller.CameraController;
 import application.controller.EnemyController;
 import application.controller.EnemyProjectileController;
+import application.controller.HudController;
 import application.controller.MapController;
 import application.controller.PlayerController;
 import application.controller.PlayerProjectileController;
@@ -48,6 +49,7 @@ public class GameSceneView extends SceneView{
 	private double mapH;
 	
 	private CameraController camera;
+	private HudController hud;
 	
 	@Override
 	protected void initComponents() {
@@ -83,7 +85,8 @@ public class GameSceneView extends SceneView{
 		this.ppController = new PlayerProjectileController(this.canvas, this.camera, this.barrier, this.enemies);
 		this.playerController = new PlayerController(this.canvas, this, this.ppController, this.camera, this.barrier);
 		
-		this.epController = new EnemyProjectileController(this.canvas, this.camera, this.barrier);
+		this.epController = new EnemyProjectileController(this.canvas, this.camera, this.barrier, this.playerController);
+		this.hud = new HudController(camera, canvas, playerController);
 	
 		this.generateEnemies(6);
 	}
@@ -250,31 +253,36 @@ public class GameSceneView extends SceneView{
 	@Override
 	public void renderFrame() {
 		// TODO Auto-generated method stub
-//        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		map.render();
         barrier.render();
-        gc.save();
-        gc.setGlobalAlpha(0.25);
-        gc.setFill(Color.BLACK);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        gc.restore();
-        playerController.render();
+
+        for (EnemyController e : enemies) {
+        	gc.setGlobalAlpha(1);
+			e.renderShadow();
+		}
+        playerController.renderShadow();
         
         for (EnemyController e : enemies) {
+        	gc.setGlobalAlpha(1);
 			e.render();
 		}
+
+        playerController.render();
         
         epController.render();
         ppController.render();
+        
+        hud.render();
 	}
 
 	@Override
 	public void updateFrame() {
 		// TODO Auto-generated method stub
 		playerController.update();
-
+		hud.update();
+		
 		for (EnemyController e : enemies) {
 			e.update();
 		}

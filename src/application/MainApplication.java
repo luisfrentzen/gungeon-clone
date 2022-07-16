@@ -3,7 +3,6 @@ package application;
 import application.controller.MainController;
 import application.factory.SceneFactory;
 import application.model.MainModel;
-import application.view.MainView;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -17,7 +16,6 @@ import javafx.stage.StageStyle;
 public class MainApplication extends Application{
 
 	public MainController controller;
-	public MainView view;
 	public MainModel model;
 	
 	public static double recomW = 1920;

@@ -26,6 +26,8 @@ public abstract class CharacterController extends GameObjectController{
 	protected double handX;
 	protected double handY;
 	
+	protected boolean hasDied;
+	
 	protected BarrierController barrier;
 	
 	public abstract void move(double x, double y);
@@ -38,5 +40,15 @@ public abstract class CharacterController extends GameObjectController{
 		double newY = pivotY + (pointX - pivotX) * Math.sin(Math.toRadians(ang)) + (pointY - pivotY)* Math.cos(Math.toRadians(ang));
 		return new Point2D(newX, newY);
 	}
+
+	public boolean isHasDied() {
+		return hasDied;
+	}
+
+	public void setHasDied(boolean hasDied) {
+		this.hasDied = hasDied;
+	}
+	
+	public abstract void renderShadow();
 
 }

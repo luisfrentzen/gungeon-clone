@@ -10,6 +10,7 @@ public class EnemyModel extends CharacterModel{
 	public static final int IDLE = 0;
 	public static final int RUN = 1;
 	public static final int HIT = 2;
+	public static final int DEATH = 3;
 	
 	public static final int FRONT_RIGHT = 0;
 	public static final int FRONT_LEFT = 1;
@@ -25,6 +26,7 @@ public class EnemyModel extends CharacterModel{
 	public static final String PATHS_SPAWN = "/vfx/enemy/spawn/crosshair/";
 	
 	private SpriteModel spawn;
+	
 	private double noticeRadius;
 	private int fireCooldown;
 	
@@ -40,9 +42,9 @@ public class EnemyModel extends CharacterModel{
 		this.scale = scale;
 		this.speed = 0.5;
 		this.damage = 1;
-		this.knockbackSpeed = 0.3;
+		this.knockbackSpeed = 0.7;
 		
-		this.hp = 3;
+		this.hp = 4;
 		this.angle = 0;
 		
 		this.loadSprites();
@@ -50,6 +52,7 @@ public class EnemyModel extends CharacterModel{
 		this.magCap = 9;
 		this.magSize = 9;
 		this.fireCooldown = 75;
+		this.gunDownTime = 0;
 		this.noticeRadius = 100 * this.scale * MainApplication.globalScale;
 	}
 
@@ -87,10 +90,17 @@ public class EnemyModel extends CharacterModel{
 		hit.put(EnemyModel.FRONT_LEFT, new SpriteModel("/bulletkin/hit/left/", this.scale, 3));
 		hit.put(EnemyModel.BACK_RIGHT, new SpriteModel("/bulletkin/hit/rightback/", this.scale, 3));
 		hit.put(EnemyModel.BACK_LEFT, new SpriteModel("/bulletkin/hit/leftback/", this.scale, 3));
+		
+		HashMap<Integer, SpriteModel> death = new HashMap<Integer, SpriteModel>();
+		death.put(EnemyModel.FRONT_RIGHT, new SpriteModel("/bulletkin/death/rightfront/", this.scale, 3));
+		death.put(EnemyModel.FRONT_LEFT, new SpriteModel("/bulletkin/death/leftfront/", this.scale, 3));
+		death.put(EnemyModel.BACK_RIGHT, new SpriteModel("/bulletkin/death/rightback/", this.scale, 3));
+		death.put(EnemyModel.BACK_LEFT, new SpriteModel("/bulletkin/death/leftback/", this.scale, 3));
 
 		this.sprites.put(EnemyModel.IDLE, idle);
 		this.sprites.put(EnemyModel.RUN, run);
 		this.sprites.put(EnemyModel.HIT, hit);
+		this.sprites.put(EnemyModel.DEATH, death);
 
 		this.gunSprites = new HashMap<Integer, SpriteModel>();
 

@@ -2,6 +2,7 @@ package application.controller;
 
 import java.util.Vector;
 
+import application.model.PlayerProjectileModel;
 import application.model.ProjectileModel;
 
 public abstract class ProjectileController extends GameObjectController{
@@ -26,5 +27,11 @@ public abstract class ProjectileController extends GameObjectController{
 		pp.setTargetY(tY);
 
 		pp.calculateVectors();
+	}
+	
+	public void bulletHit(ProjectileModel p) {
+		this.addVFX(PlayerProjectileModel.PATH_IMPACT, 3, p.getX(),
+				p.getY(), 1);
+		p.resetPosition();
 	}
 }

@@ -27,6 +27,7 @@ public class PlayerModel extends CharacterModel{
 	public static final String PATH_RUN_DUST = "/vfx/player/run/";
 	
 	private int dodgeFrame;
+	private int maxHp;
 
 	public PlayerModel(double x, double y, double scale) {
 		// TODO Auto-generated constructor stub
@@ -39,12 +40,12 @@ public class PlayerModel extends CharacterModel{
 		this.scale = scale;
 		this.speed = 3;
 		this.gunDownTime = 0;
-		this.damage = damage;
 		
 		this.magCap = 9;
 		this.magSize = 9;
 		
-		this.hp = 3;
+		this.hp = 6;
+		this.maxHp = 6;
 		this.state = PlayerModel.IDLE;
 		this.angle = 0;
 		
@@ -54,6 +55,14 @@ public class PlayerModel extends CharacterModel{
 		this.loadSprites();
 	}
 	
+	public int getMaxHp() {
+		return maxHp;
+	}
+
+	public void setMaxHp(int maxHp) {
+		this.maxHp = maxHp;
+	}
+
 	@Override
 	public double getBoundX() {
 		// TODO Auto-generated method stub

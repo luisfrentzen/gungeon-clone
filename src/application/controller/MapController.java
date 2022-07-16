@@ -186,6 +186,10 @@ public class MapController extends GameObjectController{
 			}
 		}
 		
+		this.gc.setGlobalAlpha(0.25);
+		this.gc.setFill(Color.BLACK);
+		this.gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		
 		this.gc.restore();
 	}
 
