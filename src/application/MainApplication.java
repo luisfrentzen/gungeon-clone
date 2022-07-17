@@ -49,7 +49,7 @@ public class MainApplication extends Application{
 		FPS = 60;
 		
 		sceneFactory = new SceneFactory();
-		scene = sceneFactory.makeScene("G");
+		scene = sceneFactory.makeScene("M");
 		
 		stage.setResizable(false);
 		stage.setScene(scene);

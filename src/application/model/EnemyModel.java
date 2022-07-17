@@ -111,7 +111,7 @@ public class EnemyModel extends CharacterModel{
 		gunFlare.put(EnemyModel.NO_DIR, new Vector<VFXModel>());
 
 		this.hand = new SpriteModel("/bulletkin/hand/", this.scale);
-		this.spawn = new SpriteModel("/bulletkin/spawn/", this.scale, 16);
+		this.spawn = new SpriteModel("/bulletkin/spawn/", this.scale, 4);
 	}
 	
 	public SpriteModel getSpawnSprite() {
@@ -128,5 +128,15 @@ public class EnemyModel extends CharacterModel{
 	public double getBoundY() {
 		// TODO Auto-generated method stub
 		return this.y - this.getH() * 0.45;
+	}
+
+	public void reset() {
+		// TODO Auto-generated method stub
+		this.hp = 4;
+		this.angle = 0;
+		this.spawn.reset();
+
+		this.magSize = 9;
+		this.gunDownTime = 0;
 	}
 }

@@ -8,6 +8,7 @@ import application.model.PlayerModel;
 import application.model.SpriteModel;
 import application.model.VFXModel;
 import application.view.GameSceneView;
+import application.view.SceneView;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.effect.BlendMode;
@@ -28,9 +29,10 @@ public class EnemyController extends CharacterController {
 
 	private SpriteModel hitFrame;
 	private SpriteModel deathFrame;
+	private boolean isActive;
 
 	public EnemyController(double x, double y, EnemyProjectileController bullet, Canvas canvas, CameraController camera,
-			BarrierController barrier, PlayerController player) {
+			BarrierController barrier, PlayerController player, SceneView scene) {
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		this.barrier = barrier;
@@ -41,6 +43,7 @@ public class EnemyController extends CharacterController {
 		this.angleIndex = -1;
 
 		this.model = new EnemyModel(x, y, 4);
+		this.scene = scene;
 
 		this.drawTick = 0;
 		this.globalTick = 0;
@@ -67,6 +70,25 @@ public class EnemyController extends CharacterController {
 		this.colorDead = new ColorAdjust();
 		this.colorDead.setBrightness(-0.5);
 		this.hasDied = false;
+		this.isActive = false;
+	}
+	
+	public void reset() {
+		this.model.reset();
+		
+		this.sprites = model.getSprites(EnemyModel.IDLE, EnemyModel.FRONT_RIGHT);
+		this.hand = model.getHand();
+		this.pistol = model.getGunSprites(EnemyModel.GUN_IDLE);
+		this.flare = new VFXModel(EnemyModel.PATH_FLARE, model.getScale() * 0.8, 0, 0);
+		this.flare.setDone(true);
+		
+		this.currentVector = model.getVectors();
+		
+		this.drawTick = 0;
+		this.hitFrame.setDone(true);
+		this.deathFrame.setDone(true);
+		this.hasDied = false;
+		this.isActive = false;
 	}
 
 	public void hit(double magX, double magY) {
@@ -78,6 +100,7 @@ public class EnemyController extends CharacterController {
 			this.deathFrame = model.getSprites(EnemyModel.DEATH, this.getModelFacing());
 			this.deathFrame.reset();
 			this.hasDied = true;
+			((GameSceneView)this.scene).enemyDied();
 		} else {
 			this.hitFrame = model.getSprites(EnemyModel.HIT, this.model.getFacing());
 			this.hitFrame.reset();
@@ -86,6 +109,15 @@ public class EnemyController extends CharacterController {
 
 	public EnemyModel getModel() {
 		return this.model;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.reset();
+		this.isActive = isActive;
 	}
 
 	public int getState() {
@@ -195,7 +227,7 @@ public class EnemyController extends CharacterController {
 		}
 
 		double tpf = (double) actionTick / (double) this.sprites.getLen();
-		int i = (int) (Math.floor(drawTick++ % actionTick) / tpf);
+		int i = (int) (Math.floor(drawTick % actionTick) / tpf);
 
 		if (this.isFlip()) {
 //			w = -w;
@@ -374,9 +406,12 @@ public class EnemyController extends CharacterController {
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
+		if (!this.isActive) return;
+		
 		if (!this.model.getSpawnSprite().isDone())
 			return;
 		this.globalTick++;
+		this.drawTick++;
 		double cX = this.model.getX();
 		double cY = this.model.getY();
 

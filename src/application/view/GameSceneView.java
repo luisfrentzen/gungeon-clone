@@ -20,6 +20,7 @@ import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -50,6 +51,10 @@ public class GameSceneView extends SceneView{
 	
 	private CameraController camera;
 	private HudController hud;
+	private int enemiesLeft;
+	private int score;
+	private int waveDelay;
+	private int enemyIndex;
 	
 	@Override
 	protected void initComponents() {
@@ -87,14 +92,32 @@ public class GameSceneView extends SceneView{
 		
 		this.epController = new EnemyProjectileController(this.canvas, this.camera, this.barrier, this.playerController);
 		this.hud = new HudController(camera, canvas, playerController);
-	
-		this.generateEnemies(6);
+		
+		this.enemiesLeft = 0;
+		this.score = 0;
+		this.enemyIndex = 0;
+		this.waveDelay = MainApplication.FPS * 2;
+		
+		this.generateEnemies(10);
 	}
 	
 	public void generateEnemies(int n) {
 		for (int i = 0; i < n; i++) {
-			this.enemies.add(new EnemyController(this.mapW * 0.1 + Math.random() * (this.mapW * 0.8), this.mapH * 0.1 + Math.random() * (this.mapH * 0.8), this.epController, canvas, camera, barrier, playerController));
+			this.enemies.add(new EnemyController(this.mapW * 0.1 + Math.random() * (this.mapW * 0.8), this.mapH * 0.1 + Math.random() * (this.mapH * 0.8), this.epController, canvas, camera, barrier, playerController, this));
 		}
+	}
+	
+	public void activateEnemies(int n) {
+		this.enemiesLeft += n;
+		for (int i = 0; i < n; i++) {
+			this.enemies.get(enemyIndex).setActive(true);
+			this.enemyIndex = (this.enemyIndex + 1) % this.enemies.size();
+		}
+	}
+	
+	public void enemyDied() {
+		this.enemiesLeft -= 1;
+		this.score += 100 * this.playerController.getPlayerHp();
 	}
 	
 	public double getMapH() {
@@ -129,6 +152,8 @@ public class GameSceneView extends SceneView{
 			@Override
 			public void handle(MouseEvent e) {
 				// TODO Auto-generated method stub
+				if (playerController.isHasDied()) return;
+				
 				switch (e.getButton()) {
 				case SECONDARY:
 					playerController.doDodge();
@@ -149,6 +174,8 @@ public class GameSceneView extends SceneView{
 			@Override
 			public void handle(MouseEvent e) {
 				// TODO Auto-generated method stub
+				if (playerController.isHasDied()) return;
+				
 				switch (e.getButton()) {
 				case SECONDARY:
 					mSecondaryDown = false;
@@ -169,6 +196,7 @@ public class GameSceneView extends SceneView{
 			@Override
 			public void handle(KeyEvent e) {
 				// TODO Auto-generated method stub
+				if (playerController.isHasDied()) return;
 				
 				switch(e.getCode()) {
 				case W:
@@ -195,7 +223,9 @@ public class GameSceneView extends SceneView{
 			@Override
 			public void handle(KeyEvent e) {
 				// TODO Auto-generated method stub
-						
+				
+				if (playerController.isHasDied()) return;
+				
 				switch(e.getCode()) {
 				case W:
 					playerController.setVectorUp(0);
@@ -253,6 +283,7 @@ public class GameSceneView extends SceneView{
 	@Override
 	public void renderFrame() {
 		// TODO Auto-generated method stub
+		
 		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		map.render();
@@ -268,13 +299,20 @@ public class GameSceneView extends SceneView{
         	gc.setGlobalAlpha(1);
 			e.render();
 		}
-
-        playerController.render();
         
         epController.render();
         ppController.render();
         
         hud.render();
+        if (playerController.isHasDied()) {
+        	gc.setGlobalAlpha(0.7);
+        	gc.setFill(Color.BLACK);
+        	gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        	gc.setGlobalAlpha(1);
+        }
+        
+        playerController.render();
+        
 	}
 
 	@Override
@@ -283,12 +321,22 @@ public class GameSceneView extends SceneView{
 		playerController.update();
 		hud.update();
 		
-		for (EnemyController e : enemies) {
-			e.update();
+		if (!playerController.isHasDied()) {
+			for (EnemyController e : enemies) {
+				e.update();
+			}
+			
+			ppController.update();
+			epController.update();
 		}
 		
-		ppController.update();
-		epController.update();
+		if (this.waveDelay > 0 && this.enemiesLeft == 0) {
+			this.waveDelay -= 1;
+		}
+		else if (this.waveDelay == 0 && this.enemiesLeft == 0) {
+			this.activateEnemies(2);
+			this.waveDelay = MainApplication.FPS * 2;
+		}
 	}
 
 }

@@ -168,10 +168,16 @@ public class PlayerController extends CharacterController {
 
 	public void drawPlayer() {
 		int actionTick = 24;
-		this.sprites = this.playerModel.getSprites(this.getPlayerState(), this.getPlayerFacing());
+		
+		if(this.hasDied) {
+			this.sprites = this.playerModel.getDeath();
+		}
+		else {
+			this.sprites = this.playerModel.getSprites(this.getPlayerState(), this.getPlayerFacing());
+		}
 
 		double tpf = (double) actionTick / (double) this.sprites.getLen();
-		int i = (int) (Math.floor(drawTick++ % actionTick) / tpf);
+		int i = (int) (Math.floor(drawTick % actionTick) / tpf);
 
 		double h = this.sprites.getHeight(i);
 		double w = this.sprites.getWidth(i);
@@ -183,6 +189,14 @@ public class PlayerController extends CharacterController {
 		}
 
 		Image p = this.sprites.get(i);
+		
+		if (this.hasDied && !this.playerModel.getDeath().isDone()) {
+			p = this.playerModel.getDeath().getNext();
+		}
+		else if(this.hasDied && this.playerModel.getDeath().isDone()) {
+			p = this.playerModel.getDeath().get(this.playerModel.getDeath().getLen() - 1);
+		}
+		
 		double centerX = playerModel.getX() - w / 2;
 		double centerY = playerModel.getY() - h / 2;
 
@@ -394,7 +408,8 @@ public class PlayerController extends CharacterController {
 	@Override
 	public void move(double x, double y) {
 		// TODO Auto-generated method stub
-
+		if (this.hasDied) return;
+		
 		this.setPlayerX(x);
 		this.setPlayerY(y);
 
@@ -425,11 +440,11 @@ public class PlayerController extends CharacterController {
 		// TODO Auto-generated method stub
 		this.drawVFX();
 
-		if (this.playerModel.isShowGun()) {
+		if (this.playerModel.isShowGun() && !this.hasDied) {
 			this.drawPistol();
 		}
 
-		if (this.playerModel.getMagSize() == 0 && (this.globalTick / 16) % 2 == 0) {
+		if (this.playerModel.getMagSize() == 0 && (this.globalTick / 16) % 2 == 0 && !this.hasDied) {
 			this.gc.setFill(Color.WHITE);
 			this.gc.fillText("reload", this.getPlayerX() - (this.sprites.getWidth(0) * 0.34) - this.camera.getX(),
 					this.getPlayerY() - this.sprites.getHeight(0) * 0.35 - this.camera.getY());
@@ -437,7 +452,7 @@ public class PlayerController extends CharacterController {
 
 		this.drawPlayer();
 
-		if (this.playerModel.isShowGun()) {
+		if (this.playerModel.isShowGun() && !this.hasDied) {
 			this.drawHand();
 		}
 	}
@@ -457,6 +472,7 @@ public class PlayerController extends CharacterController {
 	public void update() {
 		// TODO Auto-generated method stub
 		this.globalTick++;
+		this.drawTick++;
 		double cX = this.playerModel.getX();
 		double cY = this.playerModel.getY();
 
@@ -471,8 +487,10 @@ public class PlayerController extends CharacterController {
 
 		double ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;
 
-		this.setPlayerAngle(ang);
-		this.updatePlayerFacing(ang);
+		if (!this.hasDied) {
+			this.setPlayerAngle(ang);
+			this.updatePlayerFacing(ang);
+		}
 
 		if (this.playerModel.getDodgeFrame() > 0) {
 			this.playerModel.setDodgeFrame(this.playerModel.getDodgeFrame() - 1);

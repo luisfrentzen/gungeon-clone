@@ -28,6 +28,8 @@ public class PlayerModel extends CharacterModel{
 	
 	private int dodgeFrame;
 	private int maxHp;
+	
+	private SpriteModel death;
 
 	public PlayerModel(double x, double y, double scale) {
 		// TODO Auto-generated constructor stub
@@ -137,7 +139,15 @@ public class PlayerModel extends CharacterModel{
 		gunFlare.put(PlayerModel.NO_DIR, new Vector<VFXModel>());
 		
 		this.hand = new SpriteModel("/marine/hand/", this.scale);
-		
+		this.death = new SpriteModel("/marine/death/death/", this.scale, 8);
+	}
+
+	public SpriteModel getDeath() {
+		return death;
+	}
+
+	public void setDeath(SpriteModel death) {
+		this.death = death;
 	}
 
 }
