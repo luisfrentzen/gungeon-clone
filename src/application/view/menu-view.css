@@ -1,0 +1,15 @@
+#play-btn {
+    -fx-text-fill: #FFFFFF;
+}
+
+.button{
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-text-fill: #737373;
+}
+
+.button:hover {
+    -fx-text-fill: #FFFFFF;
+}

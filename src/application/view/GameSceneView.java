@@ -62,11 +62,11 @@ public class GameSceneView extends SceneView{
 		this.root = new StackPane();
 		this.root.setMinHeight(MainApplication.H);
 		this.root.setMinWidth(MainApplication.W);
+		StackPane.setAlignment(this.canvas, Pos.TOP_LEFT); 
 		
 		this.canvas = new Canvas(MainApplication.W, MainApplication.H);
 		this.canvas.setCache(true);
 		this.canvas.setCacheHint(CacheHint.SPEED);
-		StackPane.setAlignment(this.canvas, Pos.TOP_LEFT); 
 		
 		Scale s = new Scale();
 		s.setX(5);
