@@ -4,7 +4,6 @@ import java.awt.MouseInfo;
 
 import application.MainApplication;
 import application.controller.SoundController;
-import application.model.SpriteModel;
 import javafx.animation.AnimationTimer;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
@@ -20,6 +19,7 @@ public abstract class SceneView {
 	
 	protected Canvas canvas;
 	protected GraphicsContext gc;
+	protected MainApplication app;
 	
 	protected abstract void initComponents();
 	
@@ -27,8 +27,9 @@ public abstract class SceneView {
 	
 	protected abstract Scene initScene();
 	
-	public void generateScene(SoundController sound) {
+	public void generateScene(SoundController sound, MainApplication app) {
 		this.sound = sound;
+		this.app = app;
 		this.initComponents();
 		this.root = this.addComponents();
 		this.scene = this.initScene();
@@ -37,11 +38,11 @@ public abstract class SceneView {
 	}
 	
 	public double getPointerX() {
-		return MouseInfo.getPointerInfo().getLocation().getX() + ImageCursor.getBestSize(64, 64).getWidth() / 2;
+		return MouseInfo.getPointerInfo().getLocation().getX() + MainApplication.W * 0.0075;
 	}
 	
 	public double getPointerY() {
-		return  MouseInfo.getPointerInfo().getLocation().getY() - ImageCursor.getBestSize(64,64).getHeight() * 0.75;
+		return  MouseInfo.getPointerInfo().getLocation().getY() + MainApplication.H * 0.015;
 	}
 	
 	public abstract void updateFrame();

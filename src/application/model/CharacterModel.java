@@ -1,10 +1,7 @@
 package application.model;
 
 import java.util.HashMap;
-import java.util.Vector;
-
 import application.MainApplication;
-import javafx.scene.image.Image;
 
 public abstract class CharacterModel extends GameObjectModel {
 	
@@ -110,22 +107,18 @@ public abstract class CharacterModel extends GameObjectModel {
 	}
 
 	public void setVectorUp(int v) {
-		// TODO Auto-generated method stub
 		this.vectors[0] = v;
 	}
 	
 	public void setVectorLeft(int v) {
-		// TODO Auto-generated method stub
 		this.vectors[1] = v;
 	}
 	
 	public void setVectorDown(int v) {
-		// TODO Auto-generated method stub
 		this.vectors[2] = v;
 	}
 	
 	public void setVectorRight(int v) {
-		// TODO Auto-generated method stub
 		this.vectors[3] = v;
 	}
 

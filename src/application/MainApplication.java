@@ -5,12 +5,6 @@ import application.controller.SoundController;
 import application.factory.SceneFactory;
 import application.model.MainModel;
 import javafx.application.Application;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -29,36 +23,45 @@ public class MainApplication extends Application{
 	public static double globalScale;
 	
 	public SceneFactory sceneFactory;
-	public static Scene scene;
+	
+	public static final String MENU_SCENE = "M";
+	public static final String GAME_SCENE = "G";
+	
+	public Stage stage;
 	
 	public SoundController sound;
 	
 	@Override
 	public void start(Stage stage) throws Exception {
 		// TODO Auto-generated method stub
-		stage.setMaximized(true);
-		stage.initStyle(StageStyle.UNDECORATED);
+		this.stage = stage;
+		this.stage.setMaximized(true);
+//		this.stage.initStyle(StageStyle.UNDECORATED);
 		
-		stage.show();
+		this.stage.show();
 		
 		W = stage.getWidth();
 		H = stage.getHeight();
 		
 		System.out.println(W + " " + H);
 		
-//		globalScale = W / recomW;
-		globalScale = 1;
+		globalScale = W / recomW;
 		
-		FPS = 60;
+		MainApplication.FPS = 60;
 		
-		sceneFactory = new SceneFactory();
-		sound = new SoundController();
-		scene = sceneFactory.makeScene("M", sound);
+		this.sceneFactory = new SceneFactory();
+		this.sound = new SoundController();
 		
-		stage.setResizable(false);
-		stage.setScene(scene);
-		stage.sizeToScene();
-		stage.show();
+		this.stage.setResizable(false);
+		this.stage.setScene(sceneFactory.makeScene(MainApplication.MENU_SCENE, sound, this));
+		this.stage.sizeToScene();
+		this.stage.show();
+	}
+	
+	public void changeScene(String type) {
+		this.stage.setScene(sceneFactory.makeScene(type, this.sound, this));
+		this.stage.sizeToScene();
+		this.stage.show();
 	}
 	
 	public static double mapWidth(double w) {
@@ -68,7 +71,6 @@ public class MainApplication extends Application{
 	public static double mapHeight(double h) {
 		return h * (H / 100);
 	}
-	
 	
 	public static void main(String[] args) {
 		launch(args);

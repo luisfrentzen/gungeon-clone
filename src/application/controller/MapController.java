@@ -92,8 +92,6 @@ public class MapController extends GameObjectController{
 		Image redTileBotRight = this.map.getWall(MapModel.RED_TILE_BOT_RIGHT);
 		
 		Image redTileHor = this.map.getWall(MapModel.RED_TILE_HOR);
-		Image redTileHorVar = this.map.getWall(MapModel.RED_TILE_HOR_VAR);
-		Image redTileVer = this.map.getWall(MapModel.RED_TILE_VER);
 		Image redTileVerVar = this.map.getWall(MapModel.RED_TILE_VER_VAR);
 		
 		double tileSize = this.map.getTileSize();

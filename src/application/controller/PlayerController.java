@@ -5,22 +5,14 @@ import java.util.Vector;
 
 import javafx.geometry.Point2D;
 import application.MainApplication;
-import application.model.BarrierModel;
-import application.model.CameraModel;
-import application.model.EnemyModel;
 import application.model.PlayerModel;
-import application.model.SpriteModel;
 import application.model.VFXModel;
 import application.view.GameSceneView;
 import application.view.SceneView;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 
 public class PlayerController extends CharacterController {
@@ -233,7 +225,7 @@ public class PlayerController extends CharacterController {
 		if (this.getPlayerState() == PlayerModel.DODGE) {
 			return this.getPlayerFacing() > 2;
 		} else {
-			return (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270);
+			return (this.getPlayerAngle() < 60 || this.getPlayerAngle() > 300);
 		}
 	}
 
@@ -244,7 +236,7 @@ public class PlayerController extends CharacterController {
 		double ph = this.sprites.getHeight(0);
 		double pw = this.sprites.getWidth(0);
 
-		if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
+		if (this.isFlip()) {
 			pw = -pw;
 			w = -w;
 		}
@@ -264,9 +256,28 @@ public class PlayerController extends CharacterController {
 		double ph = this.sprites.getHeight(0);
 		double pw = this.sprites.getWidth(0);
 
-		double ang = this.getPlayerAngle();
+		double dX = ((GameSceneView) this.scene).getMouseX() - this.camera.getXMapRelative(this.shootX);
+		double dY = ((GameSceneView) this.scene).getMouseY() - this.camera.getYMapRelative(this.shootY);
+		double dist = Math.sqrt(
+				(
+				(((GameSceneView) this.scene).getMouseX() - this.camera.getXMapRelative(this.getPlayerX())) * 
+				(((GameSceneView) this.scene).getMouseX() - this.camera.getXMapRelative(this.getPlayerX()))
+				) + (
+				(((GameSceneView) this.scene).getMouseY() - this.camera.getYMapRelative(this.getPlayerY())) * 
+				(((GameSceneView) this.scene).getMouseY() - this.camera.getYMapRelative(this.getPlayerY()))
+				)
+				);
+		
 
-		if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
+		double ang = 0;
+		if (dist < MainApplication.W * 0.1) {
+			ang = this.getPlayerAngle();
+		}
+		else {
+			ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;			
+		}
+		
+		if (this.isFlip()) {
 			pw = -pw;
 			w = -w;
 		} else {
@@ -379,7 +390,27 @@ public class PlayerController extends CharacterController {
 
 	public void doShoot() {
 		if (this.getPlayerState() != PlayerModel.DODGE) {
-			double ang = playerModel.getAngle();
+			double dX = ((GameSceneView) this.scene).getMouseX() - this.camera.getXMapRelative(this.shootX);
+			double dY = ((GameSceneView) this.scene).getMouseY() - this.camera.getYMapRelative(this.shootY);
+			double dist = Math.sqrt(
+					(
+					(((GameSceneView) this.scene).getMouseX() - this.camera.getXMapRelative(this.getPlayerX())) * 
+					(((GameSceneView) this.scene).getMouseX() - this.camera.getXMapRelative(this.getPlayerX()))
+					) + (
+					(((GameSceneView) this.scene).getMouseY() - this.camera.getYMapRelative(this.getPlayerY())) * 
+					(((GameSceneView) this.scene).getMouseY() - this.camera.getYMapRelative(this.getPlayerY()))
+					)
+					);
+			
+
+			double ang = 0;
+			if (dist < MainApplication.W * 0.1) {
+				ang = this.getPlayerAngle();
+			}
+			else {
+				ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;			
+			}
+//			double ang = playerModel.getAngle();
 			double w = this.pistol.getWidth(0);
 			double h = this.pistol.getHeight(0);
 
@@ -390,7 +421,7 @@ public class PlayerController extends CharacterController {
 			this.flare.setX(this.shootX);
 			this.flare.setY(this.shootY);
 
-			if (this.getPlayerAngle() < 90 || this.getPlayerAngle() > 270) {
+			if (this.isFlip()) {
 				w = -w;
 			} else {
 				ang -= 180;
@@ -455,6 +486,11 @@ public class PlayerController extends CharacterController {
 		if (this.playerModel.isShowGun() && !this.hasDied) {
 			this.drawHand();
 		}
+		
+
+		this.gc.setFill(Color.RED);
+		this.gc.fillOval(((GameSceneView) this.scene).getMouseX() - 5, ((GameSceneView) this.scene).getMouseY() - 5, 10, 10);
+
 	}
 
 	public int getVectorSum() {
@@ -479,9 +515,9 @@ public class PlayerController extends CharacterController {
 		if (this.hitFrame > 0)
 			this.hitFrame -= 1;
 
-		double dX = this.scene.getPointerX() - this.getPlayerX();
-		double dY = this.scene.getPointerY() - this.getPlayerY();
-
+		double dX = ((GameSceneView) this.scene).getMouseX() - this.camera.getXMapRelative(this.getPlayerX());
+		double dY = ((GameSceneView) this.scene).getMouseY() - this.camera.getYMapRelative(this.getPlayerY());
+		
 		this.cameraOffsetX = dX / (MainApplication.W / 2) * (this.cameraOffset * MainApplication.W);
 		this.cameraOffsetY = dY / (MainApplication.H / 2) * (this.cameraOffset * MainApplication.H);
 

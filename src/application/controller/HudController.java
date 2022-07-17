@@ -9,8 +9,6 @@ import javafx.scene.image.Image;
 
 public class HudController extends GameObjectController {
 
-	private CameraController camera;
-	private Canvas canvas;
 	private GraphicsContext gc;
 	private PlayerController player;
 

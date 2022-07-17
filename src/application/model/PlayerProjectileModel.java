@@ -17,7 +17,7 @@ public class PlayerProjectileModel extends ProjectileModel{
 		
 		this.targetX = tX;
 		this.targetY = tY;
-		this.spray = 0.4;
+		this.spray = 0.15;
 		
 		calculateVectors();
 

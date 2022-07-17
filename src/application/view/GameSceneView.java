@@ -12,24 +12,20 @@ import application.controller.HudController;
 import application.controller.MapController;
 import application.controller.PlayerController;
 import application.controller.PlayerProjectileController;
-import application.model.CameraModel;
-import application.model.PlayerModel;
-import javafx.animation.AnimationTimer;
+import application.factory.SceneFactory;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
+import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.GaussianBlur;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
 public class GameSceneView extends SceneView{
@@ -56,21 +52,32 @@ public class GameSceneView extends SceneView{
 	private int waveDelay;
 	private int enemyIndex;
 	
+	private int deathFade;
+	private boolean screenChanged;
+	
+	protected double mouseX;
+	protected double mouseY;
+	
 	@Override
 	protected void initComponents() {
 		// TODO Auto-generated method stub
 		this.root = new StackPane();
 		this.root.setMinHeight(MainApplication.H);
 		this.root.setMinWidth(MainApplication.W);
-		StackPane.setAlignment(this.canvas, Pos.TOP_LEFT); 
+		this.root.getStyleClass().add("option-container");
 		
 		this.canvas = new Canvas(MainApplication.W, MainApplication.H);
 		this.canvas.setCache(true);
 		this.canvas.setCacheHint(CacheHint.SPEED);
 		
+		StackPane.setAlignment(this.canvas, Pos.TOP_LEFT); 
+		
 		Scale s = new Scale();
 		s.setX(5);
 		s.setY(5);
+		
+		this.deathFade = 0;
+		this.screenChanged = false;
 		
 		camera = new CameraController();
 		
@@ -101,6 +108,16 @@ public class GameSceneView extends SceneView{
 		this.generateEnemies(10);
 	}
 	
+	public double getMouseX() {
+//		return mouseX + MainApplication.W * 0.0075;
+		return mouseX + ImageCursor.getBestSize(64, 64).getWidth() / 2;
+	}
+
+	public double getMouseY() {
+//		return mouseY + MainApplication.H * 0.015;
+		return mouseY + ImageCursor.getBestSize(64, 64).getHeight() / 2;
+	}
+
 	public void generateEnemies(int n) {
 		for (int i = 0; i < n; i++) {
 			this.enemies.add(new EnemyController(this.mapW * 0.1 + Math.random() * (this.mapW * 0.8), this.mapH * 0.1 + Math.random() * (this.mapH * 0.8), this.epController, canvas, camera, barrier, playerController, this));
@@ -144,8 +161,17 @@ public class GameSceneView extends SceneView{
 	protected Scene initScene() {
 		// TODO Auto-generated method stub
 		this.scene = new Scene(root);
+		this.scene.getStylesheets().add(getClass().getResource("menu-view.css").toExternalForm());
 		this.mPrimaryDown = false;
 		this.mSecondaryDown = false;
+		
+		this.scene.setOnMouseMoved(new EventHandler<MouseEvent>() {
+		    @Override
+		    public void handle(MouseEvent event) {
+		        mouseX = event.getSceneX();
+		        mouseY = event.getSceneY();
+		    }
+		});
 		
 		this.scene.setOnMousePressed(new EventHandler<MouseEvent>() {
 
@@ -271,13 +297,13 @@ public class GameSceneView extends SceneView{
 	@Override
 	public double getPointerX() {
 		// TODO Auto-generated method stub
-		return this.camera.getXCamRelative(super.getPointerX());
+		return super.getPointerX();
 	}
 	
 	@Override
 	public double getPointerY() {
 		// TODO Auto-generated method stub
-		return this.camera.getYCamRelative(super.getPointerY());
+		return super.getPointerY();
 	}
 
 	@Override
@@ -308,11 +334,34 @@ public class GameSceneView extends SceneView{
         	gc.setGlobalAlpha(0.7);
         	gc.setFill(Color.BLACK);
         	gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
         	gc.setGlobalAlpha(1);
         }
         
         playerController.render();
         
+    	
+    	if (this.deathFade == 0 && playerController.isHasDied()) {
+    		this.deathFade = (int) (MainApplication.FPS * 2.0);
+    	}
+    	else if (this.deathFade > 0 && playerController.isHasDied()){
+    		this.deathFade -= 1;
+    		gc.setGlobalAlpha(1 - (this.deathFade / (MainApplication.FPS * 2.0)));
+        	gc.setFill(Color.BLACK);
+        	gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        	
+        	if (this.deathFade == 0) {
+        		this.deathFade = -1;
+        	}
+    	}
+    	else if (this.deathFade == -1) {
+    		gc.setGlobalAlpha(1);
+        	gc.setFill(Color.BLACK);
+        	gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        	
+        	if (this.screenChanged == false) this.app.changeScene(MainApplication.MENU_SCENE);
+        	this.screenChanged = true;
+    	}
 	}
 
 	@Override

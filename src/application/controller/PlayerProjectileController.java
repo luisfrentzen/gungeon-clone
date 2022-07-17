@@ -2,20 +2,12 @@ package application.controller;
 
 import java.util.Vector;
 
-import application.MainApplication;
-import application.model.PlayerModel;
 import application.model.PlayerProjectileModel;
 import application.model.ProjectileModel;
 import application.model.SpriteModel;
 import application.model.VFXModel;
-import application.view.GameSceneView;
-import application.view.SceneView;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.GaussianBlur;
-import javafx.scene.effect.Glow;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class PlayerProjectileController extends ProjectileController {

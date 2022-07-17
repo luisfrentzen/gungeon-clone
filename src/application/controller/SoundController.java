@@ -13,6 +13,8 @@ public class SoundController {
 	
 	public static final int SFX_MENU_SELECT = 0;
 	public static final int SFX_MENU_CONFIRM = 1;
+	public static final int SFX_MENU_PAUSE = 2;
+	public static final int SFX_MENU_CANCEL = 3;
 	
 	public static final int MUSIC_TITLE_MENU = 0;
 	
@@ -27,6 +29,8 @@ public class SoundController {
 		
 		this.sound.put(SoundController.SFX_MENU_SELECT, this.loadSfx("/sfx/menu/menu_select.wav"));
 		this.sound.put(SoundController.SFX_MENU_CONFIRM, this.loadSfx("/sfx/menu/menu_confirm.wav"));
+		this.sound.put(SoundController.SFX_MENU_PAUSE, this.loadSfx("/sfx/menu/menu_pause.wav"));
+		this.sound.put(SoundController.SFX_MENU_CANCEL, this.loadSfx("/sfx/menu/menu_cancel.wav"));
 		
 		this.music.put(SoundController.MUSIC_TITLE_MENU, this.loadMusic("/music/menu/menu_bgm.mp3"));
 	}
@@ -47,6 +51,22 @@ public class SoundController {
 	public void playMusic(int id) {
 		this.music.get(id).play();
 		this.music.get(id).setCycleCount(MediaPlayer.INDEFINITE);
+	}
+	
+	public void stopMusic(int id) {
+		this.music.get(id).stop();
+	}
+	
+	public void setMusicVolume(double vol) {
+		this.music.forEach((k, v) -> {
+			v.setVolume(vol);
+		});
+	}
+	
+	public void setSoundVolume(double vol) {
+		this.sound.forEach((k, v) -> {
+			v.setVolume(vol);
+		});
 	}
 
 }

@@ -2,16 +2,13 @@ package application.controller;
 
 import java.util.Vector;
 
-import application.MainApplication;
 import application.model.EnemyModel;
-import application.model.PlayerModel;
 import application.model.SpriteModel;
 import application.model.VFXModel;
 import application.view.GameSceneView;
 import application.view.SceneView;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -282,7 +279,6 @@ public class EnemyController extends CharacterController {
 		double h = this.hand.getHeight(0);
 		double w = this.hand.getWidth(0);
 
-		double ph = this.sprites.getHeight(0);
 		double pw = this.sprites.getWidth(0);
 
 		if (this.getModelAngle() < 90 || this.getModelAngle() > 270) {
@@ -462,7 +458,7 @@ public class EnemyController extends CharacterController {
 		cY += rY;
 
 		if (this.model.getGunDownTime() == 0) {
-			if (this.model.getMagSize() > 0 && mag < model.getNoticeRadius()) {
+			if (this.model.getMagSize() > 0 && mag < this.model.getNoticeRadius()) {
 				this.initiateShoot();
 				this.model.setMagSize(this.model.getMagSize() - 1);
 			} else {
@@ -476,7 +472,7 @@ public class EnemyController extends CharacterController {
 	}
 
 	private void initiateShoot() {
-		this.pistol = model.getGunSprites(EnemyModel.GUN_FIRE);
+		this.pistol = this.model.getGunSprites(EnemyModel.GUN_FIRE);
 		this.pistol.reset();
 	}
 

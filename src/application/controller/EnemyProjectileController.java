@@ -3,7 +3,6 @@ package application.controller;
 import java.util.Vector;
 
 import application.model.EnemyProjectileModel;
-import application.model.PlayerProjectileModel;
 import application.model.ProjectileModel;
 import application.model.SpriteModel;
 import application.model.VFXModel;

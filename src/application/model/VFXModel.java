@@ -1,7 +1,5 @@
 package application.model;
 
-import javafx.scene.image.Image;
-
 public class VFXModel extends SpriteModel{
 	
 	private double x;
