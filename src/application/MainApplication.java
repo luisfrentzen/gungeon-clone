@@ -1,6 +1,7 @@
 package application;
 
 import application.controller.MainController;
+import application.controller.SoundController;
 import application.factory.SceneFactory;
 import application.model.MainModel;
 import javafx.application.Application;
@@ -30,6 +31,8 @@ public class MainApplication extends Application{
 	public SceneFactory sceneFactory;
 	public static Scene scene;
 	
+	public SoundController sound;
+	
 	@Override
 	public void start(Stage stage) throws Exception {
 		// TODO Auto-generated method stub
@@ -49,7 +52,8 @@ public class MainApplication extends Application{
 		FPS = 60;
 		
 		sceneFactory = new SceneFactory();
-		scene = sceneFactory.makeScene("M");
+		sound = new SoundController();
+		scene = sceneFactory.makeScene("M", sound);
 		
 		stage.setResizable(false);
 		stage.setScene(scene);

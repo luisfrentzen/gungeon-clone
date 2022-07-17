@@ -1,6 +1,11 @@
 package application.view;
 
 import application.MainApplication;
+import application.controller.SoundController;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -56,29 +61,75 @@ public class MenuSceneView extends SceneView{
 		
 		Font f = Font.loadFont("file:resources/font/minecraftia/Minecraftia-Regular.ttf", MainApplication.H * 0.04);
 
+		EventHandler hover = new EventHandler<>() {
+
+			@Override
+			public void handle(Event arg0) {
+				// TODO Auto-generated method stub
+				sound.playSfx(SoundController.SFX_MENU_SELECT);
+			}
+			
+		};
+		
 		playButton.setId("play-btn");
 		playButton.setFont(f);
 		playButton.setLayoutY(MainApplication.H * 0.75);
 		playButton.setLayoutX(MainApplication.W * 0.02);
 		
+		playButton.setOnAction(new EventHandler<>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
+			}
+			
+		});
+		
+		playButton.setOnMouseEntered(hover);
+		
 		optionButton.setFont(f);
 		optionButton.setLayoutY(MainApplication.H * 0.815);
 		optionButton.setLayoutX(MainApplication.W * 0.02);
+		
+		optionButton.setOnAction(new EventHandler<>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
+			}
+			
+		});
+		
+		optionButton.setOnMouseEntered(hover);
 		
 		exitButton.setFont(f);
 		exitButton.setLayoutY(MainApplication.H * 0.88);
 		exitButton.setLayoutX(MainApplication.W * 0.02);
 		
+		exitButton.setOnAction(new EventHandler<>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
+				Platform.exit();
+			}
+			
+		});
+		
+		exitButton.setOnMouseEntered(hover);
+		
 		this.buttonPane = new Pane();
 		this.buttonPane.getChildren().addAll(playButton, optionButton, exitButton);
-
-		this.menuLabel = new Label("Main Menu");
+		
+		this.sound.playMusic(SoundController.MUSIC_TITLE_MENU);
 	}
 
 	@Override
 	protected Pane addComponents() {
 		// TODO Auto-generated method stub
-		this.root.getChildren().add(menuLabel);
 		this.root.getChildren().add(logoPane);
 		this.root.getChildren().add(this.buttonPane);
 		
@@ -90,7 +141,7 @@ public class MenuSceneView extends SceneView{
 		// TODO Auto-generated method stub
 		this.scene = new Scene(root);
 		this.scene.getStylesheets().add(getClass().getResource("menu-view.css").toExternalForm());
-		
+
 		return this.scene;
 	}
 

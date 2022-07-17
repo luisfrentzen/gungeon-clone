@@ -3,6 +3,7 @@ package application.view;
 import java.awt.MouseInfo;
 
 import application.MainApplication;
+import application.controller.SoundController;
 import application.model.SpriteModel;
 import javafx.animation.AnimationTimer;
 import javafx.scene.ImageCursor;
@@ -15,6 +16,7 @@ public abstract class SceneView {
 
 	protected Pane root;
 	protected Scene scene;
+	protected SoundController sound;
 	
 	protected Canvas canvas;
 	protected GraphicsContext gc;
@@ -25,7 +27,8 @@ public abstract class SceneView {
 	
 	protected abstract Scene initScene();
 	
-	public void generateScene() {
+	public void generateScene(SoundController sound) {
+		this.sound = sound;
 		this.initComponents();
 		this.root = this.addComponents();
 		this.scene = this.initScene();

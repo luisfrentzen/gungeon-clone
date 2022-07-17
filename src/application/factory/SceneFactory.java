@@ -3,6 +3,7 @@ package application.factory;
 import java.awt.MouseInfo;
 import java.net.URISyntaxException;
 
+import application.controller.SoundController;
 import application.model.SpriteModel;
 import application.view.GameSceneView;
 import application.view.MenuSceneView;
@@ -15,7 +16,7 @@ public class SceneFactory {
 	
 	private SpriteModel cursor;
 	
-	public Scene makeScene(String sceneType) {
+	public Scene makeScene(String sceneType, SoundController sound) {
 		SceneView scene = null;
 		
 		switch (sceneType) {
@@ -29,7 +30,7 @@ public class SceneFactory {
 		
 		this.cursor = new SpriteModel("/app/cursor/", 1);
 		ImageCursor im = new ImageCursor(cursor.get(0));
-		scene.generateScene();
+		scene.generateScene(sound);
 		scene.getScene().setCursor(im);
 		
 		return scene.getScene();
