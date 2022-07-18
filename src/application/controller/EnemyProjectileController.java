@@ -14,12 +14,13 @@ public class EnemyProjectileController extends ProjectileController{
 	
 	private PlayerController player;
 	
-	public EnemyProjectileController(Canvas canvas, CameraController camera, BarrierController barrier, PlayerController player) {
+	public EnemyProjectileController(Canvas canvas, CameraController camera, BarrierController barrier, PlayerController player, SoundController sound) {
 		// TODO Auto-generated constructor stub
 		projectiles = new Vector<ProjectileModel>();
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		this.barrier = barrier;
+		this.sound = sound;
 		
 		this.nBullets = 10;
 		this.camera = camera;

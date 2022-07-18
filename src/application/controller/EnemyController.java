@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import application.MainApplication;
 import application.model.EnemyModel;
+import application.model.PlayerModel;
 import application.model.SpriteModel;
 import application.model.VFXModel;
 import application.view.GameSceneView;
@@ -29,9 +30,12 @@ public class EnemyController extends CharacterController {
 	private SpriteModel deathFrame;
 	private boolean isActive;
 	private int deathLinger;
+	
+	private double lastX;
+	private double lastY;
 
 	public EnemyController(double x, double y, EnemyProjectileController bullet, Canvas canvas, CameraController camera,
-			BarrierController barrier, PlayerController player, SceneView scene) {
+			BarrierController barrier, PlayerController player, SceneView scene, SoundController sound) {
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		this.barrier = barrier;
@@ -41,12 +45,15 @@ public class EnemyController extends CharacterController {
 		this.pistolAngle = new int[] { 64, 8 };
 		this.angleIndex = -1;
 		this.deathLinger = MainApplication.FPS * 4;
+		this.sound = sound;
 
 		this.model = new EnemyModel(x, y, 4);
 		this.scene = scene;
 
 		this.drawTick = 0;
 		this.globalTick = 0;
+		this.lastX = x;
+		this.lastY = y;
 
 		this.sprites = model.getSprites(EnemyModel.IDLE, EnemyModel.FRONT_RIGHT);
 		this.hand = model.getHand();
@@ -77,6 +84,8 @@ public class EnemyController extends CharacterController {
 		
 		this.model.setX(((GameSceneView)scene).getMapW() * 0.1 + Math.random() * (((GameSceneView)scene).getMapW() * 0.8));
 		this.model.setY(((GameSceneView)scene).getMapH() * 0.1 + Math.random() * (((GameSceneView)scene).getMapH() * 0.8));
+		this.lastX = this.model.getX();
+		this.lastY = this.model.getY();
 		
 		this.deathLinger = MainApplication.FPS * 4;
 		this.sprites = model.getSprites(EnemyModel.IDLE, EnemyModel.FRONT_RIGHT);
@@ -103,9 +112,13 @@ public class EnemyController extends CharacterController {
 			this.deathFrame = model.getSprites(EnemyModel.DEATH, this.getModelFacing());
 			this.deathFrame.reset();
 			this.hasDied = true;
+			this.sound.playSfx(SoundController.SFX_ENEMY_HIT);
+			this.sound.playRandomSfx(SoundController.SFX_ENEMY_DEATH_1, SoundController.SFX_ENEMY_DEATH_2);
 			((GameSceneView)this.scene).enemyDied();
 		} else {
+			this.sound.playSfx(SoundController.SFX_ENEMY_HIT);
 			this.hitFrame = model.getSprites(EnemyModel.HIT, this.model.getFacing());
+			this.sound.playRandomSfx(SoundController.SFX_ENEMY_HURT_1, SoundController.SFX_ENEMY_HURT_2);
 			this.hitFrame.reset();
 		}
 	}
@@ -120,6 +133,7 @@ public class EnemyController extends CharacterController {
 
 	public void activate() {
 		this.reset();
+		this.sound.playRandomSfx(SoundController.SFX_ENEMY_SPAWN_1, SoundController.SFX_ENEMY_SPAWN_2, SoundController.SFX_ENEMY_SPAWN_3);
 		this.isActive = true;
 	}
 	
@@ -156,6 +170,17 @@ public class EnemyController extends CharacterController {
 		// TODO Auto-generated method stub
 		this.setModelX(x);
 		this.setModelY(y);
+		
+		double dx = (this.lastX - this.model.getX()) * (this.lastX - this.model.getX());
+		double dy = (this.lastY - this.model.getY()) * (this.lastY - this.model.getY());
+
+		double d = Math.sqrt(dx + dy);
+
+		if (d > 27) {
+			this.sound.playRandomSfx(SoundController.SFX_ENEMY_STEP_1, SoundController.SFX_ENEMY_STEP_2, SoundController.SFX_ENEMY_STEP_3);
+			this.lastX = this.model.getX();
+			this.lastY = this.model.getY();
+		}
 	}
 
 	public void setModelX(double x) {
@@ -416,6 +441,12 @@ public class EnemyController extends CharacterController {
 		// TODO Auto-generated method stub
 		if (!this.isActive) return;
 		
+		if (isColliding(this.model, player.getModel()) && !player.hasDied && !player.isInvulnerable() && !this.hasDied) {
+			player.hit();
+			this.model.setHp(this.model.getHp() + 1);
+			this.hit(1, 0);
+		}
+		
 		if (!this.model.getSpawnSprite().isDone())
 			return;
 		this.globalTick++;
@@ -496,6 +527,7 @@ public class EnemyController extends CharacterController {
 
 	public void doReload() {
 		this.pistol.reset();
+		this.sound.playSfx(SoundController.SFX_MAGNUM_RELOAD);
 		this.model.setMagSize(this.model.getMagCap());
 	}
 
@@ -520,6 +552,7 @@ public class EnemyController extends CharacterController {
 
 		Point2D rresult = this.getRotated(ang, pointX, pointY, this.handX, this.handY);
 
+		this.sound.playRandomSfx(SoundController.SFX_MAGNUM_SHOT_1, SoundController.SFX_MAGNUM_SHOT_2, SoundController.SFX_MAGNUM_SHOT_3);
 		this.bullet.shootBullet(this.shootX, this.shootY, rresult.getX(), rresult.getY());
 	}
 

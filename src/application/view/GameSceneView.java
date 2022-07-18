@@ -2,6 +2,7 @@ package application.view;
 
 
 import java.util.Vector;
+import java.util.jar.Attributes.Name;
 
 import application.MainApplication;
 import application.controller.BarrierController;
@@ -15,20 +16,30 @@ import application.controller.PlayerProjectileController;
 import application.controller.SoundController;
 import application.factory.SceneFactory;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
+import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -69,6 +80,12 @@ public class GameSceneView extends SceneView{
 	private StackPane pausePane;
 	protected boolean onPause;
 	
+	private StackPane endPane;
+	private Label scoreLabel;
+	private boolean endPaneThrown;
+	private TextField name;
+	private boolean onMusic;
+	
 	@Override
 	protected void initComponents() {
 		// TODO Auto-generated method stub
@@ -89,6 +106,7 @@ public class GameSceneView extends SceneView{
 		
 		this.deathFade = 0;
 		this.screenChanged = false;
+		this.onMusic = false;
 		
 		camera = new CameraController();
 		
@@ -105,10 +123,10 @@ public class GameSceneView extends SceneView{
 		this.barrier = new BarrierController(this.canvas, this.camera, 0, -80, mapW, mapH + 80);
 		this.enemies = new Vector<EnemyController>();
 		
-		this.ppController = new PlayerProjectileController(this.canvas, this.camera, this.barrier, this.enemies);
-		this.playerController = new PlayerController(this.canvas, this, this.ppController, this.camera, this.barrier);
+		this.ppController = new PlayerProjectileController(this.canvas, this.camera, this.barrier, this.enemies, this.sound);
+		this.playerController = new PlayerController(this.canvas, this, this.ppController, this.camera, this.barrier, this.sound);
 		
-		this.epController = new EnemyProjectileController(this.canvas, this.camera, this.barrier, this.playerController);
+		this.epController = new EnemyProjectileController(this.canvas, this.camera, this.barrier, this.playerController, this.sound);
 		this.hud = new HudController(camera, canvas, playerController);
 		
 		this.enemiesLeft = 0;
@@ -121,6 +139,101 @@ public class GameSceneView extends SceneView{
 		this.generateEnemies(36);
 		
 		initPauseMenu();
+		initEndPane();
+	}
+
+	public void initEndPane() {
+		this.endPane = new StackPane();
+		this.endPane.getStyleClass().add("option-container");
+		this.endPaneThrown = false;
+		
+		Font endTitle = Font.loadFont("file:resources/font/alagard/alagard.ttf", MainApplication.H * 0.15);
+		Font scoreFont = Font.loadFont("file:resources/font/minecraftia/Minecraftia-Regular.ttf", MainApplication.H * 0.03);
+		Font nameFont = Font.loadFont("file:resources/font/alagard/alagard.ttf", MainApplication.H * 0.05);
+		Font fontSmall = Font.loadFont("file:resources/font/minecraftia/Minecraftia-Regular.ttf", MainApplication.H * 0.03);
+		Font fontXs = Font.loadFont("file:resources/font/alagard/alagard.ttf", MainApplication.H * 0.03);
+
+		EventHandler<Event> hover = new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event arg0) {
+				// TODO Auto-generated method stub
+				sound.playSfx(SoundController.SFX_MENU_SELECT);
+			}
+			
+		};
+		
+		Label gameover = new Label("GAME OVER");
+		gameover.setPrefWidth(MainApplication.W * 0.8);
+		gameover.setFont(endTitle);
+		gameover.setLayoutX(MainApplication.W * 0.1);
+		gameover.setLayoutY(MainApplication.H * 0.2);
+		
+		scoreLabel = new Label("SCORE:   ");
+		scoreLabel.setPrefWidth(MainApplication.W * 0.8);
+		scoreLabel.setFont(scoreFont);
+		scoreLabel.setLayoutX(MainApplication.W * 0.1);
+		scoreLabel.setLayoutY(MainApplication.H * 0.36);
+		
+		Button confirm = new Button("CONTINUE");
+		confirm.setPrefWidth(MainApplication.W * 0.4);
+		confirm.setFont(fontSmall);
+		confirm.setLayoutX(MainApplication.W * 0.3);
+		confirm.setLayoutY(MainApplication.H * 0.75);
+		confirm.setOnMouseEntered(hover);
+		confirm.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				if (name.getText().length() == 0) {
+					sound.playSfx(SoundController.SFX_MENU_CANCEL);
+					return;
+				}
+				
+				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
+				if (screenChanged == false) app.changeScene(MainApplication.MENU_SCENE);
+	        	screenChanged = true;
+			}
+			
+		});
+		
+		name = new TextField();
+		name.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+	        public void changed(final ObservableValue<? extends String> ov, final String oldValue, final String newValue) {
+				String s = name.getText();
+	            if (name.getText().length() > 8) {
+	            	s = s.substring(0, 8);
+	            }
+	            name.setText(s.toUpperCase());
+	        }
+
+		});
+		name.setFont(nameFont);
+		name.setPrefWidth(MainApplication.W * 0.3);
+		name.setLayoutX(MainApplication.W * 0.35);
+		name.setLayoutY(MainApplication.H * 0.6);
+		name.setBorder(new Border(new BorderStroke(Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE,
+	            BorderStrokeStyle.NONE, BorderStrokeStyle.NONE, BorderStrokeStyle.SOLID, BorderStrokeStyle.NONE,
+	            CornerRadii.EMPTY, new BorderWidths(MainApplication.W * 0.003), Insets.EMPTY)));
+		
+		Label phrase = new Label("Thou shalt be known as");
+		phrase.setFont(fontXs);
+		phrase.setId("phrase");
+		phrase.setPrefWidth(MainApplication.W * 0.4);
+		phrase.setLayoutX(MainApplication.W * 0.3);
+		phrase.setLayoutY(MainApplication.H * 0.575);
+		
+		Pane layout = new Pane();
+		layout.getChildren().add(gameover);
+		layout.getChildren().add(scoreLabel);
+		layout.getChildren().add(confirm);
+		layout.getChildren().add(name);
+		layout.getChildren().add(phrase);
+		
+		this.endPane.setVisible(false);
+		this.endPane.getChildren().add(layout);
 	}
 	
 	public double getMouseX() {
@@ -133,7 +246,7 @@ public class GameSceneView extends SceneView{
 
 	public void generateEnemies(int n) {
 		for (int i = 0; i < n; i++) {
-			this.enemies.add(new EnemyController(-1000, 1000, this.epController, canvas, camera, barrier, playerController, this));
+			this.enemies.add(new EnemyController(-1000, 1000, this.epController, canvas, camera, barrier, playerController, this, this.sound));
 		}
 	}
 	
@@ -172,6 +285,7 @@ public class GameSceneView extends SceneView{
 		// TODO Auto-generated method stub
 		this.root.getChildren().add(this.canvas);
 		this.root.getChildren().add(this.pausePane);
+		this.root.getChildren().add(this.endPane);
 		
 		return this.root;
 	}
@@ -305,6 +419,7 @@ public class GameSceneView extends SceneView{
 			
 		});
 		
+		this.sound.playSfx(SoundController.SFX_PLAYER_SPAWN);
 		return this.scene;
 	}
 	
@@ -312,6 +427,12 @@ public class GameSceneView extends SceneView{
 		onPause = !onPause;
 		pausePane.setVisible(onPause);
 		sound.playSfx(onPause? SoundController.SFX_MENU_PAUSE : SoundController.SFX_MENU_CANCEL);
+		if (onPause) {
+			sound.pauseMusic(SoundController.MUSIC_GAME_1);
+		} 
+		else {
+			sound.playMusic(SoundController.MUSIC_GAME_1);
+		}
 	}
 	
 	public void initPauseMenu() {
@@ -480,6 +601,14 @@ public class GameSceneView extends SceneView{
         	gc.setFill(Color.BLACK);
         	gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         	
+        	if (this.deathFade == (int)(MainApplication.FPS * 1.65)) {
+        		sound.playSfx(SoundController.SFX_PLAYER_LEAP_3);
+        	}
+        	
+        	if (this.deathFade == (int)(MainApplication.FPS * 0.215)) {
+        		sound.playSfx(SoundController.SFX_GAMEOVER);
+        	}
+        	
         	if (this.deathFade == 0) {
         		this.deathFade = -1;
         	}
@@ -489,9 +618,14 @@ public class GameSceneView extends SceneView{
         	gc.setFill(Color.BLACK);
         	gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         	
-        	if (this.screenChanged == false) this.app.changeScene(MainApplication.MENU_SCENE);
-        	this.screenChanged = true;
+        	if (!endPaneThrown) showGameoverPane();
     	}
+	}
+	
+	public void showGameoverPane() {
+		this.endPaneThrown = true;
+		this.endPane.setVisible(true);
+		this.scoreLabel.setText(this.scoreLabel.getText() + score);
 	}
 
 	@Override
@@ -521,6 +655,8 @@ public class GameSceneView extends SceneView{
 			System.out.println(this.enemyBatch);
 			System.out.println(this.enemiesLeft);
 			this.waveDelay = MainApplication.FPS * 2;
+			
+			if (this.onMusic == false) this.sound.playMusic(SoundController.MUSIC_GAME_1);
 		}
 	}
 

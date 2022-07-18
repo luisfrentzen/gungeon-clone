@@ -11,6 +11,7 @@ public abstract class ProjectileController extends GameObjectController{
 	protected int bulletIndex;
 	protected int nBullets;
 	protected BarrierController barrier;
+	protected SoundController sound;
 
 	public abstract void initBullets(int n);
 	

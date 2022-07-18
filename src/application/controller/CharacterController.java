@@ -35,6 +35,8 @@ public abstract class CharacterController extends GameObjectController{
 	protected ColorAdjust colorHit;
 	protected ColorAdjust colorDead;
 	
+	protected SoundController sound;
+	
 	public Point2D getRotated(double ang, double pointX, double pointY, double pivotX, double pivotY) {
 		double newX = pivotX + (pointX - pivotX) * Math.cos(Math.toRadians(ang)) - (pointY - pivotY)* Math.sin(Math.toRadians(ang));
 		double newY = pivotY + (pointX - pivotX) * Math.sin(Math.toRadians(ang)) + (pointY - pivotY)* Math.cos(Math.toRadians(ang));

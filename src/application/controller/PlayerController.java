@@ -31,13 +31,14 @@ public class PlayerController extends CharacterController {
 	private int vulnTime;
 
 	public PlayerController(Canvas canvas, SceneView scene, PlayerProjectileController ppController,
-			CameraController camera, BarrierController barrier) {
+			CameraController camera, BarrierController barrier, SoundController sound) {
 		// TODO Auto-generated constructor stub
 		this.canvas = canvas;
 		this.scene = scene;
 		this.ppController = ppController;
 		this.gc = canvas.getGraphicsContext2D();
 		this.barrier = barrier;
+		this.sound = sound;
 
 		this.camera = camera;
 		this.cameraOffset = 0.1;
@@ -70,8 +71,11 @@ public class PlayerController extends CharacterController {
 	public void hit() {
 		this.playerModel.setHp(this.playerModel.getHp() - 1);
 		if (this.playerModel.getHp() == 0) {
+			this.sound.playSfx(SoundController.SFX_PLAYER_DEATH);
+			this.sound.stopMusic(SoundController.MUSIC_GAME_1);
 			this.hasDied = true;
 		} else {
+			this.sound.playSfx(SoundController.SFX_PLAYER_HIT);
 			this.hitFrame = (int) (MainApplication.FPS * 1.25);
 		}
 		
@@ -333,6 +337,7 @@ public class PlayerController extends CharacterController {
 			this.setPlayerState(PlayerModel.DODGE);
 			this.hideGun();
 			this.currentVector = Arrays.copyOf(this.playerModel.getVectors(), this.playerModel.getVectors().length);
+			this.sound.playRandomSfx(SoundController.SFX_PLAYER_LEAP_1, SoundController.SFX_PLAYER_LEAP_2, SoundController.SFX_PLAYER_LEAP_3);
 			this.playerModel.setDodgeFrame(24);
 		}
 	}
@@ -434,6 +439,7 @@ public class PlayerController extends CharacterController {
 
 			Point2D rresult = this.getRotated(ang, pointX, pointY, this.handX, this.handY);
 			
+			this.sound.playRandomSfx(SoundController.SFX_DEAGLE_SHOT_1, SoundController.SFX_DEAGLE_SHOT_2, SoundController.SFX_DEAGLE_SHOT_3);
 			this.ppController.shootBullet(this.shootX, this.shootY, rresult.getX(), rresult.getY());
 		}
 	}
@@ -457,6 +463,7 @@ public class PlayerController extends CharacterController {
 		if (d > 100 && this.getPlayerState() != PlayerModel.DODGE) {
 			this.lastX = this.getPlayerX();
 			this.lastY = this.getPlayerY();
+			this.sound.playRandomSfx(SoundController.SFX_PLAYER_STEP_1, SoundController.SFX_PLAYER_STEP_2, SoundController.SFX_PLAYER_STEP_3);
 			this.addVFX(PlayerModel.PATH_RUN_DUST, this.playerModel.getScale(), x,
 					y + this.sprites.getHeight(0) * 0.425, 2);
 		}
@@ -501,9 +508,12 @@ public class PlayerController extends CharacterController {
 	}
 
 	public void doReload() {
+		if (this.playerModel.getGunDownTime() > 0) return; 
+		this.sound.playSfx(SoundController.SFX_DEAGLE_RELOAD);
 		this.pistol = playerModel.getGunSprites(PlayerModel.GUN_RELOAD);
 		this.pistol.reset();
 		this.playerModel.setMagSize(this.playerModel.getMagCap());
+		this.playerModel.setGunDownTime(36);
 	}
 
 	@Override
@@ -532,7 +542,10 @@ public class PlayerController extends CharacterController {
 
 		if (this.playerModel.getDodgeFrame() > 0) {
 			this.playerModel.setDodgeFrame(this.playerModel.getDodgeFrame() - 1);
-
+			
+			if (this.playerModel.getDodgeFrame() == 8) {
+				this.sound.playRandomSfx(SoundController.SFX_PLAYER_ROLL_1, SoundController.SFX_PLAYER_ROLL_2, SoundController.SFX_PLAYER_ROLL_3);
+			}
 			if (this.playerModel.getDodgeFrame() == 0) {
 				this.setPlayerState(PlayerModel.IDLE);
 				this.resetVector();

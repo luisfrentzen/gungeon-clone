@@ -15,12 +15,13 @@ public class PlayerProjectileController extends ProjectileController {
 	private Vector<EnemyController> enemies;
 	
 	public PlayerProjectileController(Canvas canvas, CameraController camera,
-			BarrierController barrier, Vector<EnemyController> enemies) {
+			BarrierController barrier, Vector<EnemyController> enemies, SoundController sound) {
 		projectiles = new Vector<ProjectileModel>();
 		this.canvas = canvas;
 		this.gc = canvas.getGraphicsContext2D();
 		this.barrier = barrier;
-
+		this.sound = sound;
+		
 		this.nBullets = 9;
 		this.camera = camera;
 		this.vfxRender = new Vector<VFXModel>();

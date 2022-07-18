@@ -11,6 +11,16 @@
     -fx-alignment: CENTER;
 }
 
+.text-field {
+    -fx-alignment: CENTER;
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+}
+
+#phrase {
+    -fx-text-fill: #737373;
+}
+
 .button {
     -fx-alignment: CENTER;
     -fx-border-color: transparent;
