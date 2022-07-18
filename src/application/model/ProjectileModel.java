@@ -25,6 +25,17 @@ public abstract class ProjectileModel extends GameObjectModel{
 		this.vectorY = dY / mag;
 	}
 	
+	public void calculateVectors(double vectX, double vectY) {
+		// TODO Auto-generated method stub
+		double dY = this.targetY - this.y;
+		double dX = this.targetX - this.x;
+		
+		double mag = Math.sqrt(dX * dX + dY * dY);
+		
+		this.vectorX = dX / mag;
+		this.vectorY = dY / mag;
+	}
+	
 	public void resetPosition() {
 		this.x = this.oriX;
 		this.y = this.oriY;

@@ -15,6 +15,25 @@ public abstract class ProjectileController extends GameObjectController{
 
 	public abstract void initBullets(int n);
 	
+	public void shootBullet(double oX, double oY, double tX, double tY, double vectX, double vectY) {
+		ProjectileModel pp = this.projectiles.get(this.bulletIndex++ % this.nBullets);
+
+		tX += (Math.random() * pp.getSpray()) - (pp.getSpray() / 2);
+		tY += (Math.random() * pp.getSpray()) - (pp.getSpray() / 2);
+
+		pp.setActive(true);
+		
+		if (vectX != 0) tX += vectX;
+		if (vectY != 0) tY += vectY;
+		
+		pp.setX(oX);
+		pp.setY(oY);
+		pp.setTargetX(tX);
+		pp.setTargetY(tY);
+
+		pp.calculateVectors(vectX, vectY);
+	}
+	
 	public void shootBullet(double oX, double oY, double tX, double tY) {
 		ProjectileModel pp = this.projectiles.get(this.bulletIndex++ % this.nBullets);
 

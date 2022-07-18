@@ -26,6 +26,9 @@ public class PlayerController extends CharacterController {
 	private double cameraOffset;
 	private double cameraOffsetX;
 	private double cameraOffsetY;
+	
+	private double vectX;
+	private double vectY;
 
 	private int hitFrame;
 	private int vulnTime;
@@ -44,6 +47,9 @@ public class PlayerController extends CharacterController {
 		this.cameraOffset = 0.1;
 		this.cameraOffsetX = 0;
 		this.cameraOffsetY = 0;
+		
+		this.vectX = 0;
+		this.vectY = 0;
 
 //		this.playerModel = new PlayerModel(MainApplication.mapWidth(50), MainApplication.mapHeight(50), 1);
 		this.playerModel = new PlayerModel(canvas.getWidth() / 2, canvas.getHeight() / 2, 4);
@@ -440,7 +446,7 @@ public class PlayerController extends CharacterController {
 			Point2D rresult = this.getRotated(ang, pointX, pointY, this.handX, this.handY);
 			
 			this.sound.playRandomSfx(SoundController.SFX_DEAGLE_SHOT_1, SoundController.SFX_DEAGLE_SHOT_2, SoundController.SFX_DEAGLE_SHOT_3);
-			this.ppController.shootBullet(this.shootX, this.shootY, rresult.getX(), rresult.getY());
+			this.ppController.shootBullet(this.shootX, this.shootY, rresult.getX(), rresult.getY(), this.vectX, this.vectY);
 		}
 	}
 
@@ -562,12 +568,15 @@ public class PlayerController extends CharacterController {
 		double vX = (-this.getCVectorLeft()) + (this.getCVectorRight());
 
 		double vY = (-this.getCVectorUp()) + (this.getCVectorDown());
+		this.vectX = vX;
+		this.vectY = vY;
 
 		double mag = Math.sqrt(vX * vX + vY * vY);
 
 		if (mag > 0) {
 			vX /= mag;
 			vY /= mag;
+		
 		}
 
 		vX *= this.playerModel.getSpeed();
