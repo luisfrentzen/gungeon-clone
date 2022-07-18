@@ -2,6 +2,7 @@ package application.controller;
 
 import java.util.Vector;
 
+import application.MainApplication;
 import application.model.EnemyModel;
 import application.model.SpriteModel;
 import application.model.VFXModel;
@@ -27,6 +28,7 @@ public class EnemyController extends CharacterController {
 	private SpriteModel hitFrame;
 	private SpriteModel deathFrame;
 	private boolean isActive;
+	private int deathLinger;
 
 	public EnemyController(double x, double y, EnemyProjectileController bullet, Canvas canvas, CameraController camera,
 			BarrierController barrier, PlayerController player, SceneView scene) {
@@ -38,6 +40,7 @@ public class EnemyController extends CharacterController {
 		this.bullet = bullet;
 		this.pistolAngle = new int[] { 64, 8 };
 		this.angleIndex = -1;
+		this.deathLinger = MainApplication.FPS * 4;
 
 		this.model = new EnemyModel(x, y, 4);
 		this.scene = scene;
@@ -58,7 +61,6 @@ public class EnemyController extends CharacterController {
 		this.hitFrame.setDone(true);
 
 		this.deathFrame = model.getSprites(EnemyModel.DEATH, this.getModelFacing());
-//		System.out.println(this.deathFrame);
 		this.deathFrame.setDone(true);
 
 		this.colorHit = new ColorAdjust();
@@ -73,6 +75,10 @@ public class EnemyController extends CharacterController {
 	public void reset() {
 		this.model.reset();
 		
+		this.model.setX(((GameSceneView)scene).getMapW() * 0.1 + Math.random() * (((GameSceneView)scene).getMapW() * 0.8));
+		this.model.setY(((GameSceneView)scene).getMapH() * 0.1 + Math.random() * (((GameSceneView)scene).getMapH() * 0.8));
+		
+		this.deathLinger = MainApplication.FPS * 4;
 		this.sprites = model.getSprites(EnemyModel.IDLE, EnemyModel.FRONT_RIGHT);
 		this.hand = model.getHand();
 		this.pistol = model.getGunSprites(EnemyModel.GUN_IDLE);
@@ -93,7 +99,7 @@ public class EnemyController extends CharacterController {
 		this.vY = magY;
 
 		this.model.setHp(this.model.getHp() - 1);
-		if (this.model.getHp() == 0) {
+		if (this.model.getHp() == 0 && this.hasDied == false) {
 			this.deathFrame = model.getSprites(EnemyModel.DEATH, this.getModelFacing());
 			this.deathFrame.reset();
 			this.hasDied = true;
@@ -112,9 +118,16 @@ public class EnemyController extends CharacterController {
 		return isActive;
 	}
 
-	public void setActive(boolean isActive) {
+	public void activate() {
 		this.reset();
-		this.isActive = isActive;
+		this.isActive = true;
+	}
+	
+	public void deactivate() {
+		this.isActive = false;
+		this.model.setX(-1000);
+		this.model.setY(1000);
+		
 	}
 
 	public int getState() {
@@ -250,8 +263,8 @@ public class EnemyController extends CharacterController {
 		this.model.setW(w * 0.6);
 		this.model.setH(h * 0.7);
 
-		double centerX = model.getX() - w / 2;
-		double centerY = model.getY() - h / 2;
+		double centerX = this.model.getX() - w / 2;
+		double centerY = this.model.getY() - h / 2;
 		
 		this.gc.save();
 		
@@ -261,9 +274,8 @@ public class EnemyController extends CharacterController {
 		}
 		else if (this.hasDied) { 
 			this.gc.setEffect(this.colorDead);
+			this.gc.setGlobalAlpha(this.deathLinger / (MainApplication.FPS * 2.0));
 		}
-		
-		this.gc.setGlobalAlpha(1);
 		
 		this.camera.draw(this.gc, p, ((int) centerX) + .5, ((int) centerY) + .5, w, h);
 		this.gc.restore();
@@ -452,6 +464,12 @@ public class EnemyController extends CharacterController {
 		if (this.hasDied && this.deathFrame.isDone()) {
 			rX = 0;
 			rY = 0;
+			this.deathLinger -= 1;
+			
+			if (this.deathLinger == 0) {
+				this.deactivate();
+				return;
+			}
 		}
 
 		cX += rX;

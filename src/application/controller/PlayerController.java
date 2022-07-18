@@ -403,7 +403,6 @@ public class PlayerController extends CharacterController {
 					)
 					);
 			
-			System.out.println(dX/dist + " " + dY/dist);
 			this.camera.shake(dX/dist, dY/dist);
 
 			double ang = 0;
@@ -434,7 +433,7 @@ public class PlayerController extends CharacterController {
 			double pointY = this.handY - h * 0.4;
 
 			Point2D rresult = this.getRotated(ang, pointX, pointY, this.handX, this.handY);
-
+			
 			this.ppController.shootBullet(this.shootX, this.shootY, rresult.getX(), rresult.getY());
 		}
 	}

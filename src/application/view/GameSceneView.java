@@ -12,14 +12,21 @@ import application.controller.HudController;
 import application.controller.MapController;
 import application.controller.PlayerController;
 import application.controller.PlayerProjectileController;
+import application.controller.SoundController;
 import application.factory.SceneFactory;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -57,6 +64,10 @@ public class GameSceneView extends SceneView{
 	
 	protected double mouseX;
 	protected double mouseY;
+	private int enemyBatch;
+	
+	private StackPane pausePane;
+	protected boolean onPause;
 	
 	@Override
 	protected void initComponents() {
@@ -105,7 +116,11 @@ public class GameSceneView extends SceneView{
 		this.enemyIndex = 0;
 		this.waveDelay = MainApplication.FPS * 2;
 		
-		this.generateEnemies(10);
+		this.enemyBatch = 2;
+		
+		this.generateEnemies(36);
+		
+		initPauseMenu();
 	}
 	
 	public double getMouseX() {
@@ -118,16 +133,21 @@ public class GameSceneView extends SceneView{
 
 	public void generateEnemies(int n) {
 		for (int i = 0; i < n; i++) {
-			this.enemies.add(new EnemyController(this.mapW * 0.1 + Math.random() * (this.mapW * 0.8), this.mapH * 0.1 + Math.random() * (this.mapH * 0.8), this.epController, canvas, camera, barrier, playerController, this));
+			this.enemies.add(new EnemyController(-1000, 1000, this.epController, canvas, camera, barrier, playerController, this));
 		}
 	}
 	
 	public void activateEnemies(int n) {
 		this.enemiesLeft += n;
+		
+		this.enemyBatch = this.enemyBatch + (int)(Math.random() * 2);
+		
 		for (int i = 0; i < n; i++) {
-			this.enemies.get(enemyIndex).setActive(true);
+			this.enemies.get(enemyIndex).activate();
 			this.enemyIndex = (this.enemyIndex + 1) % this.enemies.size();
 		}
+
+		if (this.enemyBatch > 12) this.enemyBatch = 12;
 	}
 	
 	public void enemyDied() {
@@ -151,6 +171,7 @@ public class GameSceneView extends SceneView{
 	protected Pane addComponents() {
 		// TODO Auto-generated method stub
 		this.root.getChildren().add(this.canvas);
+		this.root.getChildren().add(this.pausePane);
 		
 		return this.root;
 	}
@@ -159,11 +180,19 @@ public class GameSceneView extends SceneView{
 	protected Scene initScene() {
 		// TODO Auto-generated method stub
 		this.scene = new Scene(root);
-		this.scene.getStylesheets().add(getClass().getResource("menu-view.css").toExternalForm());
+		this.scene.getStylesheets().add(getClass().getResource("../style/menu-view.css").toExternalForm());
 		this.mPrimaryDown = false;
 		this.mSecondaryDown = false;
 		
 		this.scene.setOnMouseMoved(new EventHandler<MouseEvent>() {
+		    @Override
+		    public void handle(MouseEvent event) {
+		        mouseX = event.getSceneX();
+		        mouseY = event.getSceneY();
+		    }
+		});
+		
+		this.scene.setOnMouseDragged(new EventHandler<MouseEvent>() {
 		    @Override
 		    public void handle(MouseEvent event) {
 		        mouseX = event.getSceneX();
@@ -180,7 +209,7 @@ public class GameSceneView extends SceneView{
 				
 				switch (e.getButton()) {
 				case SECONDARY:
-					playerController.doDodge();
+					if (!onPause) playerController.doDodge();
 					mSecondaryDown = true;
 					break;
 				case PRIMARY:
@@ -224,16 +253,16 @@ public class GameSceneView extends SceneView{
 				
 				switch(e.getCode()) {
 				case W:
-					playerController.setVectorUp(1);
+					if (!onPause) playerController.setVectorUp(1);
 					break;
 				case A:
-					playerController.setVectorLeft(1);
+					if (!onPause) playerController.setVectorLeft(1);
 					break;
 				case S:
-					playerController.setVectorDown(1);
+					if (!onPause) playerController.setVectorDown(1);
 					break;
 				case D:
-					playerController.setVectorRight(1);
+					if (!onPause) playerController.setVectorRight(1);
 					break;
 				default:
 					break;
@@ -266,6 +295,9 @@ public class GameSceneView extends SceneView{
 				case R:
 					playerController.doReload();
 					break;
+				case ESCAPE:
+					togglePause();
+					break;
 				default:
 					break;
 				}
@@ -274,6 +306,107 @@ public class GameSceneView extends SceneView{
 		});
 		
 		return this.scene;
+	}
+	
+	public void togglePause() {
+		onPause = !onPause;
+		pausePane.setVisible(onPause);
+		sound.playSfx(onPause? SoundController.SFX_MENU_PAUSE : SoundController.SFX_MENU_CANCEL);
+	}
+	
+	public void initPauseMenu() {
+		this.pausePane = new StackPane();
+		this.pausePane.getStyleClass().add("option-container");
+		this.pausePane.setVisible(false);
+		this.onPause = false;
+		
+		Pane layoutPane = new Pane();
+		
+		Image im = new Image(MenuSceneView.class.getResource("/layout/layout_pause.png").toExternalForm());
+		ImageView iv = new ImageView();
+		
+		Font fontSmall = Font.loadFont("file:resources/font/minecraftia/Minecraftia-Regular.ttf", MainApplication.H * 0.03);
+		
+		EventHandler<Event> hover = new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event arg0) {
+				// TODO Auto-generated method stub
+				sound.playSfx(SoundController.SFX_MENU_SELECT);
+			}
+			
+		};
+		
+		Button resumeBtn = new Button("RESUME");
+		Button menuBtn = new Button("MAIN MENU");
+		Button exitBtn = new Button("EXIT GAME");
+		
+		resumeBtn.setPrefWidth(MainApplication.W * 0.3);
+		menuBtn.setPrefWidth(MainApplication.W * 0.3);
+		exitBtn.setPrefWidth(MainApplication.W * 0.3);
+		
+		resumeBtn.setOnMouseEntered(hover);
+		menuBtn.setOnMouseEntered(hover);
+		exitBtn.setOnMouseEntered(hover);
+		
+		resumeBtn.setFont(fontSmall);
+		menuBtn.setFont(fontSmall);
+		exitBtn.setFont(fontSmall);
+		
+		resumeBtn.setLayoutX(MainApplication.W * 0.35);
+		menuBtn.setLayoutX(MainApplication.W * 0.35);
+		exitBtn.setLayoutX(MainApplication.W * 0.35);
+		
+		resumeBtn.setLayoutY(MainApplication.H * 0.375);
+		menuBtn.setLayoutY(MainApplication.H * 0.44);
+		exitBtn.setLayoutY(MainApplication.H * 0.505);
+		
+		resumeBtn.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				sound.playSfx(SoundController.SFX_MENU_CANCEL);
+				pausePane.setVisible(false);
+				onPause = false;
+			}
+		});
+		
+		menuBtn.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
+				if (screenChanged == false) app.changeScene(MainApplication.MENU_SCENE);
+	        	screenChanged = true;
+			}
+		});
+
+		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
+				Platform.exit();
+			}
+		});
+
+		Pane btnPane = new Pane();
+		btnPane.getChildren().addAll(resumeBtn, menuBtn, exitBtn);
+		
+		iv.setImage(im);
+		iv.setPreserveRatio(true);
+		iv.setFitWidth(MainApplication.W * 0.45);
+		iv.setLayoutY(MainApplication.H * 0.05);
+		iv.setLayoutX(MainApplication.W * 0.5 - iv.getFitWidth() * 0.55);
+		iv.setSmooth(true);
+		iv.setCache(true);
+		
+		layoutPane.getChildren().add(iv);
+		this.pausePane.getChildren().add(layoutPane);
+		this.pausePane.getChildren().add(btnPane);
 	}
 
 	public boolean ismSecondaryDown() {
@@ -343,7 +476,6 @@ public class GameSceneView extends SceneView{
     	}
     	else if (this.deathFade > 0 && playerController.isHasDied()){
     		this.deathFade -= 1;
-    		System.out.println(-1 - ((this.deathFade - (MainApplication.FPS * 2.0))/ (MainApplication.FPS * 2.0)));
     		gc.setGlobalAlpha(-((this.deathFade - (MainApplication.FPS * 2.0))/ (MainApplication.FPS * 2.0)));
         	gc.setFill(Color.BLACK);
         	gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -365,9 +497,11 @@ public class GameSceneView extends SceneView{
 	@Override
 	public void updateFrame() {
 		// TODO Auto-generated method stub
+		if (onPause) return;
 		playerController.update();
 		hud.update();
 		camera.update();
+		
 		
 		if (!playerController.isHasDied()) {
 			int i = 0;
@@ -378,12 +512,14 @@ public class GameSceneView extends SceneView{
 			ppController.update();
 			epController.update();
 		}
-		
+				
 		if (this.waveDelay > 0 && this.enemiesLeft == 0) {
 			this.waveDelay -= 1;
 		}
 		else if (this.waveDelay == 0 && this.enemiesLeft == 0) {
-			this.activateEnemies(2);
+			this.activateEnemies(this.enemyBatch);
+			System.out.println(this.enemyBatch);
+			System.out.println(this.enemiesLeft);
 			this.waveDelay = MainApplication.FPS * 2;
 		}
 	}

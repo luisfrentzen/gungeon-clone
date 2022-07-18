@@ -486,7 +486,7 @@ Image im = new Image(MenuSceneView.class.getResource("/titlescreen/backdrop/titl
 	protected Scene initScene() {
 		// TODO Auto-generated method stub
 		this.scene = new Scene(root);
-		this.scene.getStylesheets().add(getClass().getResource("menu-view.css").toExternalForm());
+		this.scene.getStylesheets().add(getClass().getResource("../style/menu-view.css").toExternalForm());
 
 		return this.scene;
 	}

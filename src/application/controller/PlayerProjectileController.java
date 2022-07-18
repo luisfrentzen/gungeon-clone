@@ -39,7 +39,7 @@ public class PlayerProjectileController extends ProjectileController {
 	
 	public void checkHit(Vector<EnemyController> enem, ProjectileModel p, double magX, double magY) {
 		for (EnemyController e : enem) {
-			if (!e.isHasDied() && e.isColliding(e.getModel(), p)) {
+			if (!e.isHasDied() && e.isActive() && e.isColliding(e.getModel(), p)) {
 				bulletHit(p);
 				e.hit(magX, magY);
 			}
