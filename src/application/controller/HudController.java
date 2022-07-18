@@ -47,7 +47,7 @@ public class HudController extends GameObjectController {
 				MainApplication.H - this.hud.getWeapon().getHeight(0) * 1.1, 
 				xratio,
 				yratio);
-
+		
 		this.gc.drawImage(this.hud.getAmmoCount().get(0), 
 				MainApplication.W - this.hud.getAmmoCount().getWidth(0) - (xratio * 0.35),
 				MainApplication.H - (yratio * 1.2) - this.hud.getAmmoCount().getHeight(0), 

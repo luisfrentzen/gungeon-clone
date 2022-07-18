@@ -31,7 +31,9 @@ public class SpriteModel {
 		int i = 0;
 		
 		for (final File f : dir.listFiles()) {
-			sprites[i++] = new Image(f.toURI().toString());
+			String fname = f.toURI().toString();
+			
+			if (fname.endsWith(".png")) sprites[i++] = new Image(fname);
 		}
 	}
 	

@@ -456,16 +456,16 @@ public class EnemyController extends CharacterController {
 
 		cX += rX;
 		cY += rY;
-
+		
 		if (this.model.getGunDownTime() == 0) {
 			if (this.model.getMagSize() > 0 && mag < this.model.getNoticeRadius()) {
 				this.initiateShoot();
+				this.model.setGunDownTime(this.model.getFireCooldown());
 				this.model.setMagSize(this.model.getMagSize() - 1);
-			} else {
+			} else if (mag < this.model.getNoticeRadius()){
 				this.doReload();
+				this.model.setGunDownTime(this.model.getFireCooldown());
 			}
-
-			this.model.setGunDownTime(this.model.getFireCooldown());
 		}
 
 		this.move(cX, cY);

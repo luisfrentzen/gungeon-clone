@@ -390,6 +390,7 @@ public class PlayerController extends CharacterController {
 
 	public void doShoot() {
 		if (this.getPlayerState() != PlayerModel.DODGE) {
+			
 			double dX = ((GameSceneView) this.scene).getMouseX() - this.camera.getXMapRelative(this.shootX);
 			double dY = ((GameSceneView) this.scene).getMouseY() - this.camera.getYMapRelative(this.shootY);
 			double dist = Math.sqrt(
@@ -402,6 +403,8 @@ public class PlayerController extends CharacterController {
 					)
 					);
 			
+			System.out.println(dX/dist + " " + dY/dist);
+			this.camera.shake(dX/dist, dY/dist);
 
 			double ang = 0;
 			if (dist < MainApplication.W * 0.1) {
@@ -410,7 +413,7 @@ public class PlayerController extends CharacterController {
 			else {
 				ang = (Math.atan2(dY, dX) * 180 / Math.PI) + 180;			
 			}
-//			double ang = playerModel.getAngle();
+
 			double w = this.pistol.getWidth(0);
 			double h = this.pistol.getHeight(0);
 

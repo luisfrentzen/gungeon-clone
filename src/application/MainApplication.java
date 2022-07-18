@@ -36,7 +36,7 @@ public class MainApplication extends Application{
 		// TODO Auto-generated method stub
 		this.stage = stage;
 		this.stage.setMaximized(true);
-//		this.stage.initStyle(StageStyle.UNDECORATED);
+		this.stage.initStyle(StageStyle.UNDECORATED);
 		
 		this.stage.show();
 		

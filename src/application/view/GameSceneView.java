@@ -109,12 +109,10 @@ public class GameSceneView extends SceneView{
 	}
 	
 	public double getMouseX() {
-//		return mouseX + MainApplication.W * 0.0075;
 		return mouseX + ImageCursor.getBestSize(64, 64).getWidth() / 2;
 	}
 
 	public double getMouseY() {
-//		return mouseY + MainApplication.H * 0.015;
 		return mouseY + ImageCursor.getBestSize(64, 64).getHeight() / 2;
 	}
 
@@ -309,7 +307,6 @@ public class GameSceneView extends SceneView{
 	@Override
 	public void renderFrame() {
 		// TODO Auto-generated method stub
-		
 		gc.setFill(Color.BLACK);
 		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		map.render();
@@ -330,6 +327,7 @@ public class GameSceneView extends SceneView{
         ppController.render();
         
         hud.render();
+        
         if (playerController.isHasDied()) {
         	gc.setGlobalAlpha(0.7);
         	gc.setFill(Color.BLACK);
@@ -340,7 +338,6 @@ public class GameSceneView extends SceneView{
         
         playerController.render();
         
-    	
     	if (this.deathFade == 0 && playerController.isHasDied()) {
     		this.deathFade = (int) (MainApplication.FPS * 2.0);
     	}
@@ -369,8 +366,10 @@ public class GameSceneView extends SceneView{
 		// TODO Auto-generated method stub
 		playerController.update();
 		hud.update();
+		camera.update();
 		
 		if (!playerController.isHasDied()) {
+			int i = 0;
 			for (EnemyController e : enemies) {
 				e.update();
 			}

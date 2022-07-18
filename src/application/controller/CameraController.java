@@ -1,11 +1,17 @@
 package application.controller;
 
+import application.MainApplication;
 import application.model.CameraModel;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 public class CameraController {
 	private CameraModel camera;
+	private int shakeFrame;
+	private double offX;
+	private double offY;
+	private double vX;
+	private double vY;
 	
 	public CameraController() {
 		// TODO Auto-generated constructor stub
@@ -36,6 +42,26 @@ public class CameraController {
 		}
 		
 		gc.drawImage(im, getXMapRelative(x), getYMapRelative(y), w, h);
+	}
+	
+	public void update() {
+		if (this.shakeFrame > 0) {
+			this.shakeFrame -= 1;
+			offX = (Math.random() * 1) * MainApplication.W * 0.003 * -vX;
+			offY = (Math.random() * 1) * MainApplication.W * 0.003 * -vY;
+		} else {
+			offX = 0;
+			offY = 0;
+		}
+		
+		this.camera.setX(this.camera.getX() + offX);
+		this.camera.setY(this.camera.getY() + offY);
+	}
+	
+	public void shake(double vX, double vY) {
+		this.shakeFrame += (int)(MainApplication.FPS / 15);
+		this.vX = vX;
+		this.vY = vY;
 	}
 	
 	public double getX() {
