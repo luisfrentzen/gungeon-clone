@@ -70,12 +70,12 @@ public class PlayerController extends CharacterController {
 	public void hit() {
 		this.playerModel.setHp(this.playerModel.getHp() - 1);
 		if (this.playerModel.getHp() == 0) {
-//			this.deathFrame = model.getSprites(EnemyModel.DEATH, this.getModelFacing());
-//			this.deathFrame.reset();
 			this.hasDied = true;
 		} else {
 			this.hitFrame = (int) (MainApplication.FPS * 1.25);
 		}
+		
+		this.camera.shake(0, 0);
 	}
 
 	public boolean isInvulnerable() {

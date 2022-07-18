@@ -47,8 +47,8 @@ public class CameraController {
 	public void update() {
 		if (this.shakeFrame > 0) {
 			this.shakeFrame -= 1;
-			offX = (Math.random() * 1) * MainApplication.W * 0.003 * -vX;
-			offY = (Math.random() * 1) * MainApplication.W * 0.003 * -vY;
+			offX = (Math.random() * 1) * MainApplication.W * 0.005 * (vX == 0? (Math.random() * 2 - 1) : -vX);
+			offY = (Math.random() * 1) * MainApplication.W * 0.005 * (vY == 0? (Math.random() * 2 - 1) : -vY);
 		} else {
 			offX = 0;
 			offY = 0;

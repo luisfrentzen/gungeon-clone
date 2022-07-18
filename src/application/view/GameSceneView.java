@@ -339,11 +339,12 @@ public class GameSceneView extends SceneView{
         playerController.render();
         
     	if (this.deathFade == 0 && playerController.isHasDied()) {
-    		this.deathFade = (int) (MainApplication.FPS * 2.0);
+    		this.deathFade = (int) (MainApplication.FPS * 4.0);
     	}
     	else if (this.deathFade > 0 && playerController.isHasDied()){
     		this.deathFade -= 1;
-    		gc.setGlobalAlpha(1 - (this.deathFade / (MainApplication.FPS * 2.0)));
+    		System.out.println(-1 - ((this.deathFade - (MainApplication.FPS * 2.0))/ (MainApplication.FPS * 2.0)));
+    		gc.setGlobalAlpha(-((this.deathFade - (MainApplication.FPS * 2.0))/ (MainApplication.FPS * 2.0)));
         	gc.setFill(Color.BLACK);
         	gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         	
