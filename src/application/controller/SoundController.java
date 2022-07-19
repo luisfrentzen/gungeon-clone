@@ -156,6 +156,7 @@ public class SoundController {
 	public void setMusicVolume(double vol) {
 		this.music.forEach((k, v) -> {
 			v.setVolume(vol);
+			System.out.println("a" + v.getVolume() + " " + vol);
 		});
 	}
 	

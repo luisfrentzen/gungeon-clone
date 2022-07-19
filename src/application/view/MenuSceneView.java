@@ -16,10 +16,14 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -69,6 +73,10 @@ public class MenuSceneView extends SceneView{
 	private Database db;
 	
 	private TableView<ScoreModel> tbHighscore;
+	private double lastMusicVol;
+	private double lastSfxVol;
+	private boolean lastShake;
+	private boolean lastOrientation;
 	
 	@Override
 	protected void initComponents() {
@@ -227,16 +235,42 @@ public class MenuSceneView extends SceneView{
 		resetBtn.setLayoutY(MainApplication.H * 0.84);
 		resetBtn.setFont(this.fontSmall);
 		resetBtn.setOnMouseEntered(this.hover);
-		resetBtn.setOnAction(new EventHandler<>() {
+		resetBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
+				MainApplication.WINDOWED = MainApplication.DEFAULT_WINDOWED;
+				MainApplication.IS_SHAKE = MainApplication.DEFAULT_SHAKE;
 				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
 			}
 			
 		});
 		
+		Label oriLabel = new Label("WINDOWED SCREEN");
+		oriLabel.setFont(fontSmall);
+		oriLabel.setPrefWidth(MainApplication.W * 0.2);
+		oriLabel.setLayoutX(MainApplication.W * 0.445);
+		oriLabel.setLayoutY(MainApplication.H * 0.4);
+	
+		CheckBox oriCb = new CheckBox("");
+		oriCb.setPadding(new Insets(MainApplication.H * 0.01));
+		oriCb.setLayoutX(MainApplication.W * 0.39);
+		oriCb.setLayoutY(MainApplication.H * 0.4);
+		oriCb.setSelected(MainApplication.DEFAULT_WINDOWED);
+		
+		Label shakeLabel = new Label("ENABLE SCREEN SHAKE");
+		shakeLabel.setFont(fontSmall);
+		shakeLabel.setPrefWidth(MainApplication.W * 0.3);
+		shakeLabel.setAlignment(Pos.BASELINE_LEFT);
+		shakeLabel.setLayoutX(MainApplication.W * 0.42);
+		shakeLabel.setLayoutY(MainApplication.H * 0.465);
+	
+		CheckBox shakeCb = new CheckBox("");
+		shakeCb.setPadding(new Insets(MainApplication.H * 0.01));
+		shakeCb.setLayoutX(MainApplication.W * 0.39);
+		shakeCb.setLayoutY(MainApplication.H * 0.465);
+		shakeCb.setSelected(MainApplication.DEFAULT_SHAKE);
 		
 		Button confBtn = new Button("CONFIRM");
 		confBtn.setPrefWidth(MainApplication.W * 0.25);
@@ -244,7 +278,7 @@ public class MenuSceneView extends SceneView{
 		confBtn.setLayoutY(MainApplication.H * 0.84);
 		confBtn.setFont(this.fontSmall);
 		confBtn.setOnMouseEntered(this.hover);
-		confBtn.setOnAction(new EventHandler<>() {
+		confBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -262,11 +296,13 @@ public class MenuSceneView extends SceneView{
 		cancBtn.setLayoutY(MainApplication.H * 0.84);
 		cancBtn.setFont(this.fontSmall);
 		cancBtn.setOnMouseEntered(this.hover);
-		cancBtn.setOnAction(new EventHandler<>() {
+		cancBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
+				MainApplication.IS_SHAKE = lastShake;
+				MainApplication.WINDOWED = lastOrientation;
 				sound.playSfx(SoundController.SFX_MENU_CANCEL);
 				onOptGameplay = false;
 				optGameplayPane.setVisible(false);
@@ -279,6 +315,10 @@ public class MenuSceneView extends SceneView{
 		controlPane.getChildren().add(cancBtn);
 		controlPane.getChildren().add(confBtn);
 		controlPane.getChildren().add(title);
+		controlPane.getChildren().add(oriLabel);
+		controlPane.getChildren().add(shakeCb);
+		controlPane.getChildren().add(shakeLabel);
+		controlPane.getChildren().add(oriCb);
 		
 		
 		ImageView optionLayout = createImageViewByH("/layout/layout_menu.png", MainApplication.H);
@@ -300,22 +340,6 @@ public class MenuSceneView extends SceneView{
 		title.setLayoutY(MainApplication.H * 0.055);
 		title.setFont(this.fontSmall);
 		
-		Button resetBtn = new Button("RESET DEFAULTS");
-		resetBtn.setPrefWidth(MainApplication.W * 0.25);
-		resetBtn.setLayoutX(MainApplication.W * 0.375);
-		resetBtn.setLayoutY(MainApplication.H * 0.84);
-		resetBtn.setFont(this.fontSmall);
-		resetBtn.setOnMouseEntered(this.hover);
-		resetBtn.setOnAction(new EventHandler<>() {
-
-			@Override
-			public void handle(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
-			}
-			
-		});
-		
 		Label sfxVolLbl = new Label("Sound Effect Volume");
 		sfxVolLbl.setFont(fontSmall);
 		sfxVolLbl.setPrefWidth(MainApplication.W * 0.4);
@@ -325,7 +349,7 @@ public class MenuSceneView extends SceneView{
 		Pane sfxProgress = new Pane();
 		StackPane sfxBar = new StackPane();
 		sfxBar.setLayoutX(MainApplication.W * 0.3);
-		sfxBar.setLayoutY(MainApplication.H * 0.3);
+		sfxBar.setLayoutY(MainApplication.H * 0.315);
 		sfxProgress.setPrefHeight(MainApplication.H * 0.05);
 		sfxProgress.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
 		sfxProgress.setBorder(new Border(new BorderStroke(Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE,
@@ -334,7 +358,7 @@ public class MenuSceneView extends SceneView{
 		sfxProgress.setPrefWidth(MainApplication.W * 0.4);
 		
 		Slider sfxVol = new Slider();
-		sfxVol.setValue(MainApplication.SFX_VOLUME);
+		sfxVol.setValue(MainApplication.SFX_VOLUME * 100);
 
 		sfxVol.valueProperty().addListener(new ChangeListener<Number>() {
 
@@ -343,7 +367,7 @@ public class MenuSceneView extends SceneView{
 					// TODO Auto-generated method stub
 					sfxProgress.setPrefWidth(MainApplication.W * 0.4 * ((double)arg1 / 100.0));
 					sound.setSoundVolume((double)arg1 / 100.0);
-					MainApplication.SFX_VOLUME = (double) arg1;
+					MainApplication.SFX_VOLUME = ((double)arg1 / 100.0);
 				}
 	        });
 		
@@ -358,7 +382,7 @@ public class MenuSceneView extends SceneView{
 		sfxVol.setLayoutX(MainApplication.W * 0.3);
 		sfxVol.setLayoutY(MainApplication.H * 0.315);
 		
-		Label musicVolLbl = new Label("Sound Effect Volume");
+		Label musicVolLbl = new Label("Music Volume");
 		musicVolLbl.setFont(fontSmall);
 		musicVolLbl.setPrefWidth(MainApplication.W * 0.4);
 		musicVolLbl.setLayoutX(MainApplication.W * 0.3);
@@ -376,15 +400,14 @@ public class MenuSceneView extends SceneView{
 		sfxProgress.setPrefWidth(MainApplication.W * 0.4);
 		
 		Slider musicVol = new Slider();
-		musicVol.setValue(MainApplication.MUSIC_VOLUME);
+		musicVol.setValue(MainApplication.MUSIC_VOLUME * 100);
 		musicVol.valueProperty().addListener(new ChangeListener<Number>() {
 
 				@Override
 				public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
 					// TODO Auto-generated method stub
-//					System.out.println((double)arg1 / 100.0);
 					sound.setMusicVolume((double)arg1 / 100.0);
-					MainApplication.MUSIC_VOLUME = (double) arg1;
+					MainApplication.MUSIC_VOLUME = ((double)arg1 / 100.0);
 				}
 	        });
 		
@@ -398,6 +421,28 @@ public class MenuSceneView extends SceneView{
 		musicVol.setPrefWidth(MainApplication.W * 0.4);
 		musicVol.setLayoutX(MainApplication.W * 0.3);
 		musicVol.setLayoutY(MainApplication.H * 0.465);
+		
+		Button resetBtn = new Button("RESET DEFAULTS");
+		resetBtn.setPrefWidth(MainApplication.W * 0.25);
+		resetBtn.setLayoutX(MainApplication.W * 0.375);
+		resetBtn.setLayoutY(MainApplication.H * 0.84);
+		resetBtn.setFont(this.fontSmall);
+		resetBtn.setOnMouseEntered(this.hover);
+		resetBtn.setOnAction(new EventHandler<>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				MainApplication.MUSIC_VOLUME = MainApplication.DEFAULT_MUSIC_VOL;
+				MainApplication.SFX_VOLUME = MainApplication.DEFAULT_SFX_VOL;
+				sfxVol.setValue(MainApplication.DEFAULT_SFX_VOL * 100);
+				musicVol.setValue(MainApplication.DEFAULT_MUSIC_VOL * 100);
+				sound.setMusicVolume(MainApplication.DEFAULT_MUSIC_VOL);
+				sound.setSoundVolume(MainApplication.DEFAULT_SFX_VOL);
+				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
+			}
+			
+		});
 		
 		Button confBtn = new Button("CONFIRM");
 		confBtn.setPrefWidth(MainApplication.W * 0.25);
@@ -428,9 +473,15 @@ public class MenuSceneView extends SceneView{
 			@Override
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
+				MainApplication.MUSIC_VOLUME = lastMusicVol;
+				MainApplication.SFX_VOLUME = lastSfxVol;
+				sfxVol.setValue(lastSfxVol * 100);
+				musicVol.setValue(lastMusicVol * 100);
+				sound.setMusicVolume(lastMusicVol);
+				sound.setSoundVolume(lastSfxVol);
 				sound.playSfx(SoundController.SFX_MENU_CANCEL);
-				onOptSound = false;
 				optSoundPane.setVisible(false);
+				onOptSound = false;
 			}
 			
 		});
@@ -443,6 +494,7 @@ public class MenuSceneView extends SceneView{
 		
 		Pane controlPane = new Pane();
 		controlPane.getChildren().add(sfxVolLbl);
+		controlPane.getChildren().add(musicVolLbl);
 		controlPane.getChildren().add(resetBtn);
 		controlPane.getChildren().add(cancBtn);
 		controlPane.getChildren().add(confBtn);
@@ -486,6 +538,8 @@ public class MenuSceneView extends SceneView{
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
+				lastMusicVol = MainApplication.MUSIC_VOLUME;
+				lastSfxVol = MainApplication.SFX_VOLUME;
 				onOptSound = true;
 				optSoundPane.setVisible(true);
 			}
@@ -505,6 +559,8 @@ public class MenuSceneView extends SceneView{
 				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
 				onOptGameplay = true;
 				optGameplayPane.setVisible(true);
+				lastShake = MainApplication.IS_SHAKE;
+				lastOrientation = MainApplication.WINDOWED;
 			}
 			
 		});

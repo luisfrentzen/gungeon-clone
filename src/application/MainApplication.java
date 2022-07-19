@@ -33,11 +33,14 @@ public class MainApplication extends Application{
 	public static boolean IS_SHAKE = true;
 	public static final boolean DEFAULT_SHAKE = true;
 	
-	public static double SFX_VOLUME = 50;
-	public static final double DEFAULT_SFX_VOL = 50;
+	public static double SFX_VOLUME = 0.5;
+	public static final double DEFAULT_SFX_VOL = 0.5;
 	
-	public static double MUSIC_VOLUME = 50;
-	public static final double DEFAULT_MUSIC_VOL = 50;
+	public static double MUSIC_VOLUME = 0.5;
+	public static final double DEFAULT_MUSIC_VOL = 0.5;
+	
+	public static boolean WINDOWED = true;
+	public static final boolean DEFAULT_WINDOWED = false;
 	
 	public Stage stage;
 	
