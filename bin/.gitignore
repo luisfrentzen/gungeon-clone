@@ -1,10 +1,6 @@
 /application/
-/bulletkin/
-/bullettank/
-/gun/
-/magnum/
-/marine/
-/projectile/
+/sfx/
 /tileset/
+/titlescreen/
 /vfx/
 /wall/

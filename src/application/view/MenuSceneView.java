@@ -8,11 +8,14 @@ import application.MainApplication;
 import application.controller.SoundController;
 import application.model.ScoreModel;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -29,6 +32,11 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -308,7 +316,88 @@ public class MenuSceneView extends SceneView{
 			
 		});
 		
+		Label sfxVolLbl = new Label("Sound Effect Volume");
+		sfxVolLbl.setFont(fontSmall);
+		sfxVolLbl.setPrefWidth(MainApplication.W * 0.4);
+		sfxVolLbl.setLayoutX(MainApplication.W * 0.3);
+		sfxVolLbl.setLayoutY(MainApplication.H * 0.25);
+		
+		Pane sfxProgress = new Pane();
+		StackPane sfxBar = new StackPane();
+		sfxBar.setLayoutX(MainApplication.W * 0.3);
+		sfxBar.setLayoutY(MainApplication.H * 0.3);
+		sfxProgress.setPrefHeight(MainApplication.H * 0.05);
+		sfxProgress.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
+		sfxProgress.setBorder(new Border(new BorderStroke(Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE,
+	            BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+	            CornerRadii.EMPTY, new BorderWidths(MainApplication.W * 0.003), Insets.EMPTY)));
+		sfxProgress.setPrefWidth(MainApplication.W * 0.4);
+		
 		Slider sfxVol = new Slider();
+		sfxVol.setValue(MainApplication.SFX_VOLUME);
+
+		sfxVol.valueProperty().addListener(new ChangeListener<Number>() {
+
+				@Override
+				public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+					// TODO Auto-generated method stub
+					sfxProgress.setPrefWidth(MainApplication.W * 0.4 * ((double)arg1 / 100.0));
+					sound.setSoundVolume((double)arg1 / 100.0);
+					MainApplication.SFX_VOLUME = (double) arg1;
+				}
+	        });
+		
+		sfxVol.skinProperty().addListener((obs,old,skin)->{
+            if(skin!=null){
+                StackPane thumb = (StackPane)sfxVol.lookup(".thumb");
+                thumb.setPrefHeight(MainApplication.H * 0.05);
+            }
+        });
+		
+		sfxVol.setPrefWidth(MainApplication.W * 0.4);
+		sfxVol.setLayoutX(MainApplication.W * 0.3);
+		sfxVol.setLayoutY(MainApplication.H * 0.315);
+		
+		Label musicVolLbl = new Label("Sound Effect Volume");
+		musicVolLbl.setFont(fontSmall);
+		musicVolLbl.setPrefWidth(MainApplication.W * 0.4);
+		musicVolLbl.setLayoutX(MainApplication.W * 0.3);
+		musicVolLbl.setLayoutY(MainApplication.H * 0.4);
+		
+		Pane musicProgress = new Pane();
+		StackPane musicBar = new StackPane();
+		musicBar.setLayoutX(MainApplication.W * 0.3);
+		musicBar.setLayoutY(MainApplication.H * 0.465);
+		musicProgress.setPrefHeight(MainApplication.H * 0.05);
+		musicProgress.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
+		musicProgress.setBorder(new Border(new BorderStroke(Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE,
+	            BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+	            CornerRadii.EMPTY, new BorderWidths(MainApplication.W * 0.003), Insets.EMPTY)));
+		sfxProgress.setPrefWidth(MainApplication.W * 0.4);
+		
+		Slider musicVol = new Slider();
+		musicVol.setValue(MainApplication.MUSIC_VOLUME);
+		musicVol.valueProperty().addListener(new ChangeListener<Number>() {
+
+				@Override
+				public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+					// TODO Auto-generated method stub
+//					System.out.println((double)arg1 / 100.0);
+					sound.setMusicVolume((double)arg1 / 100.0);
+					MainApplication.MUSIC_VOLUME = (double) arg1;
+				}
+	        });
+		
+		musicVol.skinProperty().addListener((obs,old,skin)->{
+            if(skin!=null){
+                StackPane thumb = (StackPane)musicVol.lookup(".thumb");
+                thumb.setPrefHeight(MainApplication.H * 0.05);
+            }
+        });
+		
+		musicVol.setPrefWidth(MainApplication.W * 0.4);
+		musicVol.setLayoutX(MainApplication.W * 0.3);
+		musicVol.setLayoutY(MainApplication.H * 0.465);
 		
 		Button confBtn = new Button("CONFIRM");
 		confBtn.setPrefWidth(MainApplication.W * 0.25);
@@ -346,12 +435,20 @@ public class MenuSceneView extends SceneView{
 			
 		});
 		
+		sfxBar.getChildren().add(sfxProgress);
+		sfxBar.getChildren().add(sfxVol);
+		
+		musicBar.getChildren().add(musicProgress);
+		musicBar.getChildren().add(musicVol);
+		
 		Pane controlPane = new Pane();
+		controlPane.getChildren().add(sfxVolLbl);
 		controlPane.getChildren().add(resetBtn);
 		controlPane.getChildren().add(cancBtn);
 		controlPane.getChildren().add(confBtn);
 		controlPane.getChildren().add(title);
-		
+		controlPane.getChildren().add(sfxBar);
+		controlPane.getChildren().add(musicBar);
 		
 		ImageView optionLayout = createImageViewByH("/layout/layout_menu.png", MainApplication.H);
 		this.optSoundPane.getChildren().add(optionLayout);

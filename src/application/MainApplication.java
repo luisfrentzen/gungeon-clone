@@ -33,6 +33,12 @@ public class MainApplication extends Application{
 	public static boolean IS_SHAKE = true;
 	public static final boolean DEFAULT_SHAKE = true;
 	
+	public static double SFX_VOLUME = 50;
+	public static final double DEFAULT_SFX_VOL = 50;
+	
+	public static double MUSIC_VOLUME = 50;
+	public static final double DEFAULT_MUSIC_VOL = 50;
+	
 	public Stage stage;
 	
 	public SoundController sound;
@@ -43,6 +49,7 @@ public class MainApplication extends Application{
 		this.stage = stage;
 		this.stage.setMaximized(true);
 		this.stage.initStyle(StageStyle.UNDECORATED);
+		this.stage.setTitle("FungeonS");
 		
 		this.stage.show();
 		
@@ -57,6 +64,9 @@ public class MainApplication extends Application{
 		
 		this.sceneFactory = new SceneFactory();
 		this.sound = new SoundController();
+		
+		this.sound.setMusicVolume(DEFAULT_MUSIC_VOL);
+		this.sound.setSoundVolume(DEFAULT_SFX_VOL);
 		
 		this.stage.setResizable(false);
 		this.stage.setScene(sceneFactory.makeScene(MainApplication.MENU_SCENE, sound, this));

@@ -155,13 +155,13 @@ public class SoundController {
 	
 	public void setMusicVolume(double vol) {
 		this.music.forEach((k, v) -> {
-			v.setVolume(v.getVolume() * vol);
+			v.setVolume(vol);
 		});
 	}
 	
 	public void setSoundVolume(double vol) {
 		this.sound.forEach((k, v) -> {
-			v.setVolume(v.getVolume() * vol);
+			v.setVolume(vol);
 		});
 	}
 
