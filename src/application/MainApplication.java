@@ -1,5 +1,7 @@
 package application;
 
+import java.sql.ResultSet;
+
 import application.controller.MainController;
 import application.controller.SoundController;
 import application.factory.SceneFactory;
@@ -12,6 +14,7 @@ public class MainApplication extends Application{
 
 	public MainController controller;
 	public MainModel model;
+	public Database db;
 	
 	public static double recomW = 1920;
 	public static double recomH = 1080;
@@ -26,6 +29,9 @@ public class MainApplication extends Application{
 	
 	public static final String MENU_SCENE = "M";
 	public static final String GAME_SCENE = "G";
+	
+	public static boolean IS_SHAKE = true;
+	public static final boolean DEFAULT_SHAKE = true;
 	
 	public Stage stage;
 	

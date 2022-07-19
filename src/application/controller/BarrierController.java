@@ -40,8 +40,8 @@ public class BarrierController extends GameObjectController{
 	@Override
 	public void render() {
 		// TODO Auto-generated method stub
-		this.gc.setStroke(Color.RED);
-		this.gc.strokeRect(this.camera.getXMapRelative(barrier.getX()), this.camera.getYMapRelative(barrier.getY()), barrier.getW(), barrier.getH());
+//		this.gc.setStroke(Color.RED);
+//		this.gc.strokeRect(this.camera.getXMapRelative(barrier.getX()), this.camera.getYMapRelative(barrier.getY()), barrier.getW(), barrier.getH());
 	}
 
 	@Override

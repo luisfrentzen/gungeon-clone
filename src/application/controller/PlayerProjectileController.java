@@ -80,8 +80,8 @@ public class PlayerProjectileController extends ProjectileController {
 					s.getWidth(0) + glowOffset, s.getHeight(0) + glowOffset);
 
 			this.gc.restore();
-			this.gc.strokeRect(this.camera.getXMapRelative(ppModel.getBoundX()),
-					this.camera.getYMapRelative(ppModel.getBoundY()), ppModel.getW(), ppModel.getH());
+//			this.gc.strokeRect(this.camera.getXMapRelative(ppModel.getBoundX()),
+//					this.camera.getYMapRelative(ppModel.getBoundY()), ppModel.getW(), ppModel.getH());
 		}
 	}
 

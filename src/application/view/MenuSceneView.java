@@ -1,24 +1,39 @@
 package application.view;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import application.Database;
 import application.MainApplication;
 import application.controller.SoundController;
+import application.model.ScoreModel;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Callback;
 
 public class MenuSceneView extends SceneView{
 
@@ -40,13 +55,18 @@ public class MenuSceneView extends SceneView{
 	
 	private StackPane highscorePane;
 	private boolean onHighscore;
+	private ResultSet highscore;
 	
 	private EventHandler<Event> hover;
+	private Database db;
+	
+	private TableView<ScoreModel> tbHighscore;
 	
 	@Override
 	protected void initComponents() {
 		// TODO Auto-generated method stub
 		this.root = new StackPane();
+		this.db = Database.getConnection();
 		
 		this.font = Font.loadFont("file:resources/font/minecraftia/Minecraftia-Regular.ttf", MainApplication.H * 0.04);
 		this.fontSmall = Font.loadFont("file:resources/font/minecraftia/Minecraftia-Regular.ttf", MainApplication.H * 0.03);
@@ -91,6 +111,7 @@ public class MenuSceneView extends SceneView{
 			@Override
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
+				
 				sound.playSfx(SoundController.SFX_MENU_CANCEL);
 				onHighscore = false;
 				highscorePane.setVisible(false);
@@ -98,15 +119,87 @@ public class MenuSceneView extends SceneView{
 			
 		});
 		
+		tbHighscore = new TableView<ScoreModel>();
+		tbHighscore.setPrefWidth(MainApplication.W * 0.5);
+		tbHighscore.setPrefHeight(MainApplication.H * 0.6);
+		tbHighscore.setLayoutX(MainApplication.W * 0.33);
+		tbHighscore.setLayoutY(MainApplication.H * 0.22);
+		
+		tbHighscore.getStyleClass().add("noheader");
+
+		TableColumn<ScoreModel, String> name = new TableColumn<ScoreModel, String>();
+		name.setText("NAME");
+		name.setCellValueFactory(new PropertyValueFactory<ScoreModel, String>("name"));
+		name.setPrefWidth(MainApplication.W * 0.2);
+		name.setCellFactory(new Callback<TableColumn<ScoreModel,String>, TableCell<ScoreModel,String>>() {
+
+			@Override
+			public TableCell<ScoreModel, String> call(TableColumn<ScoreModel, String> arg0) {
+				// TODO Auto-generated method stub
+				return new TableCell<ScoreModel, String>() 
+                {
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if(isEmpty())
+                        {
+                            setText("");
+                        }
+                        else
+                        {
+                            setTextFill(Color.WHITE);
+                            setFont(fontSmall);
+                            setText(item);
+                        }
+                    }
+                };
+			}
+		});
+		
+		TableColumn<ScoreModel, Integer> score = new TableColumn<ScoreModel, Integer>();
+		score.setText("SCORE");
+		score.setPrefWidth(MainApplication.W * 0.2);
+		score.setCellValueFactory(new PropertyValueFactory<ScoreModel, Integer>("score"));
+		score.setCellFactory(new Callback<TableColumn<ScoreModel,Integer>, TableCell<ScoreModel,Integer>>() {
+
+			@Override
+			public TableCell<ScoreModel, Integer> call(TableColumn<ScoreModel, Integer> arg0) {
+				// TODO Auto-generated method stub
+				return new TableCell<ScoreModel, Integer>() 
+                {
+                    @Override
+                    public void updateItem(Integer item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if(isEmpty())
+                        {
+                            setText("");
+                        }
+                        else
+                        {
+                            setTextFill(Color.WHITE);
+                            setFont(fontSmall);
+                            setText(String.format("%010d", item));
+                        }
+                    }
+                };
+			}
+		});
+		
+		tbHighscore.getColumns().addAll(name, score);
+		
 		Pane controlPane = new Pane();
 		controlPane.getChildren().add(cancBtn);
 		controlPane.getChildren().add(title);
+		controlPane.getChildren().add(tbHighscore);
 		
 		
 		ImageView optionLayout = createImageViewByH("/layout/layout_menu.png", MainApplication.H);
 		this.highscorePane.getChildren().add(optionLayout);
 		this.highscorePane.getChildren().add(controlPane);
 	}
+	
 	
 	public void initGameOptPage() {
 		this.optGameplayPane = new StackPane();
@@ -215,6 +308,7 @@ public class MenuSceneView extends SceneView{
 			
 		});
 		
+		Slider sfxVol = new Slider();
 		
 		Button confBtn = new Button("CONFIRM");
 		confBtn.setPrefWidth(MainApplication.W * 0.25);
@@ -400,6 +494,21 @@ Image im = new Image(MenuSceneView.class.getResource("/titlescreen/backdrop/titl
 				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
 				highscorePane.setVisible(true);
 				onHighscore = true;
+				
+				ResultSet rs = db.executeQuery("SELECT * FROM score ORDER BY score DESC LIMIT 6");
+				
+				ObservableList<ScoreModel> data = FXCollections.observableArrayList();
+				try {
+					while(rs.next()) {
+						data.add(new ScoreModel(rs.getString("username"), rs.getInt("score")));
+					}
+					
+					tbHighscore.setItems(data);
+					tbHighscore.refresh();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 		});

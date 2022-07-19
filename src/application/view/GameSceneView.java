@@ -4,6 +4,7 @@ package application.view;
 import java.util.Vector;
 import java.util.jar.Attributes.Name;
 
+import application.Database;
 import application.MainApplication;
 import application.controller.BarrierController;
 import application.controller.CameraController;
@@ -86,6 +87,8 @@ public class GameSceneView extends SceneView{
 	private TextField name;
 	private boolean onMusic;
 	
+	private Database db;
+	
 	@Override
 	protected void initComponents() {
 		// TODO Auto-generated method stub
@@ -99,6 +102,7 @@ public class GameSceneView extends SceneView{
 		this.canvas.setCacheHint(CacheHint.SPEED);
 		
 		StackPane.setAlignment(this.canvas, Pos.TOP_LEFT); 
+		this.db = Database.getConnection();
 		
 		Scale s = new Scale();
 		s.setX(5);
@@ -191,7 +195,10 @@ public class GameSceneView extends SceneView{
 					return;
 				}
 				
+				String query = "INSERT INTO score VALUES(NULL, '" + name.getText() + "', " + score + ")";
+				db.executeUpdate(query);
 				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
+				
 				if (screenChanged == false) app.changeScene(MainApplication.MENU_SCENE);
 	        	screenChanged = true;
 			}
@@ -601,7 +608,7 @@ public class GameSceneView extends SceneView{
         	gc.setFill(Color.BLACK);
         	gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         	
-        	if (this.deathFade == (int)(MainApplication.FPS * 1.65)) {
+        	if (this.deathFade == (int)(MainApplication.FPS * 1.625)) {
         		sound.playSfx(SoundController.SFX_PLAYER_LEAP_3);
         	}
         	

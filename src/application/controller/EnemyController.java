@@ -305,11 +305,11 @@ public class EnemyController extends CharacterController {
 		this.camera.draw(this.gc, p, ((int) centerX) + .5, ((int) centerY) + .5, w, h);
 		this.gc.restore();
 		
-		this.gc.setFill(Color.RED);
-		this.gc.fillOval(this.camera.getXMapRelative(model.getX()) - 5, this.camera.getYMapRelative(model.getY()) - 5,
-				10, 10);
-		this.gc.strokeRect(this.camera.getXMapRelative(this.model.getBoundX()),
-				this.camera.getYMapRelative(this.model.getBoundY()), this.model.getW(), this.model.getH());
+//		this.gc.setFill(Color.RED);
+//		this.gc.fillOval(this.camera.getXMapRelative(model.getX()) - 5, this.camera.getYMapRelative(model.getY()) - 5,
+//				10, 10);
+//		this.gc.strokeRect(this.camera.getXMapRelative(this.model.getBoundX()),
+//				this.camera.getYMapRelative(this.model.getBoundY()), this.model.getW(), this.model.getH());
 	}
 
 	public void drawHand() {
@@ -386,9 +386,9 @@ public class EnemyController extends CharacterController {
 
 		Point2D rotated = this.getRotated(ang, pointX, pointY, this.handX, this.handY);
 
-		this.gc.setFill(Color.RED);
-		this.gc.fillOval(this.camera.getXMapRelative(this.handX - 5), this.camera.getYMapRelative(this.handY - 5), 10,
-				10);
+//		this.gc.setFill(Color.RED);
+//		this.gc.fillOval(this.camera.getXMapRelative(this.handX - 5), this.camera.getYMapRelative(this.handY - 5), 10,
+//				10);
 
 		this.shootX = rotated.getX();
 		this.shootY = rotated.getY();

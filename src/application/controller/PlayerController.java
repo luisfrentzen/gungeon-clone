@@ -215,20 +215,20 @@ public class PlayerController extends CharacterController {
 		this.gc.setGlobalAlpha(1);
 		this.gc.restore();
 
-		this.gc.setFill(Color.RED);
-		this.gc.fillOval(this.camera.getXMapRelative(playerModel.getX()) - 5,
-				this.camera.getYMapRelative(playerModel.getY()) - 5, 10, 10);
-		this.gc.strokeRect(this.camera.getXMapRelative(this.playerModel.getBoundX()),
-				this.camera.getYMapRelative(this.playerModel.getBoundY()), this.playerModel.getW(),
-				this.playerModel.getH());
+//		this.gc.setFill(Color.RED);
+//		this.gc.fillOval(this.camera.getXMapRelative(playerModel.getX()) - 5,
+//				this.camera.getYMapRelative(playerModel.getY()) - 5, 10, 10);
+//		this.gc.strokeRect(this.camera.getXMapRelative(this.playerModel.getBoundX()),
+//				this.camera.getYMapRelative(this.playerModel.getBoundY()), this.playerModel.getW(),
+//				this.playerModel.getH());
 
-		this.gc.strokeOval(
-				this.camera.getXMapRelative(
-						playerModel.getX() - (75 * this.playerModel.getScale() * MainApplication.globalScale)),
-				this.camera.getYMapRelative(
-						playerModel.getY() - (75 * this.playerModel.getScale() * MainApplication.globalScale)),
-				150 * this.playerModel.getScale() * MainApplication.globalScale,
-				150 * this.playerModel.getScale() * MainApplication.globalScale);
+//		this.gc.strokeOval(
+//				this.camera.getXMapRelative(
+//						playerModel.getX() - (75 * this.playerModel.getScale() * MainApplication.globalScale)),
+//				this.camera.getYMapRelative(
+//						playerModel.getY() - (75 * this.playerModel.getScale() * MainApplication.globalScale)),
+//				150 * this.playerModel.getScale() * MainApplication.globalScale,
+//				150 * this.playerModel.getScale() * MainApplication.globalScale);
 	}
 
 	public boolean isFlip() {
@@ -503,8 +503,8 @@ public class PlayerController extends CharacterController {
 		}
 		
 
-		this.gc.setFill(Color.RED);
-		this.gc.fillOval(((GameSceneView) this.scene).getMouseX() - 5, ((GameSceneView) this.scene).getMouseY() - 5, 10, 10);
+//		this.gc.setFill(Color.RED);
+//		this.gc.fillOval(((GameSceneView) this.scene).getMouseX() - 5, ((GameSceneView) this.scene).getMouseY() - 5, 10, 10);
 
 	}
 
@@ -515,6 +515,7 @@ public class PlayerController extends CharacterController {
 
 	public void doReload() {
 		if (this.playerModel.getGunDownTime() > 0) return; 
+		if (this.getPlayerState() == PlayerModel.DODGE) return;
 		this.sound.playSfx(SoundController.SFX_DEAGLE_RELOAD);
 		this.pistol = playerModel.getGunSprites(PlayerModel.GUN_RELOAD);
 		this.pistol.reset();
