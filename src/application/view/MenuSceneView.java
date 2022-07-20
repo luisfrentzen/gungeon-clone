@@ -228,7 +228,20 @@ public class MenuSceneView extends SceneView{
 		title.setLayoutX(MainApplication.W * 0.375);
 		title.setLayoutY(MainApplication.H * 0.055);
 		title.setFont(this.fontSmall);
-		
+
+		Label shakeLabel = new Label("ENABLE SCREEN SHAKE");
+		shakeLabel.setFont(fontSmall);
+		shakeLabel.setPrefWidth(MainApplication.W * 0.3);
+		shakeLabel.setAlignment(Pos.BASELINE_LEFT);
+		shakeLabel.setLayoutX(MainApplication.W * 0.42);
+		shakeLabel.setLayoutY(MainApplication.H * 0.425);
+	
+		CheckBox shakeCb = new CheckBox("");
+		shakeCb.setPadding(new Insets(MainApplication.H * 0.01));
+		shakeCb.setLayoutX(MainApplication.W * 0.39);
+		shakeCb.setLayoutY(MainApplication.H * 0.425);
+		shakeCb.setSelected(MainApplication.DEFAULT_SHAKE);
+
 		Button resetBtn = new Button("RESET DEFAULTS");
 		resetBtn.setPrefWidth(MainApplication.W * 0.25);
 		resetBtn.setLayoutX(MainApplication.W * 0.375);
@@ -240,37 +253,12 @@ public class MenuSceneView extends SceneView{
 			@Override
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				MainApplication.WINDOWED = MainApplication.DEFAULT_WINDOWED;
+				shakeCb.setSelected(MainApplication.DEFAULT_SHAKE);
 				MainApplication.IS_SHAKE = MainApplication.DEFAULT_SHAKE;
 				sound.playSfx(SoundController.SFX_MENU_CONFIRM);
 			}
 			
 		});
-		
-		Label oriLabel = new Label("WINDOWED SCREEN");
-		oriLabel.setFont(fontSmall);
-		oriLabel.setPrefWidth(MainApplication.W * 0.2);
-		oriLabel.setLayoutX(MainApplication.W * 0.445);
-		oriLabel.setLayoutY(MainApplication.H * 0.4);
-	
-		CheckBox oriCb = new CheckBox("");
-		oriCb.setPadding(new Insets(MainApplication.H * 0.01));
-		oriCb.setLayoutX(MainApplication.W * 0.39);
-		oriCb.setLayoutY(MainApplication.H * 0.4);
-		oriCb.setSelected(MainApplication.DEFAULT_WINDOWED);
-		
-		Label shakeLabel = new Label("ENABLE SCREEN SHAKE");
-		shakeLabel.setFont(fontSmall);
-		shakeLabel.setPrefWidth(MainApplication.W * 0.3);
-		shakeLabel.setAlignment(Pos.BASELINE_LEFT);
-		shakeLabel.setLayoutX(MainApplication.W * 0.42);
-		shakeLabel.setLayoutY(MainApplication.H * 0.465);
-	
-		CheckBox shakeCb = new CheckBox("");
-		shakeCb.setPadding(new Insets(MainApplication.H * 0.01));
-		shakeCb.setLayoutX(MainApplication.W * 0.39);
-		shakeCb.setLayoutY(MainApplication.H * 0.465);
-		shakeCb.setSelected(MainApplication.DEFAULT_SHAKE);
 		
 		Button confBtn = new Button("CONFIRM");
 		confBtn.setPrefWidth(MainApplication.W * 0.25);
@@ -284,6 +272,7 @@ public class MenuSceneView extends SceneView{
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				sound.playSfx(SoundController.SFX_MENU_CANCEL);
+				MainApplication.IS_SHAKE = shakeCb.isSelected();
 				onOptGameplay = false;
 				optGameplayPane.setVisible(false);
 			}
@@ -302,7 +291,7 @@ public class MenuSceneView extends SceneView{
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				MainApplication.IS_SHAKE = lastShake;
-				MainApplication.WINDOWED = lastOrientation;
+				shakeCb.setSelected(lastShake);
 				sound.playSfx(SoundController.SFX_MENU_CANCEL);
 				onOptGameplay = false;
 				optGameplayPane.setVisible(false);
@@ -315,10 +304,8 @@ public class MenuSceneView extends SceneView{
 		controlPane.getChildren().add(cancBtn);
 		controlPane.getChildren().add(confBtn);
 		controlPane.getChildren().add(title);
-		controlPane.getChildren().add(oriLabel);
 		controlPane.getChildren().add(shakeCb);
 		controlPane.getChildren().add(shakeLabel);
-		controlPane.getChildren().add(oriCb);
 		
 		
 		ImageView optionLayout = createImageViewByH("/layout/layout_menu.png", MainApplication.H);
@@ -560,7 +547,6 @@ public class MenuSceneView extends SceneView{
 				onOptGameplay = true;
 				optGameplayPane.setVisible(true);
 				lastShake = MainApplication.IS_SHAKE;
-				lastOrientation = MainApplication.WINDOWED;
 			}
 			
 		});

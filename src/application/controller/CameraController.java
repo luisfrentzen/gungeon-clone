@@ -59,6 +59,8 @@ public class CameraController {
 	}
 	
 	public void shake(double vX, double vY) {
+		if (!MainApplication.IS_SHAKE) return;
+		
 		this.shakeFrame += (int)(MainApplication.FPS / 15);
 		this.vX = vX;
 		this.vY = vY;
